@@ -8,9 +8,7 @@ import { InlineMiradorViewer } from '@/features/iiif/InlineMiradorViewer'
 import { buildManifestUrl, buildMiradorViewerUrl } from '@/lib/config/iiif'
 
 const DEFAULT_MANIFEST_URL = 'https://iiif.harvardartmuseums.org/manifests/object/299843'
-const OPEN_IN_NEW_WINDOW_LABEL = '新窗口打开 Mirador'
 
-const LINK_WRAPPER_STYLE: CSSProperties = { marginTop: '0.5rem' }
 const IFRAME_STYLE: CSSProperties = {
   width: '100%',
   height: '75vh',
@@ -33,13 +31,6 @@ export function IiifPage(): JSX.Element {
 
   return (
     <main className="container">
-      <section className="panel">
-        <h1>Mirador 查看器</h1>
-        <p className="muted">当前页面直接加载项目内 Mirador，保持原有查看器展示效果。</p>
-        <p style={LINK_WRAPPER_STYLE}>
-          <a href={openInNewWindowUrl} target="_blank" rel="noopener noreferrer">{OPEN_IN_NEW_WINDOW_LABEL}</a>
-        </p>
-      </section>
       <section className="panel">
         {isEmbeddedShellRoute ? (
           <iframe

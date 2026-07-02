@@ -8,6 +8,7 @@ import { act } from 'react'
 import { MemoryRouter } from 'react-router-dom'
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import { IIIFSection } from '@/features/common/IIIFSection'
+import { AncientBookFieldPanel } from '@/features/details/components/entity-fields/AncientBookFieldPanel'
 import { AncientBookVolumeTextSection } from '@/features/details/components/AncientBookVolumeTextSection'
 import { OverviewTab } from '@/features/details/OverviewTab'
 import { IiifPage } from '@/features/iiif/IiifPage'
@@ -167,6 +168,19 @@ describe('古籍详情 UI 回归', () => {
               timespan: { _label: '明' },
             },
           }}
+          mainContent={(
+            <AncientBookFieldPanel
+              entity={{
+                _label: data.title,
+                type: 'HumanMadeObject',
+                created_by: {
+                  carried_out_by: [{ _label: '唐元竑' }],
+                  timespan: { _label: '明' },
+                },
+              }}
+              digitalResourceCount={data.externalUris.length}
+            />
+          )}
         />
       </MemoryRouter>,
     )
@@ -239,6 +253,9 @@ describe('古籍详情 UI 回归', () => {
     expect(iframe).toBeTruthy()
     expect(iframe.hasAttribute('allowfullscreen')).toBe(true)
     expect(String(iframe.getAttribute('allow') || '')).toContain('fullscreen')
+    expect(container.textContent || '').not.toContain('Mirador 查看器')
+    expect(container.textContent || '').not.toContain('当前页面直接加载项目内 Mirador')
+    expect(container.textContent || '').not.toContain('新窗口打开 Mirador')
     unmount(root, container)
   })
 

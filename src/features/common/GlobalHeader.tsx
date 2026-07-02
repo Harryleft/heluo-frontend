@@ -13,10 +13,9 @@ import { Link, useNavigate } from 'react-router-dom'
 
 /**
  * 判断是否应该显示全局 Header
- * 当前全站都显示 Header
  */
-export function shouldShowGlobalHeader(_pathname: string): boolean {
-  return true
+export function shouldShowGlobalHeader(pathname: string): boolean {
+  return pathname !== '/mirador'
 }
 
 /**

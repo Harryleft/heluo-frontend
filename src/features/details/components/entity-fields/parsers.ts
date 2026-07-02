@@ -352,14 +352,11 @@ function pickAncientBookSource(entity: Record<string, unknown>): string {
 /** 解析古籍实体的字段组 */
 export function parseAncientBookFieldGroups(
   entity: Record<string, unknown>,
-  options: AncientBookFieldGroupOptions = {},
+  _options: AncientBookFieldGroupOptions = {},
 ): FieldGroup[] {
   const groups: FieldGroup[] = []
   const createdBy = asRecord(entity.created_by)
   const producedBy = asRecord(entity.produced_by)
-  const title = pickNodeText(entity._label || entity)
-  const entityType = normalizeText(entity.type)
-  const digitalResourceCount = Number(options.digitalResourceCount)
   const creators = uniq([
     ...pickAncientBookActorNames(createdBy),
     ...pickAncientBookActorNames(producedBy),
@@ -371,9 +368,6 @@ export function parseAncientBookFieldGroups(
   const source = pickAncientBookSource(entity)
 
   const basicGroup = createGroup('古籍核心字段', [
-    { label: '名称', value: title },
-    { label: '实体类型', value: entityType },
-    { label: '数字资源数', value: Number.isFinite(digitalResourceCount) && digitalResourceCount > 0 ? String(digitalResourceCount) : '' },
     { label: '创作者', value: creators.join('、') },
     { label: '时间', value: timespan },
     { label: '版本/来源', value: source },
