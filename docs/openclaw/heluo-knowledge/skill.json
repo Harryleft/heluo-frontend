@@ -1,0 +1,93 @@
+{
+  "name": "heluo-knowledge",
+  "version": "1.0.0",
+  "description": "河洛知识图谱 - 中国历史文化知识库搜索与问答",
+  "author": "heluo-frontend",
+  "tags": [
+    "历史",
+    "人物",
+    "古籍",
+    "诗词",
+    "知识图谱",
+    "中国文化",
+    "搜索",
+    "问答"
+  ],
+  "category": "knowledge-base",
+  "license": "MIT",
+  "homepage": "https://github.com/heluo-project/heluo-frontend",
+  "api": {
+    "baseUrl": "http://localhost:9011",
+    "endpoints": [
+      {
+        "method": "GET",
+        "path": "/api/v1/search",
+        "description": "统一搜索接口"
+      },
+      {
+        "method": "GET",
+        "path": "/api/v1/persons/:id",
+        "description": "人物详情"
+      },
+      {
+        "method": "GET",
+        "path": "/api/v1/persons/:id/poem-track",
+        "description": "人物诗文地理轨迹"
+      },
+      {
+        "method": "GET",
+        "path": "/api/v1/poems/:id",
+        "description": "诗文详情"
+      },
+      {
+        "method": "GET",
+        "path": "/api/v1/books/:id",
+        "description": "图书详情"
+      },
+      {
+        "method": "GET",
+        "path": "/api/v1/places/:id",
+        "description": "地点详情"
+      },
+      {
+        "method": "GET",
+        "path": "/api/v1/concepts/:id",
+        "description": "概念详情"
+      },
+      {
+        "method": "GET",
+        "path": "/api/v1/ancient-books/:id",
+        "description": "古籍详情"
+      },
+      {
+        "method": "POST",
+        "path": "/api/v1/fusion/query",
+        "description": "融合问答"
+      },
+      {
+        "method": "POST",
+        "path": "/api/v1/fusion/stream",
+        "description": "融合问答（流式）"
+      },
+      {
+        "method": "POST",
+        "path": "/api/v1/persons/ai-intro",
+        "description": "生成人物 AI 介绍"
+      },
+      {
+        "method": "GET",
+        "path": "/api/v1/health",
+        "description": "健康检查"
+      }
+    ]
+  },
+  "requirements": {
+    "backend": {
+      "port": 9011,
+      "startupCommand": "node server/src/index.js"
+    },
+    "optional": {
+      "llm": "融合问答功能需要 LLM 服务"
+    }
+  }
+}

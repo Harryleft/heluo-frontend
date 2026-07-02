@@ -1,0 +1,207 @@
+/* ========================================
+   CSS 变量定义
+   基于 Yale LUX 设计系统风格
+   ======================================== */
+
+:root {
+  /* ===== 主色调 - Yale 深蓝 ===== */
+  --primary: #003366;
+  --primary-light: #004d99;
+  --primary-dark: #002244;
+
+  /* ===== 链接色 ===== */
+  --link: #007bff;
+  --link-hover: #0056b3;
+  --link-visited: #551a8b;
+
+  /* ===== 中性色 ===== */
+  --text: #333333;
+  --muted: #666666;
+  --border: #d9d9d9;
+  --bg: #f8f9fa;
+  --panel: #ffffff;
+  --line: #dbe0ea;
+  --ink: #1f2937;
+  --brand: #0f172a;
+
+  /* ===== 状态色 ===== */
+  --success: #28a745;
+  --warning: #ffc107;
+  --error: #dc3545;
+  --info: #17a2b8;
+
+  /* ===== 间距 ===== */
+  --spacing-xs: 4px;
+  --spacing-sm: 8px;
+  --spacing-md: 16px;
+  --spacing-lg: 24px;
+  --spacing-xl: 32px;
+
+  /* ===== 圆角 ===== */
+  --radius-sm: 4px;
+  --radius-md: 8px;
+  --radius-lg: 12px;
+  --radius-full: 999px;
+
+  /* ===== 阴影 ===== */
+  --shadow-card: 0 2px 8px rgba(0, 0, 0, 0.1);
+  --shadow-card-hover: 0 4px 16px rgba(0, 0, 0, 0.15);
+  --shadow-panel: 0 1px 4px rgba(0, 0, 0, 0.08);
+
+  /* ===== 芯片渐变色 ===== */
+  --chip-on-a: #4f46e5;
+  --chip-on-b: #2563eb;
+
+  /* ===== 经典学术风格变量 ===== */
+  --classic-primary: #1e3a5f;
+  --classic-secondary: #2a5a6a;
+  --classic-accent: #c9a227;
+  --classic-gold: #b8860b;
+  --classic-gold-light: #daa520;
+  --classic-text: #2c3e50;
+  --classic-text-muted: #7f8c8d;
+  --classic-border: #e8e0d5;
+  --classic-border-light: #f5f0ea;
+  --classic-bg: #faf8f5;
+  --classic-panel: #ffffff;
+  --classic-hover: #f8f5f0;
+  --classic-shadow: 0 2px 12px rgba(30, 58, 95, 0.08);
+  --classic-shadow-hover: 0 4px 20px rgba(30, 58, 95, 0.12);
+
+  /* ===== Yale 设计系统扩展变量 ===== */
+  --yale-primary: #1a4b7c;          /* 提亮 15% */
+  --yale-primary-light: #2d6ba8;    /* hover 状态 */
+  --yale-primary-dark: #0f2d4a;     /* active 状态 */
+  --yale-secondary: #4a4a4a;
+  --yale-accent: #bd9540;
+  --yale-accent-light: #d4af37;
+  --yale-accent-dark: #a67c00;
+  --yale-text: #333333;
+  --yale-text-muted: #6b7280;
+  --yale-border: #e5e7eb;
+  --yale-border-light: #f3f4f6;
+  --yale-bg: #f9fafb;
+
+  /* 背景层次变量 */
+  --yale-bg-base: #fafbfc;          /* 页面基础背景 */
+  --yale-bg-elevated: #ffffff;      /* 卡片/面板背景 */
+  --yale-bg-subtle: #f5f7f9;        /* 次级区域背景 */
+  --yale-bg-muted: #eef1f4;         /* 静默区域背景 */
+  --yale-bg-warm: #fdfaf5;          /* 暖色调区域 */
+  --yale-panel: #ffffff;
+  --yale-hover: #f3f4f6;
+  --yale-gold: #c9a227;
+  --yale-gold-light: #d4af37;
+  --yale-font-sans: 'Microsoft YaHei', 'PingFang SC', 'Noto Sans SC', sans-serif;
+  --yale-font-serif: 'Georgia', 'Noto Serif SC', serif;
+  --yale-font-h1: 600 32px/1.3 var(--yale-font-serif);
+  --yale-font-h2: 600 24px/1.4 var(--yale-font-serif);
+  --yale-font-h3: 500 18px/1.4 var(--yale-font-sans);
+  --yale-font-body: 400 15px/1.7 var(--yale-font-sans);
+  --yale-font-small: 400 13px/1.5 var(--yale-font-sans);
+  --yale-font-micro: 400 11px/1.4 var(--yale-font-sans);
+  --yale-radius-sm: 4px;
+  --yale-radius-md: 8px;
+  --yale-radius-lg: 12px;
+  --yale-radius-full: 999px;
+  --yale-shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.08);
+  --yale-shadow-md: 0 2px 8px rgba(0, 0, 0, 0.1);
+  --yale-shadow-lg: 0 4px 16px rgba(0, 0, 0, 0.12);
+  --yale-shadow-panel: 0 1px 4px rgba(0, 0, 0, 0.08);
+  --yale-shadow-card: 0 2px 8px rgba(0, 0, 0, 0.1);
+  --yale-shadow-card-hover: 0 4px 16px rgba(0, 0, 0, 0.15);
+  --yale-spacing-xs: 4px;
+  --yale-spacing-sm: 8px;
+  --yale-spacing-md: 16px;
+  --yale-spacing-lg: 24px;
+  --yale-spacing-xl: 32px;
+  --yale-spacing-module: 1.25rem;
+  --yale-spacing-card: 1.5rem;
+  --yale-padding-xs: 0.5rem;
+  --yale-padding-sm: 0.75rem;
+  --yale-padding-md: 1rem;
+  --yale-padding-lg: 1.5rem;
+  --yale-padding-xl: 2rem;
+  --yale-white: #ffffff;
+  --yale-black: #000000;
+  --yale-light: #f8f9fa;
+  --yale-link: #007bff;
+  --yale-link-hover: #0056b3;
+  --yale-link-visited: #551a8b;
+  --yale-success: #28a745;
+  --yale-warning: #ffc107;
+  --yale-error: #dc3545;
+  --yale-info: #17a2b8;
+
+  /* 交互状态色系 */
+  --yale-interactive-hover: rgba(26, 75, 124, 0.08);
+  --yale-interactive-active: rgba(26, 75, 124, 0.15);
+  --yale-interactive-focus: rgba(26, 75, 124, 0.2);
+  --yale-card-hover-shadow: 0 4px 16px rgba(26, 75, 124, 0.1);
+
+  /* ===== 古典书院风格变量 ===== */
+  --academy-dark-blue: #1e3a5f;
+  --academy-warm-brown: #8b4513;
+  --academy-parchment: #f5f0e1;
+  --academy-ink-black: #2c2c2c;
+  --academy-gold: #c9a227;
+  --academy-jade: #2d5a4a;
+
+  /* ===== 新中式未来主义 - 融合聊天界面 ===== */
+
+  /* 墨色系 - 水墨渐变层次 */
+  --ink-wash-50: rgba(28, 25, 23, 0.02);
+  --ink-wash-100: rgba(28, 25, 23, 0.04);
+  --ink-wash-200: rgba(28, 25, 23, 0.08);
+  --ink-wash-300: rgba(28, 25, 23, 0.12);
+  --ink-wash-400: rgba(28, 25, 23, 0.20);
+  --ink-wash-500: rgba(28, 25, 23, 0.32);
+  --ink-particle: rgba(45, 74, 94, 0.15);
+
+  /* 朱砂红 - 强调色 */
+  --vermilion-600: #a33d28;
+  --vermilion-500: #c84b31;
+  --vermilion-400: #e07b53;
+  --vermilion-300: #f0a890;
+  --vermilion-glow: rgba(200, 75, 49, 0.25);
+
+  /* 青墨色 - 辅助色 */
+  --cyan-ink-700: #1d3a4e;
+  --cyan-ink-600: #2d4a5e;
+  --cyan-ink-500: #3d5a6e;
+  --cyan-ink-400: #5d7a8e;
+
+  /* 金箔色 - 点缀 */
+  --gold-leaf-dark: #a67c00;
+  --gold-leaf: #c9a227;
+  --gold-leaf-light: #d4af37;
+  --gold-leaf-glow: rgba(201, 162, 39, 0.35);
+
+  /* 宣纸色系 - 背景 */
+  --paper-warm: #faf8f3;
+  --paper-aged: #f5f0e1;
+  --paper-cream: #fdfcfa;
+  --paper-shadow: rgba(28, 25, 23, 0.03);
+
+  /* 玻璃态效果 */
+  --glass-bg: rgba(255, 253, 248, 0.72);
+  --glass-bg-hover: rgba(255, 253, 248, 0.85);
+  --glass-border: rgba(201, 162, 39, 0.12);
+  --glass-border-hover: rgba(201, 162, 39, 0.28);
+  --glass-shadow: 0 8px 32px rgba(28, 25, 23, 0.06);
+  --glass-shadow-hover: 0 12px 40px rgba(28, 25, 23, 0.1);
+  --glass-blur: blur(24px);
+  --glass-blur-light: blur(16px);
+
+  /* 动画时长 */
+  --duration-instant: 0.1s;
+  --duration-fast: 0.2s;
+  --duration-normal: 0.3s;
+  --duration-slow: 0.5s;
+  --duration-slower: 0.8s;
+
+  /* 缓动函数 */
+  --ease-ink: cubic-bezier(0.4, 0, 0.2, 1);
+  --ease-brush: cubic-bezier(0.25, 0.46, 0.45, 0.94);
+  --ease-bounce: cubic-bezier(0.34, 1.56, 0.64, 1);
+}

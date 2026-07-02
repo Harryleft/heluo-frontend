@@ -1,0 +1,60 @@
+/**
+ * 工具类样式（基础版）
+ * 说明：用于承接 global.css 的 @import，避免构建时 ENOENT。
+ */
+
+/* 布局 */
+.u-hidden {
+  display: none !important;
+}
+
+.u-flex {
+  display: flex !important;
+}
+
+.u-flex-center {
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+}
+
+/* 间距 */
+.u-mt-1 {
+  margin-top: 0.25rem !important;
+}
+
+.u-mt-2 {
+  margin-top: 0.5rem !important;
+}
+
+.u-mb-1 {
+  margin-bottom: 0.25rem !important;
+}
+
+.u-mb-2 {
+  margin-bottom: 0.5rem !important;
+}
+
+.u-p-1 {
+  padding: 0.25rem !important;
+}
+
+.u-p-2 {
+  padding: 0.5rem !important;
+}
+
+/* 文本 */
+.u-text-center {
+  text-align: center !important;
+}
+
+.u-text-muted {
+  color: var(--text-secondary, #666) !important;
+}
+
+/* 响应式 */
+@media (max-width: 768px) {
+  .u-mobile-hidden {
+    display: none !important;
+  }
+}

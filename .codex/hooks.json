@@ -1,0 +1,56 @@
+{
+  "hooks": {
+    "PreToolUse": [
+      {
+        "matcher": "Bash|Write|Edit",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "node 'S:\\vibe_coding\\heluo-frontend\\.codex\\hooks\\security-check.mjs'",
+            "timeout": 10
+          }
+        ]
+      }
+    ],
+    "PostToolUse": [
+      {
+        "matcher": "Edit|Write",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "node 'S:\\vibe_coding\\heluo-frontend\\.codex\\hooks\\auto-optimize.mjs'",
+            "timeout": 5
+          },
+          {
+            "type": "command",
+            "command": "node 'S:\\vibe_coding\\heluo-frontend\\.codex\\hooks\\tsc-check.mjs'",
+            "timeout": 60
+          }
+        ]
+      }
+    ],
+    "SessionStart": [
+      {
+        "matcher": "*",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "node 'S:\\vibe_coding\\heluo-frontend\\.codex\\hooks\\session-start.mjs'",
+            "timeout": 10
+          }
+        ]
+      }
+    ],
+    "Stop": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "node 'S:\\vibe_coding\\heluo-frontend\\.codex\\hooks\\completion-summary.mjs'",
+            "timeout": 15
+          }
+        ]
+      }
+    ]
+  }
+}

@@ -1,0 +1,16 @@
+# Embedding 服务依赖
+# 安装命令: pip install -r requirements.txt
+
+# Web 框架
+fastapi>=0.100.0
+uvicorn>=0.23.0
+
+# 模型相关
+torch>=2.0.0
+sentence-transformers>=2.2.0
+
+# 可选：CUDA 支持（如果有 GPU）
+# torch>=2.0.0+cu118  # 根据你的 CUDA 版本选择
+
+# 数据验证
+pydantic>=2.0.0

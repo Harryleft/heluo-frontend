@@ -1,0 +1,23 @@
+__pycache__/
+*.pyc
+.venv/
+venv/
+.env
+*.log
+node_modules/
+client/node_modules/
+server/node_modules/
+client/dist/
+server/dist/
+dist/
+.idea/
+coverage/
+
+# Claude Code worktree
+.claude/worktree/
+.claude/
+recovery/
+docs/qa/screenshots/
+docs/design/
+.gstack/
+*.png
