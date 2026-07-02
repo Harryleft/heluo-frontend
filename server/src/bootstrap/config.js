@@ -191,27 +191,32 @@ export const urlRewriteConfig = Object.freeze({
  */
 export const entityDirectoryConfig = Object.freeze({
   person: {
-    primary: ['/processed/json-ld/person/'],
+    primary: ['/processed/json-ld/person/', '/data/processed/json-ld/person/'],
     legacy: ['/processed/entities/person/'],
   },
   poem: {
-    primary: ['/processed/json-ld/poem/set/'],
+    primary: ['/processed/json-ld/poem/set/', '/data/processed/json-ld/poem/set/'],
     legacy: ['/processed/entities/poem/set/'],
   },
   book: {
-    primary: ['/processed/json-ld/book/'],
+    primary: ['/processed/json-ld/book/', '/data/processed/json-ld/book/'],
     legacy: ['/processed/entities/marc/'],
   },
   ancient_book: {
-    primary: ['/processed/json-ld/ancient_book/ancient_book_set/book_entry/', '/processed/json-ld/ancient_book/ancient_book_txt/book/'],
+    primary: [
+      '/processed/json-ld/ancient_book/ancient_book_set/book_entry/',
+      '/processed/json-ld/ancient_book/ancient_book_txt/book/',
+      '/data/processed/json-ld/ancient_book/ancient_book_set/book_entry/',
+      '/data/processed/json-ld/ancient_book/ancient_book_txt/book/',
+    ],
     legacy: ['/processed/entities/ancient_book/ancient_book_txt/book/'],
   },
   place: {
-    primary: ['/processed/json-ld/place/'],
+    primary: ['/processed/json-ld/place/', '/data/processed/json-ld/place/'],
     legacy: ['/processed/entities/place/'],
   },
   concept: {
-    primary: ['/processed/json-ld/concept/'],
+    primary: ['/processed/json-ld/concept/', '/data/processed/json-ld/concept/'],
     legacy: ['/processed/entities/concept/', '/processed/concept/', '/processed/api/concept/'],
   },
   iiif: {
@@ -249,7 +254,9 @@ export function getEntityDirectories(scope, options = {}) {
  */
 export function isJsonLdDirectory(value) {
   const text = String(value || '').trim()
-  return text.startsWith('/processed/json-ld/') || text.startsWith('/processed/json-ld-vector/')
+  return text.startsWith('/processed/json-ld/') ||
+    text.startsWith('/data/processed/json-ld/') ||
+    text.startsWith('/processed/json-ld-vector/')
 }
 
 // ============================================================================

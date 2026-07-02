@@ -72,7 +72,7 @@ export async function mlGetJson(url, init = {}) {
  */
 export async function mlGetDoc(uri, options = {}) {
   const { allowWhenJsonLdOnly = false } = options
-  if (searchConfig.jsonLdOnly && !allowWhenJsonLdOnly && !String(uri || '').startsWith('/processed/json-ld/')) {
+  if (searchConfig.jsonLdOnly && !allowWhenJsonLdOnly && !isJsonLdDirectory(uri)) {
     return null
   }
   const params = new URLSearchParams({ uri, format: 'json' })

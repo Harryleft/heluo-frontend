@@ -7,7 +7,7 @@
  * @module server/src/usecases/getDetailUseCase
  */
 
-import { detailConfig, cacheConfig } from '../bootstrap/config.js'
+import { detailConfig, cacheConfig, getEntityDirectories } from '../bootstrap/config.js'
 import {
   extractPersonDetail,
   extractPoemDetail,
@@ -699,23 +699,44 @@ function buildPossibleUris(id, type) {
       uris.push(
         `/processed/json-ld/poem/set/${id}.json`,
         `/processed/json-ld/poem/set/${id}`,
+        `/data/processed/json-ld/poem/set/${id}.json`,
+        `/data/processed/json-ld/poem/set/${id}`,
         `/processed/json-ld/poem/txt/${id}.json`,
         `/processed/json-ld/poem/txt/${id}`,
+        `/data/processed/json-ld/poem/txt/${id}.json`,
+        `/data/processed/json-ld/poem/txt/${id}`,
       )
       break
     case 'book':
-      uris.push(`/processed/json-ld/book/${id}.json`, `/processed/json-ld/book/${id}`)
+      uris.push(
+        `/processed/json-ld/book/${id}.json`,
+        `/processed/json-ld/book/${id}`,
+        `/data/processed/json-ld/book/${id}.json`,
+        `/data/processed/json-ld/book/${id}`,
+      )
       break
     case 'place':
-      uris.push(`/processed/json-ld/place/${id}.json`, `/processed/json-ld/place/${id}`)
+      uris.push(
+        `/processed/json-ld/place/${id}.json`,
+        `/processed/json-ld/place/${id}`,
+        `/data/processed/json-ld/place/${id}.json`,
+        `/data/processed/json-ld/place/${id}`,
+      )
       break
     case 'concept':
-      uris.push(`/processed/json-ld/concept/${id}.json`, `/processed/json-ld/concept/${id}`)
+      uris.push(
+        `/processed/json-ld/concept/${id}.json`,
+        `/processed/json-ld/concept/${id}`,
+        `/data/processed/json-ld/concept/${id}.json`,
+        `/data/processed/json-ld/concept/${id}`,
+      )
       break
     case 'ancient_book':
       uris.push(
         `/processed/json-ld/ancient_book/ancient_book_set/book_entry/${id}.json`,
         `/processed/json-ld/ancient_book/ancient_book_set/book_entry/${id}`,
+        `/data/processed/json-ld/ancient_book/ancient_book_set/book_entry/${id}.json`,
+        `/data/processed/json-ld/ancient_book/ancient_book_set/book_entry/${id}`,
       )
       break
     default:
@@ -732,14 +753,13 @@ function buildPossibleUris(id, type) {
  */
 function getDirectoriesForType(type) {
   const dirMap = {
-    person: ['/processed/json-ld/person/'],
-    poem: ['/processed/json-ld/poem/set/', '/processed/json-ld/poem/txt/'],
-    book: ['/processed/json-ld/book/'],
-    place: ['/processed/json-ld/place/'],
-    concept: ['/processed/json-ld/concept/'],
-    ancient_book: ['/processed/json-ld/ancient_book/ancient_book_set/book_entry/'],
+    poem: [
+      ...getEntityDirectories('poem', { includeLegacy: false }),
+      '/processed/json-ld/poem/txt/',
+      '/data/processed/json-ld/poem/txt/',
+    ],
   }
-  return dirMap[type] || []
+  return dirMap[type] || getEntityDirectories(type, { includeLegacy: false })
 }
 
 function trimTrailingSlash(value) {
