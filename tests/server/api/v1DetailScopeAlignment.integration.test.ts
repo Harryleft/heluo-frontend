@@ -22,10 +22,12 @@ function createFetchMock(options = {}) {
   const personUri = '/processed/json-ld/person/17270.json'
   const dataPersonUri = '/data/processed/json-ld/person/15188.json'
   const poemUri = '/processed/json-ld/poem/set/poem_31848.json'
+  const dataDufuPoemUri = '/data/processed/json-ld/poem/set/poem_30546.json'
   const poemTextUri1 = '/processed/json-ld/poem/txt/poem_31848_01.json'
   const poemTextUri2 = '/processed/json-ld/poem/txt/poem_31848_02.json'
   const bookUri = '/processed/json-ld/book/978-7-5470-5738-4.json'
   const placeUri = '/processed/json-ld/place/CN510922.json'
+  const dataDufuPlaceUri = '/data/processed/json-ld/place/CN500236.json'
   const ancientUri = '/processed/json-ld/ancient_book/ancient_book_set/book_entry/17270_303.json'
   const ancientTxtBookUri = '/processed/json-ld/ancient_book/ancient_book_txt/book/17270_303.json'
 
@@ -50,6 +52,15 @@ function createFetchMock(options = {}) {
         carried_out_by: [{ _label: '杜甫', id: 'https://api.heluo.site/person/17270' }],
       },
     },
+    [dataDufuPoemUri]: {
+      id: 'https://api.heluo.site/poem/set/poem_30546',
+      _label: '入宅三首',
+      created_by: {
+        timespan: { _label: '767年' },
+        carried_out_by: [{ _label: '杜甫', id: 'http://localhost:8003/person/17270' }],
+        took_place_at: [{ _label: '奉节县', id: 'http://localhost:8003/place/CN500236' }],
+      },
+    },
     [poemTextUri1]: {
       id: 'https://api.heluo.site/poem/txt/poem_31848_01',
       text_norm_zh: '昔闻洞庭水，今上岳阳楼。',
@@ -71,6 +82,11 @@ function createFetchMock(options = {}) {
       id: 'https://api.heluo.site/place/CN510922',
       _label: '射洪',
       defined_by: 'POINT (105.38131 30.87123)',
+    },
+    [dataDufuPlaceUri]: {
+      id: 'https://api.heluo.site/place/CN500236',
+      _label: '奉节县',
+      defined_by: 'POINT(109.470533 31.024561)',
     },
     [ancientUri]: {
       id: 'http://localhost:8000/set/ancient_book/siku/jibu/303',
@@ -128,6 +144,16 @@ function createFetchMock(options = {}) {
             return jsonResponse({
               total: 1,
               results: [{ uri: ancientTxtBookUri, score: 0.83, confidence: 0.12 }],
+            }, 200)
+          }
+          return jsonResponse({ total: 0, results: [] }, 200)
+        }
+        if (directory === '/data/processed/json-ld/poem/set/') {
+          const query = parsed.searchParams.get('q') || ''
+          if (query === '17270') {
+            return jsonResponse({
+              total: 1,
+              results: [{ uri: dataDufuPoemUri, score: 0.91, confidence: 0.05 }],
             }, 200)
           }
           return jsonResponse({ total: 0, results: [] }, 200)
@@ -242,6 +268,17 @@ describe('GET /api/v1 details 口径对齐', () => {
     expect(result.data.personId).toBe('15188')
     expect(result.data.personName).toBe('李白')
     expect(result.error).toBe(null)
+  })
+
+  it('person poem-track 应支持 data 前缀的诗文和地点', async () => {
+    const response = await fetch(`${baseUrl}/api/v1/persons/17270/poem-track`)
+    const result = await response.json()
+
+    expect(response.status).toBe(200)
+    expect(result.success).toBe(true)
+    expect(result.data.stats.totalPoems).toBe(1)
+    expect(result.data.trackPoints).toHaveLength(1)
+    expect(result.data.trackPoints[0].place.label).toBe('奉节县')
   })
 
   it('book search 结果进入 details 不应 404', async () => {
