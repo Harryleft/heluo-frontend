@@ -65,6 +65,19 @@ describe('poemExtractor', () => {
     expect(detail?.rhyme).toBeUndefined()
   })
 
+  it('应从 created_by 提取诗文作者', () => {
+    const detail = extractPoemDetail('/data/processed/json-ld/poem/set/poem_30546.json', {
+      _label: '入宅三首',
+      created_by: {
+        type: 'Creation',
+        carried_out_by: [{ id: 'http://localhost:8003/person/17270', _label: '杜甫' }],
+      },
+    })
+
+    expect(detail?.author).toBe('杜甫')
+    expect(detail?.authorId).toBe('17270')
+  })
+
   it('构建 set 详情时也应返回体裁与韵目信息', async () => {
     const detail = await buildPoemSetDetail(
       '/processed/json-ld/poem/set/poem_30458.json',

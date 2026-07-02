@@ -540,7 +540,7 @@ export function extractPoemDetail(uri, doc, poemSetDetail) {
   const title = pickRowTitle({ uri }, doc)
 
   // 从 poemSetDetail 获取作者
-  const author = poemSetDetail?.author || '未知作者'
+  const author = poemSetDetail?.author || extractPoemAuthor(doc) || '未知作者'
 
   // 提取作者 ID
   const authorId = extractPoemAuthorId(doc)
