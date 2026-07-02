@@ -55,8 +55,8 @@ function deduplicateByUri<T extends { uri: string }>(items: T[]): T[] {
 }
 
 function deduplicatePlaces(
-  items: Array<{ label: string; uri: string }>,
-): Array<{ label: string; uri: string }> {
+  items: Array<{ label: string; uri: string; lat?: number; lng?: number }>,
+): Array<{ label: string; uri: string; lat?: number; lng?: number }> {
   const seen = new Set<string>()
   return items.filter((item) => {
     const label = normalizeText(item.label)
@@ -195,7 +195,7 @@ function collectNodesByPath(root: Record<string, unknown>, path: string[]): unkn
   return nodes
 }
 
-function normalizePlaceLink(node: unknown): { label: string; uri: string } | null {
+function normalizePlaceLink(node: unknown): { label: string; uri: string; lat?: number; lng?: number } | null {
   if (!node) return null
 
   if (typeof node === 'string') {
@@ -208,11 +208,17 @@ function normalizePlaceLink(node: unknown): { label: string; uri: string } | nul
   const record = node as Record<string, unknown>
   const label = normalizeText(record._label || record.label || record.name || record.content || record.value)
   const uri = normalizeText(record.id || record.uri || record['@id'])
+  const lat = Number(record.lat)
+  const lng = Number(record.lng)
   if (!label && !uri) return null
-  return { label: label || uri, uri }
+  return {
+    label: label || uri,
+    uri,
+    ...(Number.isFinite(lat) && Number.isFinite(lng) ? { lat, lng } : {}),
+  }
 }
 
-function inferPlaceLinksFromDoc(doc: Record<string, unknown>): Array<{ label: string; uri: string }> {
+function inferPlaceLinksFromDoc(doc: Record<string, unknown>): Array<{ label: string; uri: string; lat?: number; lng?: number }> {
   const placeNodes = [
     ...collectNodesByPath(doc, ['took_place_at']),
     ...collectNodesByPath(doc, ['created_by', 'took_place_at']),

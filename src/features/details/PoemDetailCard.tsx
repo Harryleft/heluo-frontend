@@ -2,12 +2,13 @@
  * 渲染诗文详情卡片。
  */
 
-import React, { useMemo } from 'react'
+import React, { useEffect, useMemo, useRef, useState } from 'react'
 import { Link } from 'react-router-dom'
 import poemDetailCardStyles from '@/styles/features/details/PoemDetailCard'
 import type { PoemDetailViewModel } from '@/types/api'
 import { injectStyles } from '@/lib/dom/injectStyles'
 import { normalizeText } from '@/lib/utils/text'
+import { loadAmapJsApi } from '@/features/details/components/PersonPoemTrackMap/services'
 
 const TEST_ID = 'poem-detail-card'
 const DEFAULT_TITLE = '无标题'
@@ -24,6 +25,8 @@ interface PoemDetailCardProps {
 interface _PlaceLinkItem {
   label: string
   uri: string
+  lat?: number
+  lng?: number
 }
 
 export const PoemDetailCard: React.FC<PoemDetailCardProps> = ({
@@ -112,7 +115,7 @@ export const PoemDetailCard: React.FC<PoemDetailCardProps> = ({
         {relatedPlaces.length > 0 && (
           <section className="poem-detail-card__geo">
             <h3 className="poem-detail-card__geo-title">地理脉络</h3>
-            <div className="poem-detail-card__map-canvas" aria-label="诗文地理地图容器" />
+            <PoemPlaceMap places={relatedPlaces} />
             <p className="poem-detail-card__map-status">
               关联地点：{relatedPlaces.map((item) => item.label).join('、')}
             </p>
@@ -167,13 +170,80 @@ function _normalizePlaces(places: PoemDetailViewModel['relatedPlaces']): _PlaceL
   places.forEach((item) => {
     const label = normalizeText(item?.label)
     const uri = normalizeText(item?.uri)
+    const lat = Number(item?.lat)
+    const lng = Number(item?.lng)
     const key = uri || label
     if (!label || !key || seen.has(key)) return
     seen.add(key)
-    result.push({ label, uri })
+    result.push({
+      label,
+      uri,
+      ...(Number.isFinite(lat) && Number.isFinite(lng) ? { lat, lng } : {}),
+    })
   })
 
   return result
+}
+
+function PoemPlaceMap({ places }: { places: _PlaceLinkItem[] }): JSX.Element {
+  const points = useMemo(
+    () => places.filter((place) => Number.isFinite(place.lat) && Number.isFinite(place.lng)),
+    [places],
+  )
+  const pointsKey = useMemo(
+    () => points.map((point) => `${point.label}:${point.lng}:${point.lat}`).join('|'),
+    [points],
+  )
+  const mapContainerRef = useRef<HTMLDivElement | null>(null)
+  const mapRef = useRef<{ destroy(): void } | null>(null)
+  const [status, setStatus] = useState<'idle' | 'loading' | 'error'>('idle')
+
+  useEffect(() => {
+    if (!points.length || !mapContainerRef.current) return
+
+    let active = true
+    setStatus('loading')
+    loadAmapJsApi()
+      .then((AMap) => {
+        if (!active || !mapContainerRef.current) return
+        const map = new AMap.Map(mapContainerRef.current, {
+          center: [points[0].lng, points[0].lat],
+          zoom: points.length > 1 ? 10 : 13,
+          viewMode: '2D',
+        })
+        points.forEach((point) => {
+          new AMap.Marker({
+            map,
+            position: [point.lng, point.lat],
+            title: point.label,
+          })
+        })
+        if (points.length > 1) map.setFitView()
+        mapRef.current = map
+        setStatus('idle')
+      })
+      .catch(() => {
+        if (active) setStatus('error')
+      })
+
+    return () => {
+      active = false
+      mapRef.current?.destroy()
+      mapRef.current = null
+    }
+  }, [pointsKey, points])
+
+  if (!points.length) {
+    return <div className="poem-detail-card__map-canvas poem-detail-card__map-canvas--empty" aria-label="暂无地点坐标" />
+  }
+
+  return (
+    <>
+      <div ref={mapContainerRef} className="poem-detail-card__map-canvas" aria-label="诗文地理地图容器" />
+      {status === 'loading' && <p className="poem-detail-card__map-status">正在加载地图...</p>}
+      {status === 'error' && <p className="poem-detail-card__map-status poem-detail-card__map-status--error">地图加载失败，请检查网络或 Key 配置。</p>}
+    </>
+  )
 }
 
 /**

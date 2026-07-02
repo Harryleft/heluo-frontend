@@ -54,6 +54,8 @@ export interface PoemDetailViewModel {
   relatedPlaces?: Array<{
     label: string
     uri: string
+    lat?: number
+    lng?: number
   }>
 }
 

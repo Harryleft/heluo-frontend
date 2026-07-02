@@ -128,6 +128,53 @@ describe('poemExtractor', () => {
     expect(detail?.authorId).toBe('17270')
   })
 
+  it('data 前缀 set 详情应合并 txt 片段并补地点坐标', async () => {
+    const textDocs = {
+      '/data/processed/json-ld/poem/txt/poem_30546_02.json': {
+        text_norm_zh: '云通白帝城，',
+        member_of: [{ id: 'http://localhost:8003/set/poems/30546' }],
+      },
+      '/data/processed/json-ld/poem/txt/poem_30546_01.json': {
+        text_norm_zh: '宋玉归州宅，',
+        member_of: [{ id: 'http://localhost:8003/set/poems/30546' }],
+      },
+      '/data/processed/json-ld/place/CN500236.json': {
+        _label: '奉节县',
+        defined_by: 'POINT(109.470533 31.024561)',
+      },
+    }
+
+    const detail = await buildPoemSetDetail(
+      '/data/processed/json-ld/poem/set/poem_30546.json',
+      {
+        id: 'http://localhost:8003/poem/30546',
+        _label: '入宅三首',
+        created_by: {
+          carried_out_by: [{ id: 'http://localhost:8003/person/17270', _label: '杜甫' }],
+          took_place_at: [{ id: 'http://localhost:8003/place/CN500236', _label: '奉节县' }],
+        },
+      },
+      {
+        mlGetDoc: async (uri) => textDocs[uri] || null,
+        searchWithFallback: async () => ({
+          results: [
+            { uri: '/data/processed/json-ld/poem/txt/poem_30546_02.json' },
+            { uri: '/data/processed/json-ld/poem/txt/poem_30546_01.json' },
+          ],
+          total: 2,
+        }),
+      },
+    )
+
+    expect(detail?.fullText).toBe('宋玉归州宅，\n云通白帝城，')
+    expect(detail?.textUri).toBe('/data/processed/json-ld/poem/txt/poem_30546_01.json')
+    expect(detail?.relatedPlaces?.[0]).toMatchObject({
+      label: '奉节县',
+      lat: 31.024561,
+      lng: 109.470533,
+    })
+  })
+
   it('应提取 classified_as 为 Comment 的诗文校注', () => {
     const comments = extractPoemComments({
       content: '屏开金孔雀，',

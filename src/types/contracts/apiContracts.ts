@@ -73,6 +73,8 @@ export type ApiResponseData<T = unknown> = ApiResponse<T> | ApiError
 export interface PlaceInfo {
   label: string
   uri: string
+  lat?: number
+  lng?: number
 }
 
 // ========== 人物接口类型 ==========

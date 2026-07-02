@@ -262,7 +262,8 @@ function buildEntitySearchKeys(value) {
  */
 export function isPoemSetUri(uri) {
   const value = String(uri || '')
-  return value.startsWith('/processed/json-ld/poem/set/')
+  return value.startsWith('/processed/json-ld/poem/set/') ||
+    value.startsWith('/data/processed/json-ld/poem/set/')
 }
 
 /**
@@ -273,7 +274,8 @@ export function isPoemSetUri(uri) {
  */
 export function isPoemTextUri(uri) {
   const value = String(uri || '')
-  return value.startsWith('/processed/json-ld/poem/txt/')
+  return value.startsWith('/processed/json-ld/poem/txt/') ||
+    value.startsWith('/data/processed/json-ld/poem/txt/')
 }
 
 // ============================================================================
@@ -376,6 +378,37 @@ function normalizePlaceLink(node) {
   const uri = normalizeText(record.id || record.uri || record['@id'])
   if (!label && !uri) return null
   return { label: label || uri, uri }
+}
+
+function parseWktPoint(value) {
+  const text = normalizeText(value)
+  const match = text.match(/POINT\s*\(\s*([\d.-]+)\s+([\d.-]+)\s*\)/i)
+  if (!match) return null
+  const lng = Number.parseFloat(match[1])
+  const lat = Number.parseFloat(match[2])
+  if (!Number.isFinite(lat) || !Number.isFinite(lng)) return null
+  return { lat, lng }
+}
+
+async function enrichPoemRelatedPlaces(places, mlGetDoc) {
+  const output = []
+  for (const place of places || []) {
+    const placeId = normalizeEntityId(place?.uri)
+    const candidates = placeId
+      ? [
+          `/data/processed/json-ld/place/${placeId}.json`,
+          `/processed/json-ld/place/${placeId}.json`,
+        ]
+      : []
+    let geo = null
+    for (const uri of candidates) {
+      const doc = await mlGetDoc(uri)
+      geo = parseWktPoint(doc?.defined_by || doc?.['crm:P168_place_is_defined_by'])
+      if (geo) break
+    }
+    output.push(geo ? { ...place, ...geo } : place)
+  }
+  return output
 }
 
 /**
@@ -624,6 +657,7 @@ export async function buildPoemSetDetail(uri, doc, dependencies) {
 
   // 收集所有文本片段的校勘注释
   const comments = collectCommentsFromTextDocs(textDocs)
+  const relatedPlaces = await enrichPoemRelatedPlaces(inferPoemRelatedPlaces(doc), mlGetDoc)
 
   return {
     id: extractIdFromUri(uri),
@@ -636,7 +670,7 @@ export async function buildPoemSetDetail(uri, doc, dependencies) {
     rhymeUri: classificationMetadata.rhymeUri,
     fullText: fullText || '未检索到诗文全文',
     textUri: primaryTextUri,
-    relatedPlaces: inferPoemRelatedPlaces(doc),
+    relatedPlaces,
     comments: comments.length ? comments : undefined,
     doc: doc && typeof doc === 'object' ? doc : {},
     set: {
@@ -672,6 +706,7 @@ export async function buildPoemDetailForLegacy(uri, doc, dependencies) {
   const title = setInfo?.setLabel || pickRowTitle({ uri: normalizedUri }, doc)
   const author = setInfo?.setDoc ? extractPoemAuthor(setInfo.setDoc) : ''
   const authorId = setInfo?.setDoc ? extractPoemAuthorId(setInfo.setDoc) : ''
+  const relatedPlaces = await enrichPoemRelatedPlaces(inferPoemRelatedPlaces(setInfo?.setDoc || doc), mlGetDoc)
 
   // 当找到父 Set 时，收集所有文本片段合并全文
   let fullText = extractPoemFullText(doc)
@@ -695,7 +730,7 @@ export async function buildPoemDetailForLegacy(uri, doc, dependencies) {
     authorId: authorId || undefined,
     fullText: fullText || '未检索到诗文全文',
     textUri: normalizedUri,
-    relatedPlaces: inferPoemRelatedPlaces(setInfo?.setDoc || doc),
+    relatedPlaces,
     comments: allComments.length ? allComments : undefined,
     doc: (setInfo?.setDoc && typeof setInfo.setDoc === 'object') ? setInfo.setDoc : (doc && typeof doc === 'object' ? doc : {}),
     set: setInfo
@@ -732,6 +767,8 @@ async function resolvePoemSetFromTextDoc(textUri, textDoc, { mlGetDoc, searchWit
     const directUris = [
       `/processed/json-ld/poem/set/${setId}.json`,
       `/processed/json-ld/poem/set/${setId}`,
+      `/data/processed/json-ld/poem/set/${setId}.json`,
+      `/data/processed/json-ld/poem/set/${setId}`,
       `/heluo/poems_set/${setId}.json`,
       `/heluo/poems-set/${setId}.json`,
       `/processed/entities/poem/set/${setId}.json`,
@@ -748,7 +785,7 @@ async function resolvePoemSetFromTextDoc(textUri, textDoc, { mlGetDoc, searchWit
     const searchData = await searchWithFallback({
       query: setId,
       pageLength: 8,
-      directories: ['/processed/json-ld/poem/set/', '/processed/entities/poem/set/'],
+      directories: ['/processed/json-ld/poem/set/', '/data/processed/json-ld/poem/set/', '/processed/entities/poem/set/'],
       collections: ['/heluo/poems_set', '/heluo/poems-set'],
     })
     const match = (searchData.results || []).find((row) => normalizeEntityId(row?.uri) === setId)
@@ -777,6 +814,8 @@ async function resolvePoemTextDocForSet(poemSetUri, poemSetDoc, { mlGetDoc, sear
   const directTextUris = [
     `/processed/json-ld/poem/txt/${setStem}.json`,
     `/processed/json-ld/poem/txt/${setStemNormalized}.json`,
+    `/data/processed/json-ld/poem/txt/${setStem}.json`,
+    `/data/processed/json-ld/poem/txt/${setStemNormalized}.json`,
     `/processed/entities/poem/txt/${setStem}.json`,
     `/processed/entities/poem/txt/${setStemNormalized}.json`,
   ]
@@ -813,7 +852,7 @@ async function collectPoemTextDocsForSet(poemSetDoc, { mlGetDoc, searchWithFallb
     const searchData = await searchWithFallback({
       query,
       pageLength: 120,
-      directories: ['/processed/json-ld/poem/txt/', '/processed/entities/poem/txt/'],
+      directories: ['/processed/json-ld/poem/txt/', '/data/processed/json-ld/poem/txt/', '/processed/entities/poem/txt/'],
       collections: ['/heluo/poems-txt', '/heluo/poems_txt'],
     })
     rowsPool.push(...(searchData.results || []))
