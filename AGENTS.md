@@ -112,6 +112,7 @@ This file provides guidance to Codex when working with code in this repository.
 
 | 命令 | 说明 |
 | --- | --- |
+| `./scripts/start-all.sh` | 一键启动 Docker Compose 服务、后端 `9011` 和前端 `3000` |
 | `npm run dev` | 一键启动全部服务 |
 | `npm run dev:frontend` | 仅启动前端，地址 `http://127.0.0.1:3000` |
 | `npm run dev:server` | 仅启动后端，地址 `http://127.0.0.1:9011` |
