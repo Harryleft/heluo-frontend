@@ -24,10 +24,12 @@ export default `
   margin: 0 auto;
 }
 
-.yale-overview-tab--ancient-book {
-  grid-template-columns: minmax(0, 1fr) 320px;
-  gap: 1.35rem;
-  align-items: start;
+.yale-overview-tab.yale-overview-tab--ancient-book {
+  grid-template-columns: minmax(0, 1fr);
+  gap: 1rem;
+  width: min(100%, 980px);
+  max-width: 980px;
+  margin: 0 auto;
 }
 
 .yale-overview-tab--ancient-book .yale-overview-tab__main {
@@ -35,7 +37,9 @@ export default `
 }
 
 .yale-overview-tab--ancient-book .yale-overview-tab__sidebar {
-  top: 0.75rem;
+  position: static;
+  max-height: none;
+  overflow: visible;
 }
 
 /* ========================================
@@ -126,10 +130,10 @@ export default `
 
 .ancient-book-detail__reader {
   overflow: hidden;
-  border: 1px solid #1f2a37;
+  border: 1px solid var(--classic-border);
   border-radius: 10px;
-  background: #111827;
-  box-shadow: 0 22px 54px rgba(17, 24, 39, 0.22);
+  background: var(--classic-panel);
+  box-shadow: var(--classic-shadow);
 }
 
 .ancient-book-detail__reader-bar {
@@ -138,17 +142,17 @@ export default `
   justify-content: space-between;
   gap: 1rem;
   padding: 0.95rem 1.1rem;
-  color: #f7f0df;
-  border-bottom: 1px solid rgba(247, 240, 223, 0.12);
+  color: var(--classic-text);
+  border-bottom: 1px solid var(--classic-border);
   background:
-    linear-gradient(90deg, rgba(183, 132, 32, 0.25), transparent 44%),
-    #111827;
+    linear-gradient(90deg, rgba(184, 134, 11, 0.1), transparent 42%),
+    var(--classic-panel);
 }
 
 .ancient-book-detail__eyebrow {
   display: block;
   margin-bottom: 0.25rem;
-  color: #d3a640;
+  color: var(--classic-gold);
   font-size: 0.74rem;
   font-weight: 600;
   letter-spacing: 0;
@@ -156,13 +160,13 @@ export default `
 
 .ancient-book-detail__reader-bar h1 {
   margin: 0;
-  color: #fff7e8;
+  color: var(--classic-primary);
   font: 600 clamp(1.35rem, 2.2vw, 2rem)/1.2 var(--yale-font-serif);
 }
 
 .ancient-book-detail__reader-count {
   flex: none;
-  color: rgba(247, 240, 223, 0.72);
+  color: var(--classic-text-muted);
   font-size: 0.82rem;
 }
 
