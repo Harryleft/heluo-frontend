@@ -998,6 +998,12 @@
   background: var(--classic-primary-light);
 }
 
+.classic-search-panel__button:focus-visible,
+.classic-search-panel__button:active {
+  color: #fff;
+  background: var(--classic-primary);
+}
+
 .classic-search-panel__summary {
   margin: 8px 2px 0;
   font-size: 13px;
