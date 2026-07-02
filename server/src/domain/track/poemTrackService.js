@@ -177,15 +177,22 @@ export async function queryPoemsByPerson(personId) {
   const searchStartTime = Date.now()
 
   // 在诗文集合目录中搜索（支持大量诗文）
-  const searchData = await mlSearchByDirectory(
+  const searchDirectories = [
     '/processed/json-ld/poem/set/',
-    normalizedPersonId,
-    2000
+    '/data/processed/json-ld/poem/set/',
+  ]
+  const searchResults = await Promise.all(
+    searchDirectories.map((directory) =>
+      mlSearchByDirectory(directory, normalizedPersonId, 2000, { allowWhenJsonLdOnly: true })
+    )
   )
 
-  const uris = (searchData.results || [])
-    .map((row) => row.uri)
-    .filter(Boolean)
+  const uris = Array.from(new Set(
+    searchResults
+      .flatMap((data) => data.results || [])
+      .map((row) => row.uri)
+      .filter(Boolean)
+  ))
 
   console.log(`[PoemTrack] 搜索到 ${uris.length} 个候选诗文 URI`)
 
@@ -194,7 +201,7 @@ export async function queryPoemsByPerson(personId) {
   const poemPromises = await withConcurrency(
     uris,
     async (uri) => {
-      const doc = await mlGetDoc(uri)
+      const doc = await mlGetDoc(uri, { allowWhenJsonLdOnly: true })
       return { uri, doc }
     },
     50 // 最大并发数
@@ -252,11 +259,13 @@ export async function getPlaceInfo(placeUri) {
   const possibleUris = [
     `/processed/json-ld/place/${placeId}.json`,
     `/processed/json-ld/place/${placeId}`,
+    `/data/processed/json-ld/place/${placeId}.json`,
+    `/data/processed/json-ld/place/${placeId}`,
     placeUri,
   ]
 
   for (const uri of possibleUris) {
-    const doc = await mlGetDoc(uri)
+    const doc = await mlGetDoc(uri, { allowWhenJsonLdOnly: true })
     if (doc) {
       const label = pickNodeLabel(doc) || placeId
       const geo = parseWktPoint(doc.defined_by)
