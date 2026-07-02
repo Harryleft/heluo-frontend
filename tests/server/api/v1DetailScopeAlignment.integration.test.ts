@@ -20,6 +20,7 @@ function jsonResponse(payload, status = 200) {
 function createFetchMock(options = {}) {
   const includeTxtManifest = options.includeTxtManifest !== false
   const personUri = '/processed/json-ld/person/17270.json'
+  const dataPersonUri = '/data/processed/json-ld/person/15188.json'
   const poemUri = '/processed/json-ld/poem/set/poem_31848.json'
   const poemTextUri1 = '/processed/json-ld/poem/txt/poem_31848_01.json'
   const poemTextUri2 = '/processed/json-ld/poem/txt/poem_31848_02.json'
@@ -37,6 +38,10 @@ function createFetchMock(options = {}) {
     [personUri]: {
       id: 'https://api.heluo.site/person/17270',
       _label: '杜甫',
+    },
+    [dataPersonUri]: {
+      id: 'https://api.heluo.site/person/15188',
+      _label: '李白',
     },
     [poemUri]: {
       id: 'https://api.heluo.site/poem/set/poem_31848',
@@ -216,6 +221,16 @@ describe('GET /api/v1 details 口径对齐', () => {
     expect(response.status).toBe(200)
     expect(result.success).toBe(true)
     expect(result.data.id).toBe('17270')
+  })
+
+  it('person details 应支持 data 前缀的 json-ld 路径', async () => {
+    const response = await fetch(`${baseUrl}/api/v1/persons/15188`)
+    const result = await response.json()
+
+    expect(response.status).toBe(200)
+    expect(result.success).toBe(true)
+    expect(result.data.id).toBe('15188')
+    expect(result.data.title).toBe('李白')
   })
 
   it('book search 结果进入 details 不应 404', async () => {
