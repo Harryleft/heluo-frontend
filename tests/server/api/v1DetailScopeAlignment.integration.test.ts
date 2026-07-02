@@ -233,6 +233,17 @@ describe('GET /api/v1 details 口径对齐', () => {
     expect(result.data.name).toBe('李白')
   })
 
+  it('person poem-track 应支持 data 前缀的人物文档', async () => {
+    const response = await fetch(`${baseUrl}/api/v1/persons/15188/poem-track`)
+    const result = await response.json()
+
+    expect(response.status).toBe(200)
+    expect(result.success).toBe(true)
+    expect(result.data.personId).toBe('15188')
+    expect(result.data.personName).toBe('李白')
+    expect(result.error).toBe(null)
+  })
+
   it('book search 结果进入 details 不应 404', async () => {
     const response = await fetch(`${baseUrl}/api/v1/books/978-7-5470-5738-4`)
     const result = await response.json()
