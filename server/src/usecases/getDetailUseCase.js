@@ -45,6 +45,10 @@ function isLikelyVectorOrFragmentUri(uri) {
   return value.includes('/json-ld-vector/') || value.includes('/heluo/vector/') || value.includes('/processed/vector/')
 }
 
+function isDataJsonLdUri(uri) {
+  return String(uri || '').toLowerCase().startsWith('/data/processed/json-ld/')
+}
+
 /**
  * 判断是否为人物主 URI
  *
@@ -397,9 +401,10 @@ export function createGetDetailUseCase(dependencies) {
 
     // 获取文档
     const inferredType = initialInferredType
+    const docOptions = isDataJsonLdUri(uri) ? { allowWhenJsonLdOnly: true } : undefined
     const doc = inferredType === 'ancient_book'
       ? await ancientBookGateways.mlGetDoc(uri)
-      : await mlGetDoc(uri)
+      : await mlGetDoc(uri, docOptions)
     if (!doc) {
       return {
         uri,
@@ -494,7 +499,7 @@ export function createGetDetailUseCase(dependencies) {
 
     // 尝试每个 URI
     for (const uri of possibleUris) {
-      const doc = await mlGetDoc(uri)
+      const doc = await mlGetDoc(uri, { allowWhenJsonLdOnly: true })
       if (doc) {
         return execute({ uri, query: '' })
       }
@@ -683,7 +688,12 @@ function buildPossibleUris(id, type) {
   const uris = []
   switch (type) {
     case 'person':
-      uris.push(`/processed/json-ld/person/${id}.json`, `/processed/json-ld/person/${id}`)
+      uris.push(
+        `/processed/json-ld/person/${id}.json`,
+        `/processed/json-ld/person/${id}`,
+        `/data/processed/json-ld/person/${id}.json`,
+        `/data/processed/json-ld/person/${id}`,
+      )
       break
     case 'poem':
       uris.push(
