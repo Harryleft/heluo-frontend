@@ -31,7 +31,7 @@ export function IiifPage(): JSX.Element {
 
   if (!isEmbeddedShellRoute) {
     return (
-      <main style={{ height: '100vh', minHeight: 0, background: '#111827' }}>
+      <main style={{ height: '100vh', minHeight: 0, background: '#fff' }}>
         <InlineMiradorViewer
           manifestPath={manifestUrl}
           canvasId={canvasId}

@@ -269,6 +269,7 @@ describe('古籍详情 UI 回归', () => {
     const main = container.querySelector('main') as globalThis.HTMLElement
     expect(main).toBeTruthy()
     expect(main.style.height).toBe('100vh')
+    expect(main.style.background).toBe('rgb(255, 255, 255)')
     expect(container.querySelector('.container')).toBeFalsy()
     expect(container.querySelector('.panel')).toBeFalsy()
     expect(container.querySelector('iframe[title="Mirador IIIF Viewer"]')).toBeFalsy()
