@@ -259,6 +259,22 @@ describe('古籍详情 UI 回归', () => {
     unmount(root, container)
   })
 
+  it('Mirador 内嵌路由应裸载查看器，不再套详情页容器', () => {
+    const { container, root } = mount(
+      <MemoryRouter initialEntries={[`/mirador?manifest=${encodeURIComponent(SAMPLE_MANIFEST)}`]}>
+        <IiifPage />
+      </MemoryRouter>,
+    )
+
+    const main = container.querySelector('main') as globalThis.HTMLElement
+    expect(main).toBeTruthy()
+    expect(main.style.height).toBe('100vh')
+    expect(container.querySelector('.container')).toBeFalsy()
+    expect(container.querySelector('.panel')).toBeFalsy()
+    expect(container.querySelector('iframe[title="Mirador IIIF Viewer"]')).toBeFalsy()
+    unmount(root, container)
+  })
+
   it('古籍缺少卷文本时不应显示缺省提示文案', () => {
     const { container, root } = mount(
       <AncientBookVolumeTextSection

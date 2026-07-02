@@ -29,25 +29,29 @@ export function IiifPage(): JSX.Element {
     [resolvedManifestUrl, manifestUrl, canvasId],
   )
 
+  if (!isEmbeddedShellRoute) {
+    return (
+      <main style={{ height: '100vh', minHeight: 0, background: '#111827' }}>
+        <InlineMiradorViewer
+          manifestPath={manifestUrl}
+          canvasId={canvasId}
+          height="100vh"
+          onResolvedManifestChange={setResolvedManifestUrl}
+        />
+      </main>
+    )
+  }
+
   return (
     <main className="container">
       <section className="panel">
-        {isEmbeddedShellRoute ? (
-          <iframe
-            title="Mirador IIIF Viewer"
-            src={openInNewWindowUrl}
-            style={IFRAME_STYLE}
-            allow="fullscreen"
-            allowFullScreen
-          />
-        ) : (
-          <InlineMiradorViewer
-            manifestPath={manifestUrl}
-            canvasId={canvasId}
-            height="75vh"
-            onResolvedManifestChange={setResolvedManifestUrl}
-          />
-        )}
+        <iframe
+          title="Mirador IIIF Viewer"
+          src={openInNewWindowUrl}
+          style={IFRAME_STYLE}
+          allow="fullscreen"
+          allowFullScreen
+        />
       </section>
     </main>
   )

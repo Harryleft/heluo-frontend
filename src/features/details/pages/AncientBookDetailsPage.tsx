@@ -6,8 +6,6 @@ import { DetailPageContainer } from '@/features/details/components/DetailPageCon
 import { useDetailPageViewModel } from '@/features/details/hooks/useDetailPageViewModel'
 import { EntityParser } from '@/lib/parse/data/EntityParser'
 
-const PANEL_STYLE = { marginBottom: '1rem' }
-
 function extractManifestsFromViewModel(entity: Record<string, unknown>, externalUris: string[]): string[] {
   if (externalUris.length > 0) return externalUris
   if (!entity || Object.keys(entity).length === 0) return []
@@ -15,21 +13,25 @@ function extractManifestsFromViewModel(entity: Record<string, unknown>, external
   return parser.getIIIFManifests()
 }
 
-function renderMasthead(title?: string): JSX.Element | null {
-  if (!title) return null
-  return (
-    <section className="ancient-book-detail__masthead" aria-label="古籍标题">
-      <span className="ancient-book-detail__eyebrow">古籍影像</span>
-      <h1>{title}</h1>
-    </section>
-  )
-}
-
-function renderIiifSection(manifests: string[]): JSX.Element | null {
+function renderIiifSection(title: string | undefined, manifests: string[]): JSX.Element | null {
   if (!manifests.length) return null
   return (
-    <section className="panel ancient-book-detail__viewer-panel" style={PANEL_STYLE}>
-      <IIIFSection manifests={manifests} embedded autoLoadEmbedded hideTitle hidePopupLink />
+    <section className="ancient-book-detail__reader" aria-label="古籍影像查看器">
+      <div className="ancient-book-detail__reader-bar">
+        <div>
+          <span className="ancient-book-detail__eyebrow">古籍影像</span>
+          <h1>{title || '未命名古籍'}</h1>
+        </div>
+        <span className="ancient-book-detail__reader-count">{manifests.length} 个影像源</span>
+      </div>
+      <IIIFSection
+        manifests={manifests}
+        embedded
+        autoLoadEmbedded
+        hideTitle
+        hidePopupLink
+        height="calc(100vh - 228px)"
+      />
     </section>
   )
 }
@@ -44,7 +46,6 @@ export function AncientBookDetailsPage(): JSX.Element {
 
   const topContent = (
     <>
-      {renderMasthead(data?.title)}
       <AncientBookFieldPanel
         entity={viewModel.entity}
         digitalResourceCount={viewModel.externalUris.length}
@@ -56,7 +57,7 @@ export function AncientBookDetailsPage(): JSX.Element {
         message={data?.ancientBookVolumeTextMessage}
         sourceUri={data?.ancientBookVolumeTextSourceUri}
       />
-      {renderIiifSection(manifests)}
+      {renderIiifSection(data?.title, manifests)}
     </>
   )
 

@@ -25,9 +25,17 @@ export default `
 }
 
 .yale-overview-tab--ancient-book {
-  grid-template-columns: minmax(0, 1fr) 340px;
-  gap: 2rem;
+  grid-template-columns: minmax(0, 1fr) 320px;
+  gap: 1.35rem;
   align-items: start;
+}
+
+.yale-overview-tab--ancient-book .yale-overview-tab__main {
+  gap: 0.9rem;
+}
+
+.yale-overview-tab--ancient-book .yale-overview-tab__sidebar {
+  top: 0.75rem;
 }
 
 /* ========================================
@@ -116,48 +124,53 @@ export default `
   border-color: transparent;
 }
 
-.ancient-book-detail__masthead {
-  position: relative;
+.ancient-book-detail__reader {
   overflow: hidden;
-  padding: 1.1rem 1.35rem 1.2rem;
-  border: 1px solid #e6ddcc;
-  border-left: 4px solid #9b6f1b;
-  border-radius: var(--yale-radius-md);
+  border: 1px solid #1f2a37;
+  border-radius: 10px;
+  background: #111827;
+  box-shadow: 0 22px 54px rgba(17, 24, 39, 0.22);
+}
+
+.ancient-book-detail__reader-bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  padding: 0.95rem 1.1rem;
+  color: #f7f0df;
+  border-bottom: 1px solid rgba(247, 240, 223, 0.12);
   background:
-    linear-gradient(90deg, rgba(155, 111, 27, 0.1), transparent 48%),
-    linear-gradient(135deg, #fffdf8 0%, #f8f5ee 100%);
-  box-shadow: 0 10px 28px rgba(30, 58, 95, 0.08);
+    linear-gradient(90deg, rgba(183, 132, 32, 0.25), transparent 44%),
+    #111827;
 }
 
 .ancient-book-detail__eyebrow {
-  display: inline-flex;
-  margin-bottom: 0.45rem;
-  color: #8a681d;
-  font-size: 0.78rem;
+  display: block;
+  margin-bottom: 0.25rem;
+  color: #d3a640;
+  font-size: 0.74rem;
   font-weight: 600;
   letter-spacing: 0;
 }
 
-.ancient-book-detail__masthead h1 {
+.ancient-book-detail__reader-bar h1 {
   margin: 0;
-  color: #24364b;
-  font: 600 clamp(1.65rem, 3vw, 2.55rem)/1.25 var(--yale-font-serif);
+  color: #fff7e8;
+  font: 600 clamp(1.35rem, 2.2vw, 2rem)/1.2 var(--yale-font-serif);
 }
 
-.ancient-book-detail__viewer-panel {
-  padding: clamp(0.75rem, 1.7vw, 1.6rem);
-  border-color: #d9d1c2;
-  background:
-    linear-gradient(180deg, rgba(238, 232, 219, 0.72), rgba(255, 255, 255, 0.92) 22%),
-    #fbfaf7;
-  box-shadow: 0 18px 42px rgba(30, 58, 95, 0.12);
+.ancient-book-detail__reader-count {
+  flex: none;
+  color: rgba(247, 240, 223, 0.72);
+  font-size: 0.82rem;
 }
 
-.ancient-book-detail__viewer-panel iframe {
+.ancient-book-detail__reader iframe {
   display: block;
-  border-color: #d4cab8 !important;
-  border-radius: 10px !important;
-  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.72), 0 12px 28px rgba(36, 54, 75, 0.12);
+  border: 0 !important;
+  border-radius: 0 !important;
+  box-shadow: none;
 }
 
 /* ========================================
