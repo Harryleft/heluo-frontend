@@ -24,6 +24,12 @@ export default `
   margin: 0 auto;
 }
 
+.yale-overview-tab--ancient-book {
+  grid-template-columns: minmax(0, 1fr) 340px;
+  gap: 2rem;
+  align-items: start;
+}
+
 /* ========================================
    OverviewTab 主栏（左侧）
    ======================================== */
@@ -108,6 +114,50 @@ export default `
 .yale-overview-tab__section--summary {
   background-color: var(--yale-light);
   border-color: transparent;
+}
+
+.ancient-book-detail__masthead {
+  position: relative;
+  overflow: hidden;
+  padding: 1.1rem 1.35rem 1.2rem;
+  border: 1px solid #e6ddcc;
+  border-left: 4px solid #9b6f1b;
+  border-radius: var(--yale-radius-md);
+  background:
+    linear-gradient(90deg, rgba(155, 111, 27, 0.1), transparent 48%),
+    linear-gradient(135deg, #fffdf8 0%, #f8f5ee 100%);
+  box-shadow: 0 10px 28px rgba(30, 58, 95, 0.08);
+}
+
+.ancient-book-detail__eyebrow {
+  display: inline-flex;
+  margin-bottom: 0.45rem;
+  color: #8a681d;
+  font-size: 0.78rem;
+  font-weight: 600;
+  letter-spacing: 0;
+}
+
+.ancient-book-detail__masthead h1 {
+  margin: 0;
+  color: #24364b;
+  font: 600 clamp(1.65rem, 3vw, 2.55rem)/1.25 var(--yale-font-serif);
+}
+
+.ancient-book-detail__viewer-panel {
+  padding: clamp(0.75rem, 1.7vw, 1.6rem);
+  border-color: #d9d1c2;
+  background:
+    linear-gradient(180deg, rgba(238, 232, 219, 0.72), rgba(255, 255, 255, 0.92) 22%),
+    #fbfaf7;
+  box-shadow: 0 18px 42px rgba(30, 58, 95, 0.12);
+}
+
+.ancient-book-detail__viewer-panel iframe {
+  display: block;
+  border-color: #d4cab8 !important;
+  border-radius: 10px !important;
+  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.72), 0 12px 28px rgba(36, 54, 75, 0.12);
 }
 
 /* ========================================

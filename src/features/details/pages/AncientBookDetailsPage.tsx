@@ -15,10 +15,20 @@ function extractManifestsFromViewModel(entity: Record<string, unknown>, external
   return parser.getIIIFManifests()
 }
 
+function renderMasthead(title?: string): JSX.Element | null {
+  if (!title) return null
+  return (
+    <section className="ancient-book-detail__masthead" aria-label="古籍标题">
+      <span className="ancient-book-detail__eyebrow">古籍影像</span>
+      <h1>{title}</h1>
+    </section>
+  )
+}
+
 function renderIiifSection(manifests: string[]): JSX.Element | null {
   if (!manifests.length) return null
   return (
-    <section className="panel" style={PANEL_STYLE}>
+    <section className="panel ancient-book-detail__viewer-panel" style={PANEL_STYLE}>
       <IIIFSection manifests={manifests} embedded autoLoadEmbedded hideTitle hidePopupLink />
     </section>
   )
@@ -34,6 +44,7 @@ export function AncientBookDetailsPage(): JSX.Element {
 
   const topContent = (
     <>
+      {renderMasthead(data?.title)}
       <AncientBookFieldPanel
         entity={viewModel.entity}
         digitalResourceCount={viewModel.externalUris.length}

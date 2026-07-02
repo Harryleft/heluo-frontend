@@ -157,6 +157,7 @@ export function OverviewTab({
     isPersonResource ? 'yale-overview-tab--person' : '',
     isBookResource ? 'yale-overview-tab--book' : '',
     isPlaceResource ? 'yale-overview-tab--place' : '',
+    isAncientBookResource ? 'yale-overview-tab--ancient-book' : '',
     !showSidebar ? 'yale-overview-tab--no-sidebar' : '',
     className,
   ].filter(Boolean).join(' ')
