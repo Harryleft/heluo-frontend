@@ -131,7 +131,7 @@ export default `
 .ancient-book-detail__reader {
   overflow: hidden;
   border: 1px solid var(--classic-border);
-  border-radius: 10px;
+  border-radius: 0;
   background: var(--classic-panel);
   box-shadow: var(--classic-shadow);
 }
