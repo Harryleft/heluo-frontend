@@ -546,10 +546,12 @@ export async function getPersonPoemTrack(personId, dependencies = {}) {
   const possiblePersonUris = [
     `/processed/json-ld/person/${normalizedPersonId}.json`,
     `/processed/json-ld/person/${normalizedPersonId}`,
+    `/data/processed/json-ld/person/${normalizedPersonId}.json`,
+    `/data/processed/json-ld/person/${normalizedPersonId}`,
   ]
 
   for (const uri of possiblePersonUris) {
-    personDoc = await customMlGetDoc(uri)
+    personDoc = await customMlGetDoc(uri, { allowWhenJsonLdOnly: true })
     if (personDoc) {
       personName = pickNodeLabel(personDoc) || normalizedPersonId
       break
