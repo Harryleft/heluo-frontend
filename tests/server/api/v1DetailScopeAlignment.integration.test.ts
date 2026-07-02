@@ -230,7 +230,7 @@ describe('GET /api/v1 details 口径对齐', () => {
     expect(response.status).toBe(200)
     expect(result.success).toBe(true)
     expect(result.data.id).toBe('15188')
-    expect(result.data.title).toBe('李白')
+    expect(result.data.name).toBe('李白')
   })
 
   it('book search 结果进入 details 不应 404', async () => {
