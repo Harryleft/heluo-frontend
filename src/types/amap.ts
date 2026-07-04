@@ -1,7 +1,7 @@
 /**
- * 高德地图类型定义
+ * 地图类型定义
  *
- * 统一的高德地图 JS API 2.0 类型定义，供多个组件共享
+ * 统一的地图对象类型定义（兼容 Leaflet/高德兼容层）
  */
 
 // ============================================================================
@@ -12,12 +12,14 @@
  * 高德地图实例接口
  */
 export interface AMapMapInstance {
-  setFitView(): void
-  destroy(): void
-  setCenter(center: [number, number]): void
-  setZoom(zoom: number): void
-  getBounds(): { getSouthWest(): { lng: number; lat: number }; getNorthEast(): { lng: number; lat: number } }
-  addControl(control: unknown): void
+ setFitView(): void
+ destroy(): void
+ setCenter(center: [number, number]): void
+ setZoom(zoom: number): void
+ getBounds(): { getSouthWest(): { lng: number; lat: number }; getNorthEast(): { lng: number; lat: number } }
+ getNativeMap?(): unknown
+ panTo(center: [number, number]): void
+ addControl(control: unknown): void
 }
 
 /**

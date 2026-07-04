@@ -1,12 +1,15 @@
 /**
- * 高德地图全局类型声明
+ * 地图全局类型声明
  *
- * 统一声明 window._AMapSecurityConfig 全局变量
- * 注意：window.AMap 在各组件文件中分别声明以避免类型冲突
+ * 统一声明 window 侧的地图运行时对象，兼容高德与 Leaflet shim
  */
 
 declare global {
   interface Window {
+    AMap?: Record<string, unknown> & {
+      __mapProvider?: 'leaflet' | 'amap'
+    }
+    L?: Record<string, unknown>
     _AMapSecurityConfig?: {
       securityJsCode: string
     }
@@ -15,5 +18,4 @@ declare global {
 
 // 空导出，使文件成为模块
 export {}
-
 
