@@ -121,6 +121,14 @@ export function useRelatedResources(params: UseRelatedResourcesParams): UseRelat
           currentResourceKey: extractBookResourceKey(dataUri),
         }
 
+        if (!response.success) {
+          const finalItems = buildRelatedFromInternalLinks(internalLinks, relatedContext)
+          cacheRelatedResourcesIfValid(cacheKey, finalItems)
+          setRelatedResources(finalItems)
+          setRelatedState('success')
+          return
+        }
+
         let recommended = pickTopRelatedResources(response.data.items || [], relatedContext)
 
         const needSupplement = isBookResource
@@ -146,7 +154,7 @@ export function useRelatedResources(params: UseRelatedResourcesParams): UseRelat
           }
         }
 
-        if (response.data?.items && response.data.items.length === 0) {
+        if (response.data.items && response.data.items.length === 0) {
           setRelatedResources([])
           setRelatedState('success')
           return
