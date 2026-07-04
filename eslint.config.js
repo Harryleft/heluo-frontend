@@ -13,6 +13,10 @@ export default [
       '.claude/**',
       'coverage/**',
       'node_modules/**',
+      '.agents/**',
+      '.codex/**',
+      '.playwright-cli/**',
+      'server/embedding-service/.venv/**',
     ],
   },
   js.configs.recommended,
@@ -97,6 +101,7 @@ export default [
     rules: {
       '@typescript-eslint/no-unused-vars': 'off',
       'no-unused-vars': 'off',
+      'no-restricted-imports': 'off',
     },
   },
   {
