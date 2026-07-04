@@ -22,7 +22,7 @@ import { getEntityDirectories } from '../bootstrap/config.js'
 export function createStatsController(dependencies) {
   const { gateways } = dependencies
   const { mlSearchByDirectory, mlSearchByCollection } = gateways
-  const conceptFallbackCollections = ['/heluo/concepts', '/heluo/poetry/concepts', '/heluo/api/concepts', '/heluo/ancient-book-concepts']
+  const conceptFallbackCollections = [...new Set(['/heluo/concepts', '/heluo/poetry/concepts', '/heluo/api/concepts'])]
 
   /**
    * 统计各类实体数量
@@ -51,7 +51,8 @@ export function createStatsController(dependencies) {
     const directoryTotal = await countByPrimaryDirectories(scope)
     if (directoryTotal > 0) return directoryTotal
 
-    const values = await Promise.all(collections.map((collection) => countByCollection(collection)))
+    const deduplicatedCollections = [...new Set(collections)]
+    const values = await Promise.all(deduplicatedCollections.map((collection) => countByCollection(collection)))
     return Math.max(...values, 0)
   }
 
@@ -61,12 +62,12 @@ export function createStatsController(dependencies) {
    * @returns {Promise<number>} 古籍数量
    */
   async function countAncientBookEntries() {
-    const directoryTotal = await countByDirectory('/processed/json-ld/ancient_book/ancient_book_set/book_entry/')
+    const directoryTotal = await countByDirectory('/processed/json-ld/ancient-book/set/book-entry/')
     if (directoryTotal > 0) return directoryTotal
 
     // 回退到集合口径，兼容仅有 collection 的历史环境
     const values = await Promise.all(
-      ['/heluo/ancient-book-sets', '/heluo/ancient_book_sets'].map(
+      [...new Set(['/heluo/ancient-books/sets'])].map(
         async (collection) => {
           const data = await mlSearchByCollection(collection, '*', 1, { allowWhenJsonLdOnly: true })
           return Number(data?.total || 0)
@@ -101,7 +102,7 @@ export function createStatsController(dependencies) {
       try {
         const [person, poemSet, book, ancientBook, geography, concept] = await Promise.all([
           countByDirectoriesOrCollections('person', ['/heluo/persons', '/heluo/person']),
-          countByDirectoriesOrCollections('poem', ['/heluo/poems-set', '/heluo/poems-txt', '/heluo/poems_set']),
+          countByDirectoriesOrCollections('poem', ['/heluo/poems/sets', '/heluo/poems/texts']),
           countByDirectoriesOrCollections('book', ['/heluo/books', '/heluo/marc']),
           countAncientBookEntries(),
           countByDirectoriesOrCollections('place', ['/heluo/places']),
