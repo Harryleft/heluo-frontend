@@ -100,6 +100,8 @@ export function PersonPoemTrackMap({
   const mapRef = useRef<any>(null)
   const markersRef = useRef<any[]>([])
   const polylineRef = useRef<any>(null)
+  const selectionRef = useRef({ currentYear, selectedTrackKey })
+  selectionRef.current = { currentYear, selectedTrackKey }
 
   // 加载高德地图
   useEffect(() => {
@@ -140,7 +142,14 @@ export function PersonPoemTrackMap({
 
         // 添加标记点
         const yearRange = trackData.stats.yearRange || { start: 0, end: 0 }
-        updateMarkers(AMap, map, trackData.trackPoints, yearRange, currentYear, selectedTrackKey)
+        updateMarkers(
+          AMap,
+          map,
+          trackData.trackPoints,
+          yearRange,
+          selectionRef.current.currentYear,
+          selectionRef.current.selectedTrackKey,
+        )
 
         // 适配视野
         setTimeout(() => {

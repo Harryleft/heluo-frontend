@@ -242,6 +242,14 @@ function createLeafletAmapNamespace(): Promise<MapNamespace> {
         iconAnchor: [32, 64],
       })
 
+    const createMarkerOptions = (content: string, title: string) => {
+      const markerOptions: Record<string, unknown> = { title }
+      if (content.trim()) {
+        markerOptions.icon = createDivIcon(content)
+      }
+      return markerOptions
+    }
+
     class LeafletMarker {
       private marker: any
       private mapRef: LeafletMap | null = null
@@ -251,10 +259,7 @@ function createLeafletAmapNamespace(): Promise<MapNamespace> {
         const content = String(options.content || '')
         const title = String(options.title || '')
 
-        this.marker = Leaflet.marker(toLeafletLatLng(position), {
-          icon: createDivIcon(content),
-          title,
-        })
+        this.marker = Leaflet.marker(toLeafletLatLng(position), createMarkerOptions(content, title))
         if (options.map) {
           this.setMap(options.map)
         }
