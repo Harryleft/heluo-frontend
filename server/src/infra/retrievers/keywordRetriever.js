@@ -23,8 +23,7 @@ import { isJsonLdDirectory, getEntityDirectories } from '../../bootstrap/config.
  */
 function isPoemSetUri(uri) {
   const value = String(uri || '')
-  return value.startsWith('/processed/json-ld/poem/set/') ||
-    value.startsWith('/data/processed/json-ld/poem/set/')
+  return value.startsWith('/processed/json-ld/poem/set/')
 }
 
 /**
@@ -36,10 +35,9 @@ function isPoemSetUri(uri) {
 function isAncientBookEntryUri(uri) {
   const value = String(uri || '')
   if (!value) return false
-  if (value.startsWith('/processed/iiif/collections/') || value.startsWith('/heluo/iiif/collections/')) return false
-  if (value.includes('/ancient_book_set/department/') || value.includes('/ancient_book_set/root/')) return false
-  return value.startsWith('/processed/json-ld/ancient_book/ancient_book_set/book_entry/') ||
-    value.startsWith('/data/processed/json-ld/ancient_book/ancient_book_set/book_entry/')
+  if (value.startsWith('/processed/iiif/collection/') || value.startsWith('/heluo/iiif/collections/')) return false
+  if (value.includes('/ancient-book/set/department/') || value.includes('/ancient-book/set/root/')) return false
+  return value.startsWith('/processed/json-ld/ancient-book/set/book-entry/')
 }
 
 // ============================================================================
@@ -77,35 +75,33 @@ function mergeRowsByUri(rows = []) {
  * @returns {Function} 返回获取源映射的函数
  */
 function createEntitySourceMap(config) {
-  const { jsonLdOnly, enableLegacyEntityPaths } = config
+  const { jsonLdOnly } = config
 
   return function entitySourceMap() {
     return {
       person: {
-        directories: getEntityDirectories('person', { includeLegacy: enableLegacyEntityPaths && !jsonLdOnly }),
-        collections: jsonLdOnly ? [] : ['/heluo/persons', '/heluo/person'],
+        directories: getEntityDirectories('person'),
+        collections: jsonLdOnly ? [] : ['/heluo/persons'],
       },
       poem: {
-        directories: getEntityDirectories('poem', { includeLegacy: enableLegacyEntityPaths && !jsonLdOnly }),
-        collections: jsonLdOnly ? [] : ['/heluo/poems-set', '/heluo/poems_set'],
+        directories: getEntityDirectories('poem'),
+        collections: jsonLdOnly ? [] : ['/heluo/poems/sets', '/heluo/poems/texts'],
       },
       book: {
-        directories: getEntityDirectories('book', { includeLegacy: enableLegacyEntityPaths && !jsonLdOnly }),
-        collections: jsonLdOnly ? [] : ['/heluo/books', '/heluo/marc'],
+        directories: getEntityDirectories('book'),
+        collections: jsonLdOnly ? [] : ['/heluo/books'],
       },
       ancient_book: {
-        directories: getEntityDirectories('ancient_book', { includeLegacy: enableLegacyEntityPaths && !jsonLdOnly }),
-        collections: jsonLdOnly ? [] : ['/heluo/ancient-book-sets', '/heluo/ancient_book_sets'],
+        directories: getEntityDirectories('ancient_book'),
+        collections: jsonLdOnly ? [] : ['/heluo/ancient-books/sets', '/heluo/ancient-books/texts', '/heluo/ancient-books/objects'],
       },
       place: {
-        directories: getEntityDirectories('place', { includeLegacy: enableLegacyEntityPaths && !jsonLdOnly }),
+        directories: getEntityDirectories('place'),
         collections: jsonLdOnly ? [] : ['/heluo/places'],
       },
       concept: {
-        directories: getEntityDirectories('concept', { includeLegacy: enableLegacyEntityPaths && !jsonLdOnly }),
-        collections: jsonLdOnly
-          ? []
-          : ['/heluo/concepts', '/heluo/poetry/concepts', '/heluo/api/concepts', '/heluo/ancient-book-concepts'],
+        directories: getEntityDirectories('concept'),
+        collections: jsonLdOnly ? [] : ['/heluo/concepts'],
       },
       iiif: {
         directories: getEntityDirectories('iiif', { includeLegacy: false }),
@@ -126,17 +122,15 @@ function createEntitySourceMap(config) {
  */
 export class KeywordRetriever extends BaseRetriever {
   /**
-   * @param {object} gateways - 网关依赖（本检索器不使用）
-   * @param {object} config - 配置对象
-   * @param {boolean} config.jsonLdOnly - 是否仅返回 JSON-LD
-   * @param {boolean} config.enableLegacyEntityPaths - 是否启用旧版实体路径
-   */
+ * @param {object} gateways - 网关依赖（本检索器不使用）
+ * @param {object} config - 配置对象
+ * @param {boolean} config.jsonLdOnly - 是否仅返回 JSON-LD
+ */
   constructor(gateways, config) {
     super(gateways, config)
     this.name = 'keyword'
     this.entitySourceMap = createEntitySourceMap({
       jsonLdOnly: config.jsonLdOnly,
-      enableLegacyEntityPaths: config.enableLegacyEntityPaths,
     })
   }
 

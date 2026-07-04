@@ -59,10 +59,6 @@ export const searchConfig = Object.freeze({
   jsonLdOnly: !['0', 'false', 'off'].includes(
     String(process.env.HELUO_JSONLD_ONLY || '1').trim().toLowerCase(),
   ),
-  /** 是否启用旧版实体路径 */
-  enableLegacyEntityPaths: !['0', 'false', 'off'].includes(
-    String(process.env.HELUO_ENABLE_LEGACY_ENTITY_PATHS || '1').trim().toLowerCase(),
-  ),
   /** Hybrid RRF 算法 K 参数 */
   hybridRrfK: Number(process.env.HYBRID_RRF_K) || 60,
 })
@@ -101,13 +97,13 @@ export const vectorConfig = Object.freeze({
   enrichTopNMax: Number(process.env.VECTOR_ENRICH_TOPN_MAX) || 40,
   /** 向量索引路径映射 */
   indexPaths: {
-    person: ['/processed/json-ld-vector/persons/'],
-    poem: ['/processed/json-ld-vector/poems-set/', '/processed/json-ld-vector/poems-txt/'],
-    book: ['/processed/json-ld-vector/books/'],
-    ancient_book: ['/processed/json-ld-vector/ancient-books/'],
-    place: ['/processed/json-ld-vector/places/'],
-    concept: ['/processed/json-ld-vector/concepts/'],
-    iiif: ['/processed/json-ld-vector/iiif/'],
+    person: ['/processed/vector/person/'],
+    poem: ['/processed/vector/poem/set/', '/processed/vector/poem/text/'],
+    book: ['/processed/vector/book/'],
+    ancient_book: ['/processed/vector/ancient-book/'],
+    place: ['/processed/vector/place/'],
+    concept: ['/processed/vector/concept/'],
+    iiif: ['/processed/vector/iiif/'],
   },
 })
 
@@ -155,9 +151,9 @@ export const cacheConfig = Object.freeze({
   poemTextCacheTtlMs: Number(process.env.VECTOR_POEM_TEXT_CACHE_TTL_MS) || 10 * 60 * 1000,
   /** 诗词全文缓存最大条目数 */
   poemTextCacheMaxSize: Number(process.env.VECTOR_POEM_TEXT_CACHE_MAX_SIZE) || 1000,
-  /** 诗文分层配额（poems-set） */
+  /** 诗文分层配额（poem/set） */
   poemSetQuotaRatio: Number(process.env.VECTOR_POEM_SET_QUOTA_RATIO) || 0.4,
-  /** 诗文分层配额（poems-txt） */
+  /** 诗文分层配额（poem/text） */
   poemTxtQuotaRatio: Number(process.env.VECTOR_POEM_TXT_QUOTA_RATIO) || 0.4,
 })
 
@@ -191,37 +187,28 @@ export const urlRewriteConfig = Object.freeze({
  */
 export const entityDirectoryConfig = Object.freeze({
   person: {
-    primary: ['/processed/json-ld/person/', '/data/processed/json-ld/person/'],
-    legacy: ['/processed/entities/person/'],
+    primary: ['/processed/json-ld/person/'],
   },
   poem: {
-    primary: ['/processed/json-ld/poem/set/', '/data/processed/json-ld/poem/set/'],
-    legacy: ['/processed/entities/poem/set/'],
+    primary: ['/processed/json-ld/poem/set/', '/processed/json-ld/poem/text/'],
   },
   book: {
-    primary: ['/processed/json-ld/book/', '/data/processed/json-ld/book/'],
-    legacy: ['/processed/entities/marc/'],
+    primary: ['/processed/json-ld/book/'],
   },
   ancient_book: {
     primary: [
-      '/processed/json-ld/ancient_book/ancient_book_set/book_entry/',
-      '/processed/json-ld/ancient_book/ancient_book_txt/book/',
-      '/data/processed/json-ld/ancient_book/ancient_book_set/book_entry/',
-      '/data/processed/json-ld/ancient_book/ancient_book_txt/book/',
+      '/processed/json-ld/ancient-book/set/book-entry/',
+      '/processed/json-ld/ancient-book/text/book/',
     ],
-    legacy: ['/processed/entities/ancient_book/ancient_book_txt/book/'],
   },
   place: {
-    primary: ['/processed/json-ld/place/', '/data/processed/json-ld/place/'],
-    legacy: ['/processed/entities/place/'],
+    primary: ['/processed/json-ld/place/'],
   },
   concept: {
-    primary: ['/processed/json-ld/concept/', '/data/processed/json-ld/concept/'],
-    legacy: ['/processed/entities/concept/', '/processed/concept/', '/processed/api/concept/'],
+    primary: ['/processed/json-ld/concept/'],
   },
   iiif: {
-    primary: ['/processed/json-ld-vector/iiif/'],
-    legacy: [],
+    primary: ['/processed/vector/iiif/'],
   },
 })
 
@@ -233,17 +220,12 @@ export const entityDirectoryConfig = Object.freeze({
  * 获取实体目录列表
  *
  * @param {string} scope - 实体类型
- * @param {object} options - 选项
- * @param {boolean} options.includeLegacy - 是否包含旧版路径
  * @returns {string[]} 目录路径数组
  */
-export function getEntityDirectories(scope, options = {}) {
-  const { includeLegacy = searchConfig.enableLegacyEntityPaths && !searchConfig.jsonLdOnly } = options
+export function getEntityDirectories(scope) {
   const config = entityDirectoryConfig[String(scope || '').trim().toLowerCase()]
   if (!config) return []
-  const dirs = [...config.primary]
-  if (includeLegacy) dirs.push(...config.legacy)
-  return dirs
+  return [...config.primary]
 }
 
 /**
@@ -255,8 +237,7 @@ export function getEntityDirectories(scope, options = {}) {
 export function isJsonLdDirectory(value) {
   const text = String(value || '').trim()
   return text.startsWith('/processed/json-ld/') ||
-    text.startsWith('/data/processed/json-ld/') ||
-    text.startsWith('/processed/json-ld-vector/')
+    text.startsWith('/processed/vector/')
 }
 
 // ============================================================================
