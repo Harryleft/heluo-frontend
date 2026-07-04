@@ -20,32 +20,30 @@ function jsonResponse(payload: unknown, status = 200) {
 function createMarklogicFetchMock() {
   const collectionTotals: Record<string, number> = {
     '/heluo/persons': 101,
-    '/heluo/vector/persons': 1076,
+    '/heluo/vector/person': 1076,
 
-    '/heluo/poems-set': 205,
-    '/heluo/vector/poems-set': 26402,
+    '/heluo/poems/sets': 205,
+    '/heluo/vector/poem/set': 26402,
 
     '/heluo/books': 303,
-    '/heluo/vector/books': 69,
+    '/heluo/vector/book': 69,
 
-    '/heluo/ancient-book-sets': 2,
-    '/heluo/vector/ancient-book-sets': 109,
+    '/heluo/ancient-books/sets': 2,
+    '/heluo/vector/ancient-books/sets': 109,
     'http://localhost:8000/graph/ancient_book': 83,
 
     '/heluo/places': 407,
-    '/heluo/vector/places': 72,
+    '/heluo/vector/place': 72,
 
-    '/heluo/poetry/concepts': 504,
-    '/heluo/api/concepts': 502,
-    '/heluo/ancient-book-concepts': 501,
-    '/heluo/vector/concept-rhyme': 87,
-    '/heluo/ancient-book-concept-rdf': 4,
+    '/heluo/concepts': 501,
+    '/heluo/vector/concept/rhyme': 87,
+    '/heluo/vector/ancient-books/concepts': 4,
   }
   const directoryTotals: Record<string, number> = {
     '/processed/json-ld/person/': 1,
     '/processed/json-ld/poem/set/': 5,
     '/processed/json-ld/book/': 3,
-    '/processed/json-ld/ancient_book/ancient_book_set/book_entry/': 2,
+    '/processed/json-ld/ancient-book/set/book-entry/': 2,
     '/processed/json-ld/place/': 7,
     '/processed/json-ld/concept/': 9,
   }
@@ -73,21 +71,18 @@ function createMarklogicFetchMock() {
 function createMarklogicFetchMockWithPollutedAncientBook() {
   const collectionTotals: Record<string, number> = {
     '/heluo/persons': 101,
-    '/heluo/poems-set': 205,
+    '/heluo/poems/sets': 205,
     '/heluo/books': 303,
-    '/heluo/ancient-book-sets': 0,
-    '/heluo/ancient_book_sets': 4,
+    '/heluo/ancient-books/sets': 4,
     '/heluo/iiif/collections': 1,
     '/heluo/places': 407,
-    '/heluo/poetry/concepts': 504,
-    '/heluo/api/concepts': 502,
-    '/heluo/ancient-book-concepts': 501,
+    '/heluo/concepts': 501,
   }
   const directoryTotals: Record<string, number> = {
     '/processed/json-ld/person/': 1,
     '/processed/json-ld/poem/set/': 5,
     '/processed/json-ld/book/': 3,
-    '/processed/json-ld/ancient_book/ancient_book_set/book_entry/': 2,
+    '/processed/json-ld/ancient-book/set/book-entry/': 2,
     '/processed/json-ld/place/': 7,
     '/processed/json-ld/concept/': 9,
   }
@@ -114,15 +109,13 @@ function createMarklogicFetchMockWithPollutedAncientBook() {
 
 function createMarklogicFetchMockWithConceptCollectionFallback() {
   const collectionTotals: Record<string, number> = {
-    '/heluo/poetry/concepts': 0,
-    '/heluo/api/concepts': 0,
-    '/heluo/ancient-book-concepts': 4,
+    '/heluo/concepts': 4,
   }
   const directoryTotals: Record<string, number> = {
     '/processed/json-ld/person/': 1,
     '/processed/json-ld/poem/set/': 5,
     '/processed/json-ld/book/': 3,
-    '/processed/json-ld/ancient_book/ancient_book_set/book_entry/': 2,
+    '/processed/json-ld/ancient-book/set/book-entry/': 2,
     '/processed/json-ld/place/': 7,
     '/processed/json-ld/concept/': 0,
   }
@@ -204,7 +197,7 @@ describe('GET /stats/entity-counts', () => {
     expect(result.ancientBook).toBe(2)
   })
 
-  it('concept 统计在 json-ld 目录为空时应回退到旧概念集合', async () => {
+  it('concept 统计在 json-ld 目录为空时应回退到概念集合', async () => {
     setMarklogicFetchForTest(createMarklogicFetchMockWithConceptCollectionFallback())
 
     const response = await fetch(`${baseUrl}/stats/entity-counts`)

@@ -22,7 +22,7 @@ import { getEntityDirectories } from '../bootstrap/config.js'
 export function createStatsController(dependencies) {
   const { gateways } = dependencies
   const { mlSearchByDirectory, mlSearchByCollection } = gateways
-  const conceptFallbackCollections = [...new Set(['/heluo/concepts', '/heluo/poetry/concepts', '/heluo/api/concepts'])]
+  const conceptFallbackCollections = ['/heluo/concepts']
 
   /**
    * 统计各类实体数量
@@ -101,9 +101,9 @@ export function createStatsController(dependencies) {
     async entityCounts(_req, res) {
       try {
         const [person, poemSet, book, ancientBook, geography, concept] = await Promise.all([
-          countByDirectoriesOrCollections('person', ['/heluo/persons', '/heluo/person']),
+          countByDirectoriesOrCollections('person', ['/heluo/persons']),
           countByDirectoriesOrCollections('poem', ['/heluo/poems/sets', '/heluo/poems/texts']),
-          countByDirectoriesOrCollections('book', ['/heluo/books', '/heluo/marc']),
+          countByDirectoriesOrCollections('book', ['/heluo/books']),
           countAncientBookEntries(),
           countByDirectoriesOrCollections('place', ['/heluo/places']),
           countConceptEntries(),
