@@ -23,7 +23,18 @@ export default defineConfig(({ mode }) => {
         '/api': backend,
         '/stats': backend,
         '/ml': backend,
-        '/iiif': backend,
+        '/iiif': {
+          target: backend,
+          changeOrigin: true,
+          bypass(req) {
+            const url = req.url || ''
+            const pathname = url.split('?')[0]
+            if (pathname === '/iiif') {
+              return '/index.html'
+            }
+            return undefined
+          },
+        },
       },
     },
     // Vitest 测试配置
