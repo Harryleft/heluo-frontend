@@ -41,7 +41,7 @@ export function createStatsController(dependencies) {
   }
 
   async function countByPrimaryDirectories(scope) {
-    const directories = getEntityDirectories(scope, { includeLegacy: false })
+    const directories = getEntityDirectories(scope)
     if (!directories.length) return 0
     const totals = await Promise.all(directories.map((directory) => countByDirectory(directory)))
     return totals.reduce((sum, total) => sum + total, 0)

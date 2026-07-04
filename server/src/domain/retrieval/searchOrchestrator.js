@@ -10,13 +10,6 @@
 import { searchConfig, getEntityDirectories, isJsonLdDirectory } from '../../bootstrap/config.js'
 import { mergeRowsByUri, mergeHybridRowsByRrf } from './resultMerger.js'
 
-const LEGACY_CONCEPT_COLLECTIONS = Object.freeze([
-  '/heluo/concepts',
-  '/heluo/poetry/concepts',
-  '/heluo/api/concepts',
-  '/heluo/ancient-book-concepts',
-])
-
 // ============================================================================
 // 实体来源映射
 // ============================================================================
@@ -30,19 +23,19 @@ export function entitySourceMap() {
   return {
     person: {
       directories: getEntityDirectories('person'),
-      collections: searchConfig.jsonLdOnly ? [] : ['/heluo/persons', '/heluo/person'],
+      collections: searchConfig.jsonLdOnly ? [] : ['/heluo/persons'],
     },
     poem: {
       directories: getEntityDirectories('poem'),
-      collections: searchConfig.jsonLdOnly ? [] : ['/heluo/poems-set', '/heluo/poems_set'],
+      collections: searchConfig.jsonLdOnly ? [] : ['/heluo/poems/sets', '/heluo/poems/texts'],
     },
     book: {
       directories: getEntityDirectories('book'),
-      collections: searchConfig.jsonLdOnly ? [] : ['/heluo/books', '/heluo/marc'],
+      collections: searchConfig.jsonLdOnly ? [] : ['/heluo/books'],
     },
     ancient_book: {
       directories: getEntityDirectories('ancient_book'),
-      collections: searchConfig.jsonLdOnly ? [] : ['/heluo/ancient-book-sets', '/heluo/ancient_book_sets'],
+      collections: searchConfig.jsonLdOnly ? [] : ['/heluo/ancient-books/sets', '/heluo/ancient-books/texts', '/heluo/ancient-books/objects'],
     },
     place: {
       directories: getEntityDirectories('place'),
@@ -50,10 +43,10 @@ export function entitySourceMap() {
     },
     concept: {
       directories: getEntityDirectories('concept'),
-      collections: LEGACY_CONCEPT_COLLECTIONS,
+      collections: searchConfig.jsonLdOnly ? [] : ['/heluo/concepts'],
     },
     iiif: {
-      directories: getEntityDirectories('iiif', { includeLegacy: false }),
+      directories: getEntityDirectories('iiif'),
       collections: [],
     },
   }
@@ -71,8 +64,7 @@ export function entitySourceMap() {
  */
 export function isPoemSetUri(uri) {
   const value = String(uri || '')
-  return value.startsWith('/processed/json-ld/poem/set/') ||
-    value.startsWith('/data/processed/json-ld/poem/set/')
+  return value.startsWith('/processed/json-ld/poem/set/')
 }
 
 /**
@@ -83,8 +75,7 @@ export function isPoemSetUri(uri) {
  */
 export function isPoemTextUri(uri) {
   const value = String(uri || '')
-  return value.startsWith('/processed/json-ld/poem/txt/') ||
-    value.startsWith('/data/processed/json-ld/poem/txt/')
+  return value.startsWith('/processed/json-ld/poem/text/')
 }
 
 /**
@@ -96,11 +87,9 @@ export function isPoemTextUri(uri) {
 export function isAncientBookEntryUri(uri) {
   const value = String(uri || '')
   if (!value) return false
-  if (value.startsWith('/processed/iiif/collections/') || value.startsWith('/heluo/iiif/collections/')) return false
-  if (value.includes('/ancient_book_set/department/') || value.includes('/ancient_book_set/root/')) return false
-  return value.startsWith('/processed/json-ld/ancient_book/ancient_book_set/book_entry/') ||
-    value.startsWith('/data/processed/json-ld/ancient_book/ancient_book_set/book_entry/') ||
-    value.startsWith('/data/processed/json-ld/ancient_book/ancient_book_set/')
+  if (value.startsWith('/processed/iiif/collection/') || value.startsWith('/heluo/iiif/collections/')) return false
+  if (value.includes('/ancient-book/set/department/') || value.includes('/ancient-book/set/root/')) return false
+  return value.startsWith('/processed/json-ld/ancient-book/set/book-entry/')
 }
 
 // ============================================================================

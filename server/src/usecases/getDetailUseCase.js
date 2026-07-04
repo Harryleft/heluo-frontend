@@ -42,11 +42,11 @@ import {
 function isLikelyVectorOrFragmentUri(uri) {
   const value = String(uri || '').toLowerCase()
   if (!value) return false
-  return value.includes('/json-ld-vector/') || value.includes('/heluo/vector/') || value.includes('/processed/vector/')
+  return value.includes('/heluo/vector/') || value.includes('/processed/vector/')
 }
 
 function isDataJsonLdUri(uri) {
-  return String(uri || '').toLowerCase().startsWith('/data/processed/json-ld/')
+  return String(uri || '').toLowerCase().startsWith('/processed/json-ld/')
 }
 
 /**
@@ -59,9 +59,7 @@ function isPersonPrimaryUri(uri) {
   const value = String(uri || '').toLowerCase()
   if (!value || isLikelyVectorOrFragmentUri(value)) return false
   return (
-    value.includes('/processed/entities/person/') ||
     value.includes('/heluo/persons/') ||
-    value.includes('/heluo/person/') ||
     value.includes('/person/') ||
     value.includes('/persons/')
   )
@@ -77,12 +75,10 @@ function isBookPrimaryUri(uri) {
   const value = String(uri || '').toLowerCase()
   if (!value || isLikelyVectorOrFragmentUri(value)) return false
   return (
-    value.includes('/processed/entities/marc/') ||
     value.includes('/processed/json-ld/book/') ||
     value.includes('/heluo/books/') ||
     value.includes('/book/') ||
-    value.includes('/books/') ||
-    value.includes('/marc/')
+    value.includes('/books/')
   )
 }
 
@@ -96,7 +92,6 @@ function isPlacePrimaryUri(uri) {
   const value = String(uri || '').toLowerCase()
   if (!value || isLikelyVectorOrFragmentUri(value)) return false
   return (
-    value.includes('/processed/entities/place/') ||
     value.includes('/processed/json-ld/place/') ||
     value.includes('/heluo/places/') ||
     value.includes('/place/') ||
@@ -115,13 +110,7 @@ function isConceptPrimaryUri(uri) {
   if (!value || isLikelyVectorOrFragmentUri(value)) return false
   return (
     value.includes('/processed/json-ld/concept/') ||
-    value.includes('/processed/entities/concept/') ||
-    value.includes('/processed/concept/') ||
-    value.includes('/processed/api/concept/') ||
     value.includes('/heluo/concepts/') ||
-    value.includes('/heluo/poetry/concepts/') ||
-    value.includes('/heluo/api/concepts/') ||
-    value.includes('/heluo/ancient-book-concepts/') ||
     value.includes('/concept/')
   )
 }
@@ -136,10 +125,8 @@ function isAncientBookPrimaryUri(uri) {
   const value = String(uri || '').toLowerCase()
   if (!value || isLikelyVectorOrFragmentUri(value)) return false
   return (
-    value.includes('/processed/json-ld/ancient_book/') ||
-    value.includes('/processed/entities/ancient_book/') ||
-    value.includes('/heluo/ancient-book') ||
-    value.includes('/ancient_book/')
+    value.includes('/processed/json-ld/ancient-book/') ||
+    value.includes('/heluo/ancient-books/')
   )
 }
 
@@ -154,7 +141,6 @@ function isPoemPrimaryUri(uri) {
   if (!value || isLikelyVectorOrFragmentUri(value)) return false
   return (
     value.includes('/processed/json-ld/poem/') ||
-    value.includes('/processed/entities/poem/') ||
     value.includes('/heluo/poems') ||
     value.includes('/poem/')
   )
@@ -163,7 +149,7 @@ function isPoemPrimaryUri(uri) {
 /**
  * 从向量 URI 路径中提取实体类型
  *
- * 向量 URI 格式示例：/processed/json-ld-vector/ancient-books/xxx.json
+ * 向量 URI 格式示例：/processed/vector/ancient-book/xxx.json
  * 当 isLikelyVectorOrFragmentUri 为 true 时，用路径中的关键词推断类型。
  *
  * @param {string} uri - URI
@@ -171,12 +157,12 @@ function isPoemPrimaryUri(uri) {
  */
 function inferEntityTypeFromVectorUri(uri) {
   const value = String(uri || '').toLowerCase()
-  if (value.includes('/ancient-books/') || value.includes('/ancient_book/')) return 'ancient_book'
-  if (value.includes('/persons/') || value.includes('/person/')) return 'person'
-  if (value.includes('/poems-set/') || value.includes('/poems-txt/') || value.includes('/poem/')) return 'poem'
-  if (value.includes('/books/') || value.includes('/book/')) return 'book'
-  if (value.includes('/places/') || value.includes('/place/')) return 'place'
-  if (value.includes('/concepts/') || value.includes('/concept/')) return 'concept'
+  if (value.includes('/ancient-book/')) return 'ancient_book'
+  if (value.includes('/person/')) return 'person'
+  if (value.includes('/poem/')) return 'poem'
+  if (value.includes('/book/')) return 'book'
+  if (value.includes('/place/')) return 'place'
+  if (value.includes('/concept/')) return 'concept'
   if (value.includes('/iiif/')) return 'iiif'
   return null
 }
@@ -691,52 +677,38 @@ function buildPossibleUris(id, type) {
       uris.push(
         `/processed/json-ld/person/${id}.json`,
         `/processed/json-ld/person/${id}`,
-        `/data/processed/json-ld/person/${id}.json`,
-        `/data/processed/json-ld/person/${id}`,
       )
       break
     case 'poem':
       uris.push(
         `/processed/json-ld/poem/set/${id}.json`,
         `/processed/json-ld/poem/set/${id}`,
-        `/data/processed/json-ld/poem/set/${id}.json`,
-        `/data/processed/json-ld/poem/set/${id}`,
-        `/processed/json-ld/poem/txt/${id}.json`,
-        `/processed/json-ld/poem/txt/${id}`,
-        `/data/processed/json-ld/poem/txt/${id}.json`,
-        `/data/processed/json-ld/poem/txt/${id}`,
+        `/processed/json-ld/poem/text/${id}.json`,
+        `/processed/json-ld/poem/text/${id}`,
       )
       break
     case 'book':
       uris.push(
         `/processed/json-ld/book/${id}.json`,
         `/processed/json-ld/book/${id}`,
-        `/data/processed/json-ld/book/${id}.json`,
-        `/data/processed/json-ld/book/${id}`,
       )
       break
     case 'place':
       uris.push(
         `/processed/json-ld/place/${id}.json`,
         `/processed/json-ld/place/${id}`,
-        `/data/processed/json-ld/place/${id}.json`,
-        `/data/processed/json-ld/place/${id}`,
       )
       break
     case 'concept':
       uris.push(
         `/processed/json-ld/concept/${id}.json`,
         `/processed/json-ld/concept/${id}`,
-        `/data/processed/json-ld/concept/${id}.json`,
-        `/data/processed/json-ld/concept/${id}`,
       )
       break
     case 'ancient_book':
       uris.push(
-        `/processed/json-ld/ancient_book/ancient_book_set/book_entry/${id}.json`,
-        `/processed/json-ld/ancient_book/ancient_book_set/book_entry/${id}`,
-        `/data/processed/json-ld/ancient_book/ancient_book_set/book_entry/${id}.json`,
-        `/data/processed/json-ld/ancient_book/ancient_book_set/book_entry/${id}`,
+        `/processed/json-ld/ancient-book/set/book-entry/${id}.json`,
+        `/processed/json-ld/ancient-book/set/book-entry/${id}`,
       )
       break
     default:
@@ -754,12 +726,11 @@ function buildPossibleUris(id, type) {
 function getDirectoriesForType(type) {
   const dirMap = {
     poem: [
-      ...getEntityDirectories('poem', { includeLegacy: false }),
-      '/processed/json-ld/poem/txt/',
-      '/data/processed/json-ld/poem/txt/',
+      ...getEntityDirectories('poem'),
+      '/processed/json-ld/poem/text/',
     ],
   }
-  return dirMap[type] || getEntityDirectories(type, { includeLegacy: false })
+  return dirMap[type] || getEntityDirectories(type)
 }
 
 function trimTrailingSlash(value) {
@@ -785,17 +756,34 @@ function buildIiifMarklogicCandidates(publicPath) {
 
   const shortManifestMatch = path.match(/^\/iiif\/manifests\/([^/]+)\/(manifest|collection)\.json$/i)
   if (shortManifestMatch?.[1] && shortManifestMatch?.[2]) {
-    return [`/iiif/manifests/${shortManifestMatch[1]}/${shortManifestMatch[2]}.json`]
+    return [
+      `/processed/iiif/manifests/${shortManifestMatch[1]}/${shortManifestMatch[2]}.json`,
+      `/iiif/manifests/${shortManifestMatch[1]}/${shortManifestMatch[2]}.json`,
+    ]
   }
 
   const longManifestMatch = path.match(/^\/iiif\/manifests\/ancientBook\/([^/]+)\/([^/]+)\/manifest\.json$/i)
   if (longManifestMatch?.[1]) {
-    return [`/iiif/manifests/${longManifestMatch[1]}/manifest.json`]
+    return [
+      `/processed/iiif/manifests/${longManifestMatch[1]}/manifest.json`,
+      `/iiif/manifests/${longManifestMatch[1]}/manifest.json`,
+    ]
+  }
+
+  const v3ManifestMatch = path.match(/^\/iiif\/3\/manifest\/ancientBook\/([^/]+)\/([^/?#]+)$/i)
+  if (v3ManifestMatch?.[1]) {
+    return [
+      `/processed/iiif/manifests/${v3ManifestMatch[1]}/manifest.json`,
+      `/iiif/manifests/${v3ManifestMatch[1]}/manifest.json`,
+    ]
   }
 
   const ancientBookCollectionMatch = path.match(/^\/iiif\/3\/collection\/ancientBook\/([^/?#]+)$/i)
   if (ancientBookCollectionMatch?.[1]) {
-    return [`/iiif/manifests/${ancientBookCollectionMatch[1]}/collection.json`]
+    return [
+      `/processed/iiif/manifests/${ancientBookCollectionMatch[1]}/collection.json`,
+      `/iiif/manifests/${ancientBookCollectionMatch[1]}/collection.json`,
+    ]
   }
 
   const personCollectionMatch = path.match(/^\/iiif\/3\/collection\/person\/([^/?#]+)$/i)

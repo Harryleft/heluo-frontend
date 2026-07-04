@@ -104,7 +104,7 @@ function createEntitySourceMap(config) {
         collections: jsonLdOnly ? [] : ['/heluo/concepts'],
       },
       iiif: {
-        directories: getEntityDirectories('iiif', { includeLegacy: false }),
+        directories: getEntityDirectories('iiif'),
         collections: [],
       },
     }
