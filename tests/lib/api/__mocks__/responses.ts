@@ -24,10 +24,10 @@ export const mockPersonDetail: PersonDetailV1 = {
   lifespan: '712-770',
   birthplace: '河南巩县',
   summary: '唐代伟大的现实主义诗人，被后人尊称为"诗圣"，与李白并称"李杜"。',
-  uri: '/processed/entities/person/17270.json',
+  uri: '/processed/json-ld/person/17270.json',
   relatedPlaces: [
-    { label: '洛阳', uri: '/processed/entities/place/luoyang.json' },
-    { label: '长安', uri: '/processed/entities/place/changan.json' },
+    { label: '洛阳', uri: '/processed/json-ld/place/luoyang.json' },
+    { label: '长安', uri: '/processed/json-ld/place/changan.json' },
   ] as PlaceInfo[],
   relatedPoems: [
     { id: 'poem_001', title: '春望', author: '杜甫' },
@@ -82,14 +82,14 @@ export const mockPoemDetail: PoemDetailV1 = {
   rhyme: '侵韵',
   fullText: '国破山河在，城春草木深。\n感时花溅泪，恨别鸟惊心。\n烽火连三月，家书抵万金。\n白头搔更短，浑欲不胜簪。',
   source: '《杜工部集》',
-  uri: '/processed/entities/poem/poem_001.json',
-  textUri: '/processed/entities/poem/poem_001.txt.json',
+  uri: '/processed/json-ld/poem/set/poem_001.json',
+  textUri: '/processed/json-ld/poem/text/poem_001.json',
   set: {
     id: 'set_001',
-    uri: '/processed/entities/poem/set_001.json',
+    uri: '/processed/json-ld/poem/set/set_001.json',
     label: '杜工部集',
   },
-  relatedPlaces: [{ label: '长安', uri: '/processed/entities/place/changan.json' }] as PlaceInfo[],
+  relatedPlaces: [{ label: '长安', uri: '/processed/json-ld/place/changan.json' }] as PlaceInfo[],
 }
 
 /** 诗文卡片 Mock */
@@ -132,7 +132,7 @@ export const mockSearchItemPerson: SearchResultItemV1 = {
   title: '杜甫',
   snippet: '唐代伟大的现实主义诗人，被后人尊称为"诗圣"...',
   score: 0.95,
-  uri: '/processed/entities/person/17270.json',
+  uri: '/processed/json-ld/person/17270.json',
 }
 
 export const mockSearchItemPoem: SearchResultItemV1 = {
@@ -141,7 +141,7 @@ export const mockSearchItemPoem: SearchResultItemV1 = {
   title: '春望',
   snippet: '国破山河在，城春草木深...',
   score: 0.92,
-  uri: '/processed/entities/poem/poem_001.json',
+  uri: '/processed/json-ld/poem/set/poem_001.json',
 }
 
 /** 统一搜索响应 Mock */

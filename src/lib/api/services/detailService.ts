@@ -279,7 +279,7 @@ function toAncientBookHierarchy(ancientBook: Pick<AncientBookDetailV1, 'hierarch
 function extractAncientBookObjectIdFromUri(uri: string): string {
   const normalizedUri = normalizeText(uri)
   if (!normalizedUri) return ''
-  const match = normalizedUri.match(/\/ancient_book_object\/(?:volume|book)\/([^/?#]+?)(?:\.json)?$/i)
+  const match = normalizedUri.match(/\/ancient-book\/object\/(?:volume|book)\/([^/?#]+?)(?:\.json)?$/i)
   if (match?.[1]) return normalizeText(match[1])
   const lastSegment = normalizedUri.split('/').pop() || ''
   return normalizeText(lastSegment.replace(/\.json$/i, ''))

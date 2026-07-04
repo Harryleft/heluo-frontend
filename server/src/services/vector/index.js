@@ -3,7 +3,7 @@
  * 使用 MarkLogic 的向量搜索功能进行语义相似度检索
  *
  * 增强功能：
- * - 对于 poems-txt 结果，自动关联获取完整诗文信息
+ * - 对于 poem/text 结果，自动关联获取完整诗文信息
  * - 返回标题、作者、完整内容等丰富信息
  */
 
@@ -13,21 +13,21 @@ import { cosineSimilarity as cosineSimilarityUtil } from '../embeddingService.js
 const VECTOR_CONFIG = {
   // 向量索引路径映射（每个实体类型可能对应多个向量路径）
   indexPaths: {
-    person: ['/processed/json-ld-vector/persons/'],
-    poem: ['/processed/json-ld-vector/poems-set/', '/processed/json-ld-vector/poems-txt/'],
-    book: ['/processed/json-ld-vector/books/'],
+    person: ['/processed/vector/person/'],
+    poem: ['/processed/vector/poem/set/', '/processed/vector/poem/text/'],
+    book: ['/processed/vector/book/'],
     ancient_book: [
-      '/processed/json-ld-vector/ancient_book_sets/',
-      '/processed/json-ld-vector/ancient_book_objects/',
-      '/processed/json-ld-vector/ancient_book_texts/',
-      '/processed/json-ld-vector/ancient_book_concepts/',
+      '/processed/vector/ancient-book/set/',
+      '/processed/vector/ancient-book/object/',
+      '/processed/vector/ancient-book/text/',
+      '/processed/vector/ancient-book/concept/',
     ],
-    place: ['/processed/json-ld-vector/places/'],
+    place: ['/processed/vector/place/'],
     concept: [
-      '/processed/json-ld-vector/concept_poetic_form/',
-      '/processed/json-ld-vector/concept_rhyme/',
+      '/processed/vector/concept/poetic-form/',
+      '/processed/vector/concept/rhyme/',
     ],
-    iiif: ['/processed/json-ld-vector/iiif/'],
+    iiif: ['/processed/vector/iiif/'],
   },
   // 默认返回数量
   defaultTopK: 20,
@@ -60,7 +60,7 @@ const VECTOR_CONFIG = {
   // 诗词全文缓存配置
   poemTextCacheTtlMs: Number(process.env.VECTOR_POEM_TEXT_CACHE_TTL_MS) || 10 * 60 * 1000,
   poemTextCacheMaxSize: Number(process.env.VECTOR_POEM_TEXT_CACHE_MAX_SIZE) || 1000,
-  // 诗文分层配额（poems-set / poems-txt）
+  // 诗文分层配额（poem/set / poem/text）
   poemSetQuotaRatio: Number(process.env.VECTOR_POEM_SET_QUOTA_RATIO) || 0.4,
   poemTxtQuotaRatio: Number(process.env.VECTOR_POEM_TXT_QUOTA_RATIO) || 0.4,
 }
@@ -130,14 +130,14 @@ function toResultDedupKey(row) {
 
 function getPoemResultBucket(row) {
   const uri = String(row?.uri || '')
-  if (uri.includes('/poems-set/')) return 'set'
-  if (uri.includes('/poems-txt/')) return 'txt'
+  if (uri.includes('/poem/set/')) return 'set'
+  if (uri.includes('/poem/text/')) return 'txt'
   return 'other'
 }
 
 /**
  * 诗文分层配额：
- * - 保证 poems-set 与 poems-txt 在 TopK 中都有最低占比
+ * - 保证 poem/set 与 poem/text 在 TopK 中都有最低占比
  * - 其余名额按全局相似度回填
  *
  * @param {Array} sortedRows
@@ -303,11 +303,11 @@ function validateVectorDimension(vector) {
 
 function resolveVectorTypeByIndexPath(indexPath = '') {
   const path = String(indexPath || '')
-  if (path.includes('/persons/')) return 'person'
-  if (path.includes('/books/')) return 'book'
-  if (path.includes('/ancient-books/')) return 'ancient_book'
-  if (path.includes('/places/')) return 'place'
-  if (path.includes('/concepts/')) return 'concept'
+  if (path.includes('/person/')) return 'person'
+  if (path.includes('/book/')) return 'book'
+  if (path.includes('/ancient-book/')) return 'ancient_book'
+  if (path.includes('/place/')) return 'place'
+  if (path.includes('/concept/')) return 'concept'
   if (path.includes('/iiif/')) return 'iiif'
   return 'poem'
 }
@@ -334,8 +334,8 @@ function buildVectorResultBase({ result, doc, indexPath, similarity }) {
   const uriParts = uri.split('/')
   const fileName = uriParts[uriParts.length - 1] || ''
   const entityId = fileName.replace('.json', '')
-  const isSet = doc?.scope === 'poems-set'
-  const isTxt = doc?.scope === 'poems-txt'
+  const isSet = doc?.scope === 'poem/set'
+  const isTxt = doc?.scope === 'poem/text'
 
   let poemId = null
   if (isSet) {
@@ -412,9 +412,9 @@ async function getPoemFullInfo(poemId, marklogicFetch, marklogicBaseUrl) {
   try {
     // 尝试多个可能的路径
     const possibleUris = [
-      `/processed/entities/poem/set/poem_${normalizedPoemId}.json`,
       `/processed/json-ld/poem/set/poem_${normalizedPoemId}.json`,
-      `/processed/entities/poem/set/${normalizedPoemId}.json`,
+      `/processed/json-ld/poem/set/poem_${normalizedPoemId}.json`,
+      `/processed/json-ld/poem/set/${normalizedPoemId}.json`,
     ]
 
     for (const uri of possibleUris) {
@@ -478,7 +478,7 @@ async function getPoemFullText(poemId, marklogicFetch, marklogicBaseUrl) {
           search: {
             query: {
               queries: [
-                { 'directory-query': { uri: ['/processed/json-ld-vector/poems-txt/'] } },
+                { 'directory-query': { uri: ['/processed/vector/poem/text/'] } },
                 { 'term-query': { text: [`poem_${normalizedPoemId}_`, `/${normalizedPoemId}_`] } },
               ],
             },

@@ -14,6 +14,20 @@
  * @param {object} controllers - 控制器实例
  */
 export function registerIiifRoutes(app, controllers) {
+  /**
+   * GET /api/v1/iiif/volume-heads
+   * 获取 IIIF 清单的卷首 Canvas 列表
+   */
+  app.get('/api/v1/iiif/volume-heads', controllers.detail.getIiifVolumeHeads)
+
+  app.get('/iiif/manifests/:bookId/manifest.json', controllers.detail.getIiifDocument)
+  app.get('/iiif/manifests/:bookId/collection.json', controllers.detail.getIiifDocument)
+  app.get('/iiif/manifests/ancientBook/:bookId/:carrierId/manifest.json', controllers.detail.getIiifDocument)
+  app.get('/iiif/3/collection/ancientBook/:bookId', controllers.detail.getIiifDocument)
+  app.get('/iiif/3/collection/person/:personId', controllers.detail.getIiifDocument)
+  app.get('/iiif/3/manifest/ancientBook/:bookId/:carrierId', controllers.detail.getIiifDocument)
+  app.get('/iiif/3/search/ancientBook/:bookId/:carrierId', controllers.detail.searchIiifContent)
+
   app.get('/iiif/*', async (req, res, next) => {
     try {
       const upstream = await fetch(`http://127.0.0.1:8083${req.originalUrl}`)
@@ -30,20 +44,6 @@ export function registerIiifRoutes(app, controllers) {
       next()
     }
   })
-
-  /**
-   * GET /api/v1/iiif/volume-heads
-   * 获取 IIIF 清单的卷首 Canvas 列表
-   */
-  app.get('/api/v1/iiif/volume-heads', controllers.detail.getIiifVolumeHeads)
-
-  app.get('/iiif/manifests/:bookId/manifest.json', controllers.detail.getIiifDocument)
-  app.get('/iiif/manifests/:bookId/collection.json', controllers.detail.getIiifDocument)
-  app.get('/iiif/manifests/ancientBook/:bookId/:carrierId/manifest.json', controllers.detail.getIiifDocument)
-  app.get('/iiif/3/collection/ancientBook/:bookId', controllers.detail.getIiifDocument)
-  app.get('/iiif/3/collection/person/:personId', controllers.detail.getIiifDocument)
-  app.get('/iiif/3/manifest/ancientBook/:bookId/:carrierId', controllers.detail.getIiifDocument)
-  app.get('/iiif/3/search/ancientBook/:bookId/:carrierId', controllers.detail.searchIiifContent)
 }
 
 export default registerIiifRoutes

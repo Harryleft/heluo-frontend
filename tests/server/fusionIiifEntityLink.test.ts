@@ -12,7 +12,7 @@ describe('resolvePrimaryEntityUri — IIIF 向量 URI 解析', () => {
     const doc = {
       entity_iri: 'http://localhost:8083/iiif/manifests/ancientBook/304/17270_304/manifest.json',
     }
-    const result = resolvePrimaryEntityUri('ancient_book', '/processed/json-ld-vector/iiif/manifests/17270_304_766_1.json', doc)
+    const result = resolvePrimaryEntityUri('ancient_book', '/processed/vector/iiif/manifest/17270_304_766_1.json', doc)
     expect(result).toBe('/iiif/manifests/ancientBook/304/17270_304/manifest.json')
   })
 
@@ -20,21 +20,21 @@ describe('resolvePrimaryEntityUri — IIIF 向量 URI 解析', () => {
     const { resolvePrimaryEntityUri } = await import('../../server/src/usecases/fusionShared.js')
 
     const doc = {
-      entity_iri: '/processed/json-ld-vector/iiif/manifests/17270_304_766_1.json',
+      entity_iri: '/processed/vector/iiif/manifest/17270_304_766_1.json',
     }
-    const result = resolvePrimaryEntityUri('ancient_book', '/processed/json-ld-vector/iiif/manifests/17270_304_766_1.json', doc)
+    const result = resolvePrimaryEntityUri('ancient_book', '/processed/vector/iiif/manifest/17270_304_766_1.json', doc)
     // 向量路径被过滤，无有效候选 → 返回原始 URI
-    expect(result).toBe('/processed/json-ld-vector/iiif/manifests/17270_304_766_1.json')
+    expect(result).toBe('/processed/vector/iiif/manifest/17270_304_766_1.json')
   })
 
   it('应保留 / 开头的候选路径', async () => {
     const { resolvePrimaryEntityUri } = await import('../../server/src/usecases/fusionShared.js')
 
     const doc = {
-      id: '/processed/json-ld/ancient_book/ancient_book_set/book_entry/304.json',
+      id: '/processed/json-ld/ancient-book/set/book-entry/304.json',
     }
-    const result = resolvePrimaryEntityUri('ancient_book', '/processed/json-ld-vector/iiif/manifests/17270_304_766_1.json', doc)
-    expect(result).toBe('/processed/json-ld/ancient_book/ancient_book_set/book_entry/304.json')
+    const result = resolvePrimaryEntityUri('ancient_book', '/processed/vector/iiif/manifest/17270_304_766_1.json', doc)
+    expect(result).toBe('/processed/json-ld/ancient-book/set/book-entry/304.json')
   })
 
   it('非 ancient_book scope 不应触发解析', async () => {
@@ -43,15 +43,15 @@ describe('resolvePrimaryEntityUri — IIIF 向量 URI 解析', () => {
     const doc = {
       entity_iri: 'http://localhost:8083/iiif/manifests/ancientBook/304/17270_304/manifest.json',
     }
-    const result = resolvePrimaryEntityUri('poem', '/processed/json-ld-vector/iiif/manifests/17270_304_766_1.json', doc)
-    expect(result).toBe('/processed/json-ld-vector/iiif/manifests/17270_304_766_1.json')
+    const result = resolvePrimaryEntityUri('poem', '/processed/vector/iiif/manifest/17270_304_766_1.json', doc)
+    expect(result).toBe('/processed/vector/iiif/manifest/17270_304_766_1.json')
   })
 
   it('空文档应返回原始 URI', async () => {
     const { resolvePrimaryEntityUri } = await import('../../server/src/usecases/fusionShared.js')
 
-    const result = resolvePrimaryEntityUri('ancient_book', '/processed/json-ld-vector/iiif/manifests/17270_304_766_1.json', {})
-    expect(result).toBe('/processed/json-ld-vector/iiif/manifests/17270_304_766_1.json')
+    const result = resolvePrimaryEntityUri('ancient_book', '/processed/vector/iiif/manifest/17270_304_766_1.json', {})
+    expect(result).toBe('/processed/vector/iiif/manifest/17270_304_766_1.json')
   })
 })
 

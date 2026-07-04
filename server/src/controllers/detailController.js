@@ -42,7 +42,7 @@ export function extractIdFromUri(uri) {
 function isLikelyVectorOrFragmentUri(uri) {
   const value = String(uri || '').toLowerCase()
   if (!value) return false
-  return value.includes('/json-ld-vector/') || value.includes('/heluo/vector/') || value.includes('/processed/vector/')
+  return value.includes('/heluo/vector/') || value.includes('/processed/vector/')
 }
 
 /**
@@ -55,7 +55,7 @@ function isPersonPrimaryUri(uri) {
   const value = String(uri || '').toLowerCase()
   if (!value || isLikelyVectorOrFragmentUri(value)) return false
   return (
-    value.includes('/processed/entities/person/') ||
+    value.includes('/processed/json-ld/person/') ||
     value.includes('/heluo/persons/') ||
     value.includes('/heluo/person/') ||
     value.includes('/person/') ||
@@ -82,7 +82,7 @@ function isPoemSetUri(uri) {
  */
 function isPoemTextUri(uri) {
   const value = String(uri || '')
-  return value.startsWith('/processed/json-ld/poem/txt/')
+  return value.startsWith('/processed/json-ld/poem/text/')
 }
 
 /**
@@ -95,8 +95,8 @@ function isAncientBookEntryUri(uri) {
   const value = String(uri || '')
   if (!value) return false
   if (value.startsWith('/processed/iiif/collections/') || value.startsWith('/heluo/iiif/collections/')) return false
-  if (value.includes('/ancient_book_set/department/') || value.includes('/ancient_book_set/root/')) return false
-  return value.startsWith('/processed/json-ld/ancient_book/ancient_book_set/book_entry/')
+  if (value.includes('/ancient-book/set/department/') || value.includes('/ancient-book/set/root/')) return false
+  return value.startsWith('/processed/json-ld/ancient-book/set/book-entry/')
 }
 
 function getRequestOrigin(req) {

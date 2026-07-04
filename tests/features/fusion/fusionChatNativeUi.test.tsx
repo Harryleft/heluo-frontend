@@ -94,8 +94,8 @@ function createEvidenceItem(overrides: Partial<UnifiedEvidenceItem> = {}): Unifi
     typeLabel: '诗文',
     title: '春望',
     snippet: '国破山河在',
-    link: '/details?uri=%2Fprocessed%2Fentities%2Fpoem%2F1.json',
-    uri: '/processed/entities/poem/1.json',
+    link: '/details?uri=%2Fprocessed%2Fjson-ld%2Fpoem%2Fset%2F1.json',
+    uri: '/processed/json-ld/poem/set/1.json',
     score: 0.9,
     sourceKinds: ['entity'],
     ...overrides,
@@ -396,7 +396,7 @@ describe('FusionChat 原生 assistant-ui 收敛', () => {
 
     const link = container.querySelector('.fusion-chat-native-source-link')
     expect(link).toBeTruthy()
-    expect(link?.getAttribute('href')).toBe('/details?uri=%2Fprocessed%2Fentities%2Fpoem%2F1.json')
+    expect(link?.getAttribute('href')).toBe('/details?uri=%2Fprocessed%2Fjson-ld%2Fpoem%2Fset%2F1.json')
 
     unmount(root, container)
   })

@@ -139,8 +139,8 @@ describe('evidenceUtils', () => {
 
   describe('parseEvidenceUriFromLink', () => {
     it('应从相对链接中解析 URI', () => {
-      const link = '/details?uri=%2Fprocessed%2Fentities%2Fperson%2F17270.json'
-      expect(parseEvidenceUriFromLink(link)).toBe('/processed/entities/person/17270.json')
+      const link = '/details?uri=%2Fprocessed%2Fjson-ld%2Fperson%2F17270.json'
+      expect(parseEvidenceUriFromLink(link)).toBe('/processed/json-ld/person/17270.json')
     })
 
     it('应从绝对链接中解析 URI', () => {
@@ -336,7 +336,7 @@ describe('evidenceUtils', () => {
     })
 
     it('IIIF manifest 引用应改写为 iiif 查看器链接', () => {
-      const manifestUri = '/processed/json-ld-vector/iiif/manifests/17270_1181_1397_1.json'
+      const manifestUri = '/processed/vector/iiif/manifest/17270_1181_1397_1.json'
       const citations = [
         { citationId: 'c1', sourceType: 'iiif', uri: manifestUri, title: '卷十五', snippet: '命中影像文本', scoreDetail: { finalScore: 0.85 } },
       ]
@@ -379,7 +379,7 @@ describe('evidenceUtils', () => {
     })
 
     it('侧边栏中的 IIIF manifest 包装链接应重定向到 iiif 查看器', () => {
-      const manifestUri = '/processed/json-ld-vector/iiif/manifests/17270_1181_1397_1.json'
+      const manifestUri = '/processed/vector/iiif/manifest/17270_1181_1397_1.json'
       const sidebarItems = [
         {
           itemId: 's1',

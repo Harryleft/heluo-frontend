@@ -203,7 +203,9 @@ function parseIiifManifestFromLink(link: string): string {
 function isIiifManifestUri(uri: string): boolean {
   const normalized = normalizeEvidenceText(uri).toLowerCase()
   if (!normalized) return false
-  return normalized.includes('/iiif/manifests/') || normalized.includes('/iiif/3/manifest/')
+  return normalized.includes('/iiif/manifests/') ||
+    normalized.includes('/iiif/3/manifest/') ||
+    normalized.includes('/processed/vector/iiif/manifest/')
 }
 
 function buildDetailsRoute(uri: string): string {

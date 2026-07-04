@@ -18,8 +18,8 @@ const HTTP_PROTOCOL = 'http://'
 const HTTPS_PROTOCOL = 'https://'
 const LEGACY_IIIF_ORIGIN = 'http://localhost:8083'
 
-/** 向量索引 IIIF URI 匹配模式：/processed/json-ld-vector/iiif/manifests/{personId}_{bookId}_{volumeId}_{seq}.json */
-const VECTOR_IIIF_URI_PATTERN = /\/processed\/json-ld-vector\/iiif\/manifests\/\d+_(\d+)_\d+_\d+\.json$/i
+/** 向量索引 IIIF URI 匹配模式：/processed/vector/iiif/manifest/{personId}_{bookId}_{volumeId}_{seq}.json */
+const VECTOR_IIIF_URI_PATTERN = /\/processed\/vector\/iiif\/manifest\/\d+_(\d+)_\d+_\d+\.json$/i
 
 /** 将向量索引 URI 转换为可访问的 IIIF manifest 路径 */
 function resolveVectorIiifUri(path: string): string {
@@ -56,7 +56,7 @@ function rewriteLegacyIiifOrigin(url: string): string {
 /** 构建 IIIF Manifest URL */
 export function buildManifestUrl(manifestPath: string): string {
   if (!manifestPath) return ''
-  // 向量索引 URI（如 /processed/json-ld-vector/iiif/manifests/17270_304_766_1.json）需要转换为可访问的 manifest 路径
+  // 向量索引 URI（如 /processed/vector/iiif/manifest/17270_304_766_1.json）需要转换为可访问的 manifest 路径
   const resolved = resolveVectorIiifUri(manifestPath)
   if (resolved) return resolved
   if (isAbsoluteHttpUrl(manifestPath)) return rewriteLegacyIiifOrigin(rewriteKnownApiHost(manifestPath))

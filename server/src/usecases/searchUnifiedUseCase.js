@@ -100,7 +100,7 @@ function resolvePrimaryEntityUri(scope, rawUri, doc) {
   pushCandidate(doc?.member_of?.[0]?.id)
 
   // 对于诗文文本类型，尝试获取集合 URI
-  if (scope === 'poem' && uri.includes('/poem/txt/')) {
+  if (scope === 'poem' && uri.includes('/poem/text/')) {
     const memberId = doc?.member_of?.id || doc?.member_of?.[0]?.id
     if (memberId) {
       const stem = String(memberId).split('/').pop()?.replace(/\.json$/i, '') || ''
@@ -112,7 +112,7 @@ function resolvePrimaryEntityUri(scope, rawUri, doc) {
   if (primaryByDoc) return primaryByDoc
 
   // 向量分片 URI 兜底归一化：统一回写到主实体路径
-  if (uri.includes('/processed/json-ld-vector/')) {
+  if (uri.includes('/processed/vector/')) {
     if (!fileId) return uri
 
     const stripVectorChunkSuffix = (value) => String(value || '').replace(/_(chunk|seg|part)[_-]?\d+$/i, '')
@@ -123,10 +123,10 @@ function resolvePrimaryEntityUri(scope, rawUri, doc) {
       return `/processed/json-ld/person/${personId}.json`
     }
     if (normalizedScope === 'poem') {
-      if (uri.includes('/poems-set/')) {
+      if (uri.includes('/poem/set/')) {
         return `/processed/json-ld/poem/set/${fileId}.json`
       }
-      if (uri.includes('/poems-txt/')) {
+      if (uri.includes('/poem/text/')) {
         const poemBaseId = fileId.replace(/_(chunk|seg|part)[_-]?\d+$/i, '')
         return `/processed/json-ld/poem/set/${poemBaseId}.json`
       }
@@ -136,7 +136,7 @@ function resolvePrimaryEntityUri(scope, rawUri, doc) {
       return `/processed/json-ld/book/${fileId}.json`
     }
     if (normalizedScope === 'ancient_book') {
-      return `/processed/json-ld/ancient_book/ancient_book_set/book_entry/${fileId}.json`
+      return `/processed/json-ld/ancient-book/set/book-entry/${fileId}.json`
     }
     if (normalizedScope === 'place') {
       return `/processed/json-ld/place/${fileId}.json`

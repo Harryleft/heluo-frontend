@@ -290,7 +290,7 @@ export class EntityParser {
       if (label?.includes('体裁') || label?.includes('诗体') || id.includes('poetic_form') || id.includes('poetic-form')) {
         return { labelZh: '类型', labelEn: 'Type', value: '体裁' }
       }
-      if (id.includes('ancient_book_concept') || id.includes('ancient-book-concept')) {
+      if (id.includes('/concept/ancient-book') || id.includes('/ancient-book/concept')) {
         return { labelZh: '类型', labelEn: 'Type', value: '古籍概念' }
       }
     }

@@ -118,16 +118,16 @@ async function collectAncientBookVolumeItems(bookId, { mlSearchByDirectory }) {
 
   const txtRows = await searchAncientBookVolumeRowsByDirectories(
     [
-      '/processed/json-ld/ancient_book/ancient_book_txt/volume/',
-      '/processed/entities/ancient_book/ancient_book_txt/volume/',
+      '/processed/json-ld/ancient-book/text/volume/',
+      '/processed/json-ld/ancient-book/text/volume/',
     ],
     bookId,
     { mlSearchByDirectory },
   )
   const objectRows = await searchAncientBookVolumeRowsByDirectories(
     [
-      '/processed/json-ld/ancient_book/ancient_book_object/volume/',
-      '/processed/entities/ancient_book/ancient_book_object/volume/',
+      '/processed/json-ld/ancient-book/object/volume/',
+      '/processed/json-ld/ancient-book/object/volume/',
     ],
     bookId,
     { mlSearchByDirectory },
@@ -150,7 +150,7 @@ async function collectAncientBookVolumeItems(bookId, { mlSearchByDirectory }) {
       })
     }
     const current = volumeMap.get(key)
-    if (meta.source === 'txt') {
+    if (meta.source === 'text') {
       current.textUri = meta.uri
       current.uri = current.uri || meta.uri
     } else {
@@ -169,7 +169,7 @@ async function collectAncientBookVolumeItems(bookId, { mlSearchByDirectory }) {
     }
   }
 
-  handleRows(txtRows, 'txt')
+  handleRows(txtRows, 'text')
   handleRows(objectRows, 'object')
 
   return sortAncientBookVolumeRows(Array.from(volumeMap.values()))
@@ -182,10 +182,10 @@ async function resolveAncientBookBookLevelManifestUris(uri, doc, dependencies) {
 
   const candidateBookUris = new Set()
   if (volumeMeta?.personId && volumeMeta?.bookId) {
-    candidateBookUris.add(`/processed/entities/ancient_book/ancient_book_txt/book/${volumeMeta.personId}_${volumeMeta.bookId}.json`)
+    candidateBookUris.add(`/processed/json-ld/ancient-book/text/book/${volumeMeta.personId}_${volumeMeta.bookId}.json`)
   }
   if (txtBookMeta?.personId && txtBookMeta?.bookId) {
-    candidateBookUris.add(`/processed/entities/ancient_book/ancient_book_txt/book/${txtBookMeta.personId}_${txtBookMeta.bookId}.json`)
+    candidateBookUris.add(`/processed/json-ld/ancient-book/text/book/${txtBookMeta.personId}_${txtBookMeta.bookId}.json`)
   }
 
   for (const candidateUri of candidateBookUris) {
@@ -198,7 +198,7 @@ async function resolveAncientBookBookLevelManifestUris(uri, doc, dependencies) {
   const bookId = extractAncientBookBookId(uri, doc)
   if (!bookId) return []
 
-  const bookSearch = await mlSearchByDirectory('/processed/entities/ancient_book/ancient_book_txt/book/', bookId, 20)
+  const bookSearch = await mlSearchByDirectory('/processed/json-ld/ancient-book/text/book/', bookId, 20)
   for (const row of bookSearch?.results || []) {
     const candidateUri = String(row?.uri || '').trim()
     if (!candidateUri) continue

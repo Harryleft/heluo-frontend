@@ -112,7 +112,7 @@ function deriveIiifManifestPath(row) {
     return `/iiif/manifests/${manifestBookId}/manifest.json`
   }
 
-  const uriMatch = String(row?.uri || '').trim().match(/\/processed\/json-ld-vector\/iiif\/manifests\/(\d+)_(\d+)_\d+_\d+\.json$/i)
+  const uriMatch = String(row?.uri || '').trim().match(/\/processed\/vector\/iiif\/manifest\/(\d+)_(\d+)_\d+_\d+\.json$/i)
   if (uriMatch) {
     return `/iiif/manifests/${uriMatch[2]}/manifest.json`
   }
@@ -138,14 +138,14 @@ function deriveIiifManifestDocUri(row) {
 
     const longMatch = text.match(/\/iiif\/manifests\/ancientBook\/([^/]+)\/([^/]+)\/manifest\.json$/i)
     if (longMatch) {
-      return `/processed/entities/ancient_book/iiif/manifests/ancientBook/${longMatch[1]}/${longMatch[2]}/manifest.json`
+      return `/processed/iiif/manifests/ancientBook/${longMatch[1]}/${longMatch[2]}/manifest.json`
     }
   }
 
-  const uriMatch = String(row?.uri || '').trim().match(/\/processed\/json-ld-vector\/iiif\/manifests\/(\d+)_(\d+)_\d+_\d+\.json$/i)
+  const uriMatch = String(row?.uri || '').trim().match(/\/processed\/vector\/iiif\/manifest\/(\d+)_(\d+)_\d+_\d+\.json$/i)
   if (!uriMatch) return ''
   const carrierId = `${uriMatch[1]}_${uriMatch[2]}`
-  return `/processed/entities/ancient_book/iiif/manifests/ancientBook/${uriMatch[2]}/${carrierId}/manifest.json`
+  return `/processed/iiif/manifests/ancientBook/${uriMatch[2]}/${carrierId}/manifest.json`
 }
 
 function deriveIiifCanvasId(row) {
@@ -155,7 +155,7 @@ function deriveIiifCanvasId(row) {
   if (rawCanvasId) return rawCanvasId
 
   const rawText = String(row?._rawUri || row?.uri || '').trim()
-  const uriMatch = rawText.match(/\/processed\/json-ld-vector\/iiif\/manifests\/(\d+)_(\d+)_(\d+)_\d+\.json$/i)
+  const uriMatch = rawText.match(/\/processed\/vector\/iiif\/manifest\/(\d+)_(\d+)_(\d+)_\d+\.json$/i)
   if (!uriMatch) return ''
   const carrierId = `${uriMatch[1]}_${uriMatch[2]}`
   return `http://localhost:8083/iiif/3/canvas/ancientBook/${uriMatch[2]}/${carrierId}/p${uriMatch[3]}`
@@ -308,14 +308,14 @@ export function resolvePrimaryEntityUri(scope, rawUri, doc) {
   if (!uri) return ''
 
   // 古籍：向量 URI → 从文档元数据提取主实体 URI
-  if (scope === 'ancient_book' && uri.includes('/json-ld-vector/')) {
+  if (scope === 'ancient_book' && uri.includes('/processed/vector/')) {
     const candidateUris = [
       doc?.id,
       doc?.entity_iri,
     ]
     for (const candidate of candidateUris) {
       const text = String(candidate || '').trim()
-      if (!text || text.includes('/json-ld-vector/')) continue
+      if (!text || text.includes('/processed/vector/')) continue
       // 支持 http:// 开头的 URL，提取 pathname
       let path = text
       try {
@@ -327,7 +327,7 @@ export function resolvePrimaryEntityUri(scope, rawUri, doc) {
     }
   }
 
-  if (scope === 'poem' && uri.includes('/poem/txt/')) {
+  if (scope === 'poem' && uri.includes('/poem/text/')) {
     const memberId = doc?.member_of?.id || doc?.member_of?.[0]?.id
     if (memberId) {
       const stem = String(memberId).split('/').pop()?.replace(/\.json$/i, '') || ''
@@ -715,7 +715,7 @@ export async function prepareFusionEvidence(params) {
     merged.map(async (row) => {
       const rawUri = String(row?.uri || '').trim()
       let doc = rawUri ? await mlGetDoc(rawUri) : null
-      if (!doc && rawUri.startsWith('/processed/json-ld-vector/')) {
+      if (!doc && rawUri.startsWith('/processed/vector/')) {
         doc = await mlGetDoc(rawUri, { allowWhenJsonLdOnly: true })
       }
       const uri = resolvePrimaryEntityUri(row?._scope || '', rawUri, doc || {})

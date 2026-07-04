@@ -52,12 +52,12 @@ function unmount(root: Root, container: HTMLDivElement): void {
 
 function buildViewModel(overrides: Partial<DetailPageViewModel> = {}): DetailPageViewModel {
   return {
-    uri: '/processed/json-ld/ancient_book/ancient_book_object/volume/17270_303_1.json',
+    uri: '/processed/json-ld/ancient-book/object/volume/17270_303_1.json',
     query: '',
     enrichedLinks: [],
     pageState: 'success',
     data: {
-      uri: '/processed/json-ld/ancient_book/ancient_book_object/volume/17270_303_1.json',
+      uri: '/processed/json-ld/ancient-book/object/volume/17270_303_1.json',
       title: '杜诗捃·卷一',
       summary: '',
       internalLinks: [],

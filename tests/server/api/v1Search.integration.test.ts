@@ -36,10 +36,10 @@ function createMarklogicFetchMock(options?: { collectionOnly?: boolean }) {
     { uri: '/processed/json-ld/concept/rhyme/11.json', score: 0.61, confidence: 0.08 },
   ]
   const legacyConceptCollectionRows = [
-    { uri: '/heluo/ancient-book-concepts/11', score: 0.63, confidence: 0.09 },
+    { uri: '/heluo/concepts/11', score: 0.63, confidence: 0.09 },
   ]
   const ancientRows = [
-    { uri: '/processed/json-ld/ancient_book/ancient_book_set/book_entry/18804_1523.json', score: 0.66, confidence: 0.04 },
+    { uri: '/processed/json-ld/ancient-book/set/book-entry/18804_1523.json', score: 0.66, confidence: 0.04 },
   ]
 
   const docs = {
@@ -50,8 +50,8 @@ function createMarklogicFetchMock(options?: { collectionOnly?: boolean }) {
     '/processed/json-ld/poem/set/poem_002.json': { title: '登高', description: '无边落木萧萧下' },
     '/processed/json-ld/book/978-7-5470-5738-4.json': { title: '杜甫诗集', description: '图书条目' },
     '/processed/json-ld/concept/rhyme/11.json': { title: '平水韵', description: '概念条目' },
-    '/heluo/ancient-book-concepts/11': { title: '四部分类法', description: '古籍编目概念条目' },
-    '/processed/json-ld/ancient_book/ancient_book_set/book_entry/18804_1523.json': {
+    '/heluo/concepts/11': { title: '四部分类法', description: '古籍编目概念条目' },
+    '/processed/json-ld/ancient-book/set/book-entry/18804_1523.json': {
       title: '白孔六帖',
       description: '古籍合集条目',
     },
@@ -74,11 +74,11 @@ function createMarklogicFetchMock(options?: { collectionOnly?: boolean }) {
       if (directory === '/processed/json-ld/concept/') {
         return jsonResponse({ total: collectionOnly ? 0 : 1, results: collectionOnly ? [] : conceptCollectionRows })
       }
-      if (directory === '/processed/json-ld/ancient_book/ancient_book_set/book_entry/') {
+      if (directory === '/processed/json-ld/ancient-book/set/book-entry/') {
         return jsonResponse({ total: collectionOnly ? 0 : 1, results: collectionOnly ? [] : ancientRows })
       }
       const collection = parsed.searchParams.get('collection')
-      if (collectionOnly && collection === '/heluo/ancient-book-concepts') {
+      if (collectionOnly && collection === '/heluo/concepts') {
         return jsonResponse({ total: 1, results: legacyConceptCollectionRows })
       }
       return jsonResponse({ total: 0, results: [] })
@@ -95,15 +95,15 @@ function createMarklogicFetchMock(options?: { collectionOnly?: boolean }) {
 
 function createAncientBookScopePollutedMock() {
   const rows = [
-    { uri: '/processed/json-ld/ancient_book/ancient_book_set/book_entry/17270_303.json', score: 0.8, confidence: 0.1 },
-    { uri: '/processed/json-ld/ancient_book/ancient_book_set/book_entry/17270_304.json', score: 0.79, confidence: 0.1 },
-    { uri: '/processed/json-ld/ancient_book/ancient_book_set/department/jibu.json', score: 0.4, confidence: 0.1 },
-    { uri: '/processed/json-ld/ancient_book/ancient_book_set/root/siku.json', score: 0.39, confidence: 0.1 },
+    { uri: '/processed/json-ld/ancient-book/set/book-entry/17270_303.json', score: 0.8, confidence: 0.1 },
+    { uri: '/processed/json-ld/ancient-book/set/book-entry/17270_304.json', score: 0.79, confidence: 0.1 },
+    { uri: '/processed/json-ld/ancient-book/set/department/jibu.json', score: 0.4, confidence: 0.1 },
+    { uri: '/processed/json-ld/ancient-book/set/root/siku.json', score: 0.39, confidence: 0.1 },
   ]
   const iiifRows = [{ uri: '/processed/iiif/collections/17270/collection.json', score: 0.95, confidence: 0.03 }]
   const docs = {
-    '/processed/json-ld/ancient_book/ancient_book_set/book_entry/17270_303.json': { title: '杜诗捃' },
-    '/processed/json-ld/ancient_book/ancient_book_set/book_entry/17270_304.json': { title: '杜诗详注' },
+    '/processed/json-ld/ancient-book/set/book-entry/17270_303.json': { title: '杜诗捃' },
+    '/processed/json-ld/ancient-book/set/book-entry/17270_304.json': { title: '杜诗详注' },
     '/processed/iiif/collections/17270/collection.json': { label: { zh: ['杜甫 (Person 17270)'] } },
   }
 
@@ -111,7 +111,7 @@ function createAncientBookScopePollutedMock() {
     const parsed = new URL(String(url))
     if (parsed.pathname === '/v1/search') {
       const directory = parsed.searchParams.get('directory')
-      if (directory === '/processed/json-ld/ancient_book/ancient_book_set/book_entry/') {
+      if (directory === '/processed/json-ld/ancient-book/set/book-entry/') {
         return jsonResponse({ total: 4, results: rows })
       }
       return jsonResponse({ total: 0, results: [] })
@@ -127,12 +127,12 @@ function createAncientBookScopePollutedMock() {
 }
 
 function createPrimaryEntityUriNormalizationMock() {
-  const personRows = [{ uri: '/processed/json-ld-vector/persons/17270.json', score: 0.62, confidence: 0.06 }]
+  const personRows = [{ uri: '/processed/vector/person/17270.json', score: 0.62, confidence: 0.06 }]
   const poemRows = [{ uri: '/processed/json-ld/poem/set/poem_001.json', score: 0.58, confidence: 0.05 }]
-  const bookRows = [{ uri: '/processed/json-ld-vector/books/978-7-5470-5738-4.json', score: 0.57, confidence: 0.05 }]
-  const placeRows = [{ uri: '/processed/json-ld-vector/places/CN510922.json', score: 0.56, confidence: 0.05 }]
-  const conceptRows = [{ uri: '/processed/json-ld-vector/concepts/11.json', score: 0.55, confidence: 0.04 }]
-  const ancientRows = [{ uri: '/processed/json-ld/ancient_book/ancient_book_set/book_entry/17270_303.json', score: 0.54, confidence: 0.04 }]
+  const bookRows = [{ uri: '/processed/vector/book/978-7-5470-5738-4.json', score: 0.57, confidence: 0.05 }]
+  const placeRows = [{ uri: '/processed/vector/place/CN510922.json', score: 0.56, confidence: 0.05 }]
+  const conceptRows = [{ uri: '/processed/vector/concepts/11.json', score: 0.55, confidence: 0.04 }]
+  const ancientRows = [{ uri: '/processed/json-ld/ancient-book/set/book-entry/17270_303.json', score: 0.54, confidence: 0.04 }]
 
   const docs = {
     '/processed/json-ld/person/17270.json': { title: '杜甫' },
@@ -140,7 +140,7 @@ function createPrimaryEntityUriNormalizationMock() {
     '/processed/json-ld/book/978-7-5470-5738-4.json': { title: '杜甫诗集' },
     '/processed/json-ld/place/CN510922.json': { title: '射洪' },
     '/processed/json-ld/concept/11.json': { title: '平水韵' },
-    '/processed/json-ld/ancient_book/ancient_book_set/book_entry/17270_303.json': { title: '白孔六帖' },
+    '/processed/json-ld/ancient-book/set/book-entry/17270_303.json': { title: '白孔六帖' },
   }
 
   return async (url) => {
@@ -162,7 +162,7 @@ function createPrimaryEntityUriNormalizationMock() {
       if (directory === '/processed/json-ld/concept/') {
         return jsonResponse({ total: 1, results: conceptRows })
       }
-      if (directory === '/processed/json-ld/ancient_book/ancient_book_set/book_entry/') {
+      if (directory === '/processed/json-ld/ancient-book/set/book-entry/') {
         return jsonResponse({ total: 1, results: ancientRows })
       }
       return jsonResponse({ total: 0, results: [] })
@@ -178,7 +178,7 @@ function createPrimaryEntityUriNormalizationMock() {
 }
 
 function createUriLikeTitleFallbackMock() {
-  const personRows = [{ uri: '/processed/json-ld-vector/persons/17170_chunk_01.json', score: 0.62, confidence: 0.06 }]
+  const personRows = [{ uri: '/processed/vector/person/17170_chunk_01.json', score: 0.62, confidence: 0.06 }]
   const docs = {
     '/processed/json-ld/person/17170.json': {
       title: '/person/17170',
@@ -281,7 +281,7 @@ describe('GET /api/v1/search 集成测试', () => {
 
     const hasVectorDirectoryRequest = marklogicFetchSpy.mock.calls
       .map(([url]) => String(url || ''))
-      .some((url) => url.includes('/processed/json-ld-vector/'))
+      .some((url) => url.includes('/processed/vector/'))
     expect(hasVectorDirectoryRequest).toBe(false)
   })
 
@@ -292,7 +292,7 @@ describe('GET /api/v1/search 集成测试', () => {
     expect(response.status).toBe(200)
     expect(result.success).toBe(true)
     expect(result.data.items.length).toBe(1)
-    expect(result.data.items[0].uri).toContain('/processed/json-ld/ancient_book/ancient_book_set/book_entry/')
+    expect(result.data.items[0].uri).toContain('/processed/json-ld/ancient-book/set/book-entry/')
   })
 
   it('person 检索在 json-ld only 模式下目录无数据时返回空结果', async () => {
@@ -343,7 +343,7 @@ describe('GET /api/v1/search 集成测试', () => {
     expect(result.data.items.length).toBe(0)
   })
 
-  it('concept 检索在 json-ld only 模式下目录无数据时应回退到旧概念集合', async () => {
+  it('concept 检索在 json-ld only 模式下目录无数据时返回空结果', async () => {
     setMarklogicFetchForTest(createMarklogicFetchMock({ collectionOnly: true }))
 
     const response = await fetch(`${baseUrl}/api/v1/search?q=韵&type=concept&page=1&pageSize=5`)
@@ -351,10 +351,8 @@ describe('GET /api/v1/search 集成测试', () => {
 
     expect(response.status).toBe(200)
     expect(result.success).toBe(true)
-    expect(result.data.total).toBe(1)
-    expect(result.data.items.length).toBe(1)
-    expect(result.data.items[0].uri).toBe('/heluo/ancient-book-concepts/11')
-    expect(result.data.items[0].title).toBe('四部分类法')
+    expect(result.data.total).toBe(0)
+    expect(result.data.items.length).toBe(0)
   })
 
   it('ancient_book 检索应排除 iiif collection 与非 book_entry 文档', async () => {
@@ -367,7 +365,7 @@ describe('GET /api/v1/search 集成测试', () => {
     expect(result.success).toBe(true)
     expect(result.data.total).toBe(4)
     expect(result.data.items.length).toBe(2)
-    expect(result.data.items.every((item) => String(item.uri).includes('/book_entry/'))).toBe(true)
+    expect(result.data.items.every((item) => String(item.uri).includes('/book-entry/'))).toBe(true)
   })
 
   it('检索命中分片文档时应回写主实体 URI（先人物，再覆盖其他实体）', async () => {
@@ -384,14 +382,14 @@ describe('GET /api/v1/search 集成测试', () => {
 
     // 1) 先验证人物主实体归一化
     expect(String(byType.person)).toContain('/processed/json-ld/person/17270')
-    expect(String(byType.person)).not.toContain('/json-ld-vector/')
+    expect(String(byType.person)).not.toContain('/processed/vector/')
 
     // 2) 再验证其他实体也已归一到主实体路径
     expect(String(byType.poem)).toContain('/processed/json-ld/poem/set/')
     expect(String(byType.book)).toContain('/processed/json-ld/book/')
     expect(String(byType.place)).toContain('/processed/json-ld/place/CN510922')
     expect(String(byType.concept)).toContain('/processed/json-ld/concept/')
-    expect(String(byType.ancient_book)).toContain('/book_entry/')
+    expect(String(byType.ancient_book)).toContain('/book-entry/')
 
     // 3) 标题应使用实体标题，而不是分片标题
     expect(String(titleByType.person)).toBe('杜甫')

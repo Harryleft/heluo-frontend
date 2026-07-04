@@ -35,7 +35,7 @@ function buildPoemVectorDoc(poemId: number): Record<string, unknown> {
   const rank = Math.max(1, poemId)
   const primary = Math.max(0.31, 0.95 - rank * 0.08)
   return {
-    scope: 'poems-set',
+    scope: 'poem/set',
     entity_iri: `http://localhost:8000/poems/${poemId}`,
     text_norm: `诗文片段-${poemId}`,
     embedding: [primary, 0.1, 0.1],
@@ -50,7 +50,7 @@ function createMarklogicFetchMockWithCounters() {
   }
 
   const vectorCandidateResults = Array.from({ length: 6 }, (_, index) => ({
-    uri: `/processed/json-ld-vector/poems-set/poem_${index + 1}.json`,
+    uri: `/processed/vector/poem/set/poem_${index + 1}.json`,
     score: 1,
     confidence: 0,
   }))
@@ -62,10 +62,10 @@ function createMarklogicFetchMockWithCounters() {
     // 候选检索（POST /v1/search）
     if (pathname === '/v1/search' && String(init.method || 'GET').toUpperCase() === 'POST') {
       const bodyText = String(init.body || '')
-      if (bodyText.includes('/processed/json-ld-vector/poems-set/')) {
+      if (bodyText.includes('/processed/vector/poem/set/')) {
         return createJsonResponse({ total: 6, results: vectorCandidateResults })
       }
-      if (bodyText.includes('/processed/json-ld-vector/poems-txt/')) {
+      if (bodyText.includes('/processed/vector/poem/text/')) {
         counters.fullTextSearchCount += 1
         return createJsonResponse({ total: 0, results: [] })
       }
@@ -81,13 +81,13 @@ function createMarklogicFetchMockWithCounters() {
     if (pathname === '/v1/documents') {
       const uri = decodeURIComponent(parseUriParam(url))
 
-      if (uri.startsWith('/processed/json-ld-vector/poems-set/')) {
+      if (uri.startsWith('/processed/vector/poem/set/')) {
         counters.vectorDocFetchCount += 1
         const poemId = Number(uri.match(/poem_(\d+)\.json/)?.[1] || 0)
         return createJsonResponse(buildPoemVectorDoc(poemId))
       }
 
-      if (uri.startsWith('/processed/entities/poem/set/poem_')) {
+      if (uri.startsWith('/processed/json-ld/poem/set/poem_')) {
         counters.fullInfoFetchCount += 1
         const poemId = Number(uri.match(/poem_(\d+)\.json/)?.[1] || 0)
         return createJsonResponse({
@@ -111,7 +111,7 @@ describe('vectorSearchService speedup regression', () => {
   it('poem 向量检索应只对前置 TopN 执行详情补查', async () => {
     const { fetchMock, counters } = createMarklogicFetchMockWithCounters()
     const result = await executeVectorSearch(
-      '/processed/json-ld-vector/poems-set/',
+      '/processed/vector/poem/set/',
       [1, 0, 0],
       {
         topK: 2,
@@ -131,7 +131,7 @@ describe('vectorSearchService speedup regression', () => {
     const { fetchMock, counters } = createMarklogicFetchMockWithCounters()
 
     await executeVectorSearch(
-      '/processed/json-ld-vector/poems-set/',
+      '/processed/vector/poem/set/',
       [1, 0, 0],
       { topK: 2, queryText: '杜甫' },
       fetchMock as unknown as (...args: unknown[]) => Promise<unknown>,
@@ -140,7 +140,7 @@ describe('vectorSearchService speedup regression', () => {
     const firstReadCount = counters.vectorDocFetchCount
 
     await executeVectorSearch(
-      '/processed/json-ld-vector/poems-set/',
+      '/processed/vector/poem/set/',
       [1, 0, 0],
       { topK: 2, queryText: '杜甫' },
       fetchMock as unknown as (...args: unknown[]) => Promise<unknown>,

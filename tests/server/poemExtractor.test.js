@@ -66,7 +66,7 @@ describe('poemExtractor', () => {
   })
 
   it('应从 created_by 提取诗文作者', () => {
-    const detail = extractPoemDetail('/data/processed/json-ld/poem/set/poem_30546.json', {
+    const detail = extractPoemDetail('/processed/json-ld/poem/set/poem_30546.json', {
       _label: '入宅三首',
       created_by: {
         type: 'Creation',
@@ -130,22 +130,22 @@ describe('poemExtractor', () => {
 
   it('data 前缀 set 详情应合并 txt 片段并补地点坐标', async () => {
     const textDocs = {
-      '/data/processed/json-ld/poem/txt/poem_30546_02.json': {
+      '/processed/json-ld/poem/text/poem_30546_02.json': {
         text_norm_zh: '云通白帝城，',
         member_of: [{ id: 'http://localhost:8003/set/poems/30546' }],
       },
-      '/data/processed/json-ld/poem/txt/poem_30546_01.json': {
+      '/processed/json-ld/poem/text/poem_30546_01.json': {
         text_norm_zh: '宋玉归州宅，',
         member_of: [{ id: 'http://localhost:8003/set/poems/30546' }],
       },
-      '/data/processed/json-ld/place/CN500236.json': {
+      '/processed/json-ld/place/CN500236.json': {
         _label: '奉节县',
         defined_by: 'POINT(109.470533 31.024561)',
       },
     }
 
     const detail = await buildPoemSetDetail(
-      '/data/processed/json-ld/poem/set/poem_30546.json',
+      '/processed/json-ld/poem/set/poem_30546.json',
       {
         id: 'http://localhost:8003/poem/30546',
         _label: '入宅三首',
@@ -158,8 +158,8 @@ describe('poemExtractor', () => {
         mlGetDoc: async (uri) => textDocs[uri] || null,
         searchWithFallback: async () => ({
           results: [
-            { uri: '/data/processed/json-ld/poem/txt/poem_30546_02.json' },
-            { uri: '/data/processed/json-ld/poem/txt/poem_30546_01.json' },
+            { uri: '/processed/json-ld/poem/text/poem_30546_02.json' },
+            { uri: '/processed/json-ld/poem/text/poem_30546_01.json' },
           ],
           total: 2,
         }),
@@ -167,7 +167,7 @@ describe('poemExtractor', () => {
     )
 
     expect(detail?.fullText).toBe('宋玉归州宅，\n云通白帝城，')
-    expect(detail?.textUri).toBe('/data/processed/json-ld/poem/txt/poem_30546_01.json')
+    expect(detail?.textUri).toBe('/processed/json-ld/poem/text/poem_30546_01.json')
     expect(detail?.relatedPlaces?.[0]).toMatchObject({
       label: '奉节县',
       lat: 31.024561,

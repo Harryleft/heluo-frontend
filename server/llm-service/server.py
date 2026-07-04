@@ -2,7 +2,7 @@
 本地 LLM OpenAI 兼容服务
 
 用途：
-1. 加载本地荀子模型（默认 D:\\hf_models\\Xunzi-Qwen1.5-4B）
+1. 加载本地荀子模型（默认 ~/.cache/heluo/models/Xunzi-Qwen1.5-4B）
 2. 提供 /v1/chat/completions（支持 stream=true/false）
 3. 兼容前端与后端当前的 OpenAI Chat Completions 调用方式
 """
@@ -14,6 +14,7 @@ import json
 import os
 import time
 import uuid
+from pathlib import Path
 from typing import Any, Dict, List
 
 import torch
@@ -23,7 +24,8 @@ from pydantic import BaseModel, Field
 from transformers import AutoModelForCausalLM, AutoTokenizer
 
 
-MODEL_PATH = os.getenv("LLM_MODEL_PATH", r"D:\hf_models\Xunzi-Qwen1.5-4B")
+DEFAULT_MODELS_DIR = Path(os.getenv("HELUO_MODELS_DIR", Path.home() / ".cache" / "heluo" / "models"))
+MODEL_PATH = os.getenv("LLM_MODEL_PATH", str(DEFAULT_MODELS_DIR / "Xunzi-Qwen1.5-4B"))
 MODEL_NAME = os.getenv("LLM_MODEL_NAME", "Xunzi-Qwen1.5-4B")
 HOST = os.getenv("LLM_HOST", "127.0.0.1")
 PORT = int(os.getenv("LLM_PORT", "18000"))

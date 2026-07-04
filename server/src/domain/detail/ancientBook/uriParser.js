@@ -20,8 +20,8 @@ export function isAncientBookEntryUri(uri) {
   const value = String(uri || '')
   if (!value) return false
   if (value.startsWith('/processed/iiif/collections/') || value.startsWith('/heluo/iiif/collections/')) return false
-  if (value.includes('/ancient_book_set/department/') || value.includes('/ancient_book_set/root/')) return false
-  return value.startsWith('/processed/json-ld/ancient_book/ancient_book_set/book_entry/')
+  if (value.includes('/ancient-book/set/department/') || value.includes('/ancient-book/set/root/')) return false
+  return value.startsWith('/processed/json-ld/ancient-book/set/book-entry/')
 }
 
 /**
@@ -45,12 +45,12 @@ export function isIiifManifestUri(uri) {
  */
 export function classifyAncientBookHierarchyLevel(uri = '', docId = '') {
   const normalizedUri = String(uri || '')
-  if (normalizedUri.includes('/ancient_book_set/root/')) return 'root'
-  if (normalizedUri.includes('/ancient_book_set/department/')) return 'department'
-  if (normalizedUri.includes('/ancient_book_set/book_entry/')) return 'entry'
+  if (normalizedUri.includes('/ancient-book/set/root/')) return 'root'
+  if (normalizedUri.includes('/ancient-book/set/department/')) return 'department'
+  if (normalizedUri.includes('/ancient-book/set/book-entry/')) return 'entry'
 
   const normalizedDocId = String(docId || '')
-  const match = normalizedDocId.match(/\/set\/ancient_book\/([^/]+)(?:\/([^/]+))?(?:\/([^/]+))?$/i)
+  const match = normalizedDocId.match(/\/set\/ancient-book\/([^/]+)(?:\/([^/]+))?(?:\/([^/]+))?$/i)
   if (!match) return 'unknown'
   if (match[1] && !match[2]) return 'root'
   if (match[1] && match[2] && !match[3]) return 'department'
@@ -70,7 +70,7 @@ export function classifyAncientBookHierarchyLevel(uri = '', docId = '') {
  */
 export function extractFirstNumericSegmentAfterAncientBook(value) {
   const text = String(value || '')
-  const marker = '/ancient_book/'
+  const marker = '/ancient-book/'
   const markerIndex = text.indexOf(marker)
   if (markerIndex < 0) return ''
   const tail = text.slice(markerIndex + marker.length)
@@ -90,12 +90,12 @@ export function extractFirstNumericSegmentAfterAncientBook(value) {
  */
 export function extractAncientBookBookId(uri, doc) {
   const normalizedUri = String(uri || '')
-  const entryMatch = normalizedUri.match(/\/ancient_book_set\/book_entry\/(\d+)_(\d+)(?:\.json)?$/i)
+  const entryMatch = normalizedUri.match(/\/ancient-book\/set\/book-entry\/(\d+)_(\d+)(?:\.json)?$/i)
   if (entryMatch?.[2]) {
     return entryMatch[2]
   }
 
-  const uriMatch = normalizedUri.match(/\/ancient_book_(?:txt|object)\/(?:volume|book)\/(\d+)_(\d+)(?:_(\d+))?\.json$/i)
+  const uriMatch = normalizedUri.match(/\/ancient-book\/(?:text|object)\/(?:volume|book)\/(\d+)_(\d+)(?:_(\d+))?\.json$/i)
   if (uriMatch?.[2]) {
     return uriMatch[2]
   }
@@ -126,9 +126,9 @@ export function extractAncientBookBookId(uri, doc) {
  */
 export function extractAncientBookVolumeMeta(uri) {
   const normalizedUri = String(uri || '')
-  const match = normalizedUri.match(/\/ancient_book_(txt|object)\/volume\/([^/]+?)(?:\.json)?$/i)
+  const match = normalizedUri.match(/\/ancient-book\/(text|object)\/volume\/([^/]+?)(?:\.json)?$/i)
   if (match) {
-    const source = match[1] === 'txt' ? 'txt' : 'object'
+    const source = match[1]
     const rawId = match[2]
     const parts = rawId.split('_').filter(Boolean)
     if (parts.length >= 3) {
@@ -139,18 +139,6 @@ export function extractAncientBookVolumeMeta(uri) {
         bookId: parts[1],
         volumeNo: parts[2],
       }
-    }
-  }
-
-  // 兼容 /ancient_book/{bookId}/{volumeNo} 形式
-  const legacyMatch = normalizedUri.match(/\/ancient_book\/(\d+)\/(\d+)$/i)
-  if (legacyMatch) {
-    return {
-      source: 'txt',
-      rawId: `${legacyMatch[1]}_${legacyMatch[2]}`,
-      personId: '',
-      bookId: legacyMatch[1],
-      volumeNo: legacyMatch[2],
     }
   }
 
@@ -165,7 +153,7 @@ export function extractAncientBookVolumeMeta(uri) {
  */
 export function extractAncientBookTxtBookMeta(uri) {
   const normalizedUri = String(uri || '')
-  const match = normalizedUri.match(/\/ancient_book_txt\/book\/([^/]+)\.json$/i)
+  const match = normalizedUri.match(/\/ancient-book\/text\/book\/([^/]+)\.json$/i)
   if (!match) return null
   const rawId = match[1]
   const parts = rawId.split('_').filter(Boolean)
@@ -186,16 +174,16 @@ export function extractAncientBookTxtBookMeta(uri) {
 export function resolveAncientBookSetUriByDocId(docId) {
   const normalizedDocId = String(docId || '').trim()
   if (!normalizedDocId) return ''
-  const match = normalizedDocId.match(/\/set\/ancient_book\/([^/]+)(?:\/([^/]+))?(?:\/([^/]+))?$/i)
+  const match = normalizedDocId.match(/\/set\/ancient-book\/([^/]+)(?:\/([^/]+))?(?:\/([^/]+))?$/i)
   if (!match) return ''
   const rootId = String(match[1] || '').trim()
   const departmentId = String(match[2] || '').trim()
   const entryId = String(match[3] || '').trim()
   if (rootId && !departmentId) {
-    return `/processed/json-ld/ancient_book/ancient_book_set/root/${rootId}.json`
+    return `/processed/json-ld/ancient-book/set/root/${rootId}.json`
   }
   if (rootId && departmentId && !entryId) {
-    return `/processed/json-ld/ancient_book/ancient_book_set/department/${departmentId}.json`
+    return `/processed/json-ld/ancient-book/set/department/${departmentId}.json`
   }
   return ''
 }

@@ -204,8 +204,8 @@ async function collectAncientBookManifestCandidates(doc, volumeMeta, dependencie
   )
 
   const candidateDirectories = [
-    '/processed/json-ld/ancient_book/ancient_book_txt/book/',
-    '/processed/entities/ancient_book/ancient_book_txt/book/',
+    '/processed/json-ld/ancient-book/text/book/',
+    '/processed/json-ld/ancient-book/text/book/',
   ]
 
   for (const directory of candidateDirectories) {
@@ -297,7 +297,7 @@ export async function resolveAncientBookVolumeText(uri, doc, volumeMeta, volumeL
 
   for (const query of candidateQueries) {
     const txtVolumeSearch = await mlSearchByDirectory(
-      '/processed/entities/ancient_book/ancient_book_txt/volume/',
+      '/processed/json-ld/ancient-book/text/volume/',
       query,
       20,
     )

@@ -47,7 +47,7 @@ function jsonResponse(payload, status = 200) {
 function createFusionMarklogicFetchMock() {
   const personRows = [{ uri: '/processed/json-ld/person/17270.json', score: 0.42, confidence: 0.08 }]
   const poemRows = [{ uri: '/processed/json-ld/poem/set/poem_31190.json', score: 0.44, confidence: 0.09 }]
-  const ancientRows = [{ uri: '/processed/json-ld/ancient_book/ancient_book_set/book_entry/17270_303.json', score: 0.36, confidence: 0.05 }]
+  const ancientRows = [{ uri: '/processed/json-ld/ancient-book/set/book-entry/17270_303.json', score: 0.36, confidence: 0.05 }]
 
   const docs = {
     '/processed/json-ld/person/17270.json': {
@@ -61,7 +61,7 @@ function createFusionMarklogicFetchMock() {
       author_name: '杜甫',
       dynasty: '唐',
     },
-    '/processed/json-ld/ancient_book/ancient_book_set/book_entry/17270_303.json': {
+    '/processed/json-ld/ancient-book/set/book-entry/17270_303.json': {
       title: '杜诗编年',
       description: '相关古籍条目',
       access_point: [{ id: 'http://localhost:8083/iiif/manifests/303/manifest.json' }],
@@ -93,7 +93,7 @@ function createFusionMarklogicFetchMock() {
         }
         return jsonResponse({ total: 0, results: [] })
       }
-      if (directory === '/processed/json-ld/ancient_book/ancient_book_set/book_entry/') {
+      if (directory === '/processed/json-ld/ancient-book/set/book-entry/') {
         return jsonResponse({ total: 1, results: ancientRows })
       }
       return jsonResponse({ total: 0, results: [] })
@@ -115,8 +115,8 @@ function createFusionMarklogicFetchMock() {
 function createFusionMarklogicFetchMockForIiifPrimaryScope() {
   const personRows = [{ uri: '/processed/json-ld/person/17270.json', score: 0.42, confidence: 0.08 }]
   const poemRows = [{ uri: '/processed/json-ld/poem/set/poem_31190.json', score: 0.44, confidence: 0.09 }]
-  const ancientRows = [{ uri: '/processed/json-ld/ancient_book/ancient_book_set/book_entry/17270_303.json', score: 0.36, confidence: 0.05 }]
-  const iiifRows = [{ uri: '/processed/json-ld-vector/iiif/manifests/17270_303_1_1.json', score: 0.48, confidence: 0.09 }]
+  const ancientRows = [{ uri: '/processed/json-ld/ancient-book/set/book-entry/17270_303.json', score: 0.36, confidence: 0.05 }]
+  const iiifRows = [{ uri: '/processed/vector/iiif/manifest/17270_303_1_1.json', score: 0.48, confidence: 0.09 }]
 
   const docs = {
     '/processed/json-ld/person/17270.json': {
@@ -127,21 +127,21 @@ function createFusionMarklogicFetchMockForIiifPrimaryScope() {
       title: '登高',
       description: '风急天高猿啸哀，渚清沙白鸟飞回',
     },
-    '/processed/json-ld/ancient_book/ancient_book_set/book_entry/17270_303.json': {
+    '/processed/json-ld/ancient-book/set/book-entry/17270_303.json': {
       title: '杜诗编年',
       description: '相关古籍条目',
     },
-    '/processed/json-ld-vector/iiif/manifests/17270_303_1_1.json': {
+    '/processed/vector/iiif/manifest/17270_303_1_1.json': {
       title: '杜诗编年 卷一',
       description: '卷一相关影像片段',
       text_norm_zh: '杜诗编年 卷一相关影像片段',
       evidence: {
         manifest_id: '17270_303',
         canvas_id: 'http://localhost:8083/iiif/3/canvas/ancientBook/303/17270_303/p9',
-        uri: '/processed/entities/ancient_book/iiif/manifests/ancientBook/303/17270_303/manifest.json',
+        uri: '/processed/iiif/manifests/ancientBook/303/17270_303/manifest.json',
       },
     },
-    '/processed/entities/ancient_book/iiif/manifests/ancientBook/303/17270_303/manifest.json': {
+    '/processed/iiif/manifests/ancientBook/303/17270_303/manifest.json': {
       id: 'http://localhost:8083/iiif/manifests/303/manifest.json',
       items: [
         {
@@ -181,10 +181,10 @@ function createFusionMarklogicFetchMockForIiifPrimaryScope() {
       if (directory === '/processed/json-ld/poem/set/') {
         return jsonResponse({ total: 1, results: poemRows })
       }
-      if (directory === '/processed/json-ld/ancient_book/ancient_book_set/book_entry/') {
+      if (directory === '/processed/json-ld/ancient-book/set/book-entry/') {
         return jsonResponse({ total: 1, results: ancientRows })
       }
-      if (directory === '/processed/json-ld-vector/iiif/') {
+      if (directory === '/processed/vector/iiif/') {
         return jsonResponse({ total: 1, results: iiifRows })
       }
 
@@ -200,7 +200,7 @@ function createFusionMarklogicFetchMockForIiifPrimaryScope() {
       return jsonResponse(iiifManifest)
     }
 
-    if (parsed.pathname === '/processed/entities/ancient_book/iiif/manifests/ancientBook/303/17270_303/manifest.json') {
+    if (parsed.pathname === '/processed/iiif/manifests/ancientBook/303/17270_303/manifest.json') {
       return jsonResponse(iiifManifest)
     }
 
@@ -210,20 +210,20 @@ function createFusionMarklogicFetchMockForIiifPrimaryScope() {
 
 function createFusionMarklogicFetchMockForIiifCanonicalManifest() {
   const iiifRows = [
-    { uri: '/processed/json-ld-vector/iiif/manifests/17270_304_1_1.json', score: 0.51, confidence: 0.08 },
-    { uri: '/processed/json-ld-vector/iiif/manifests/17270_304_2_1.json', score: 0.49, confidence: 0.07 },
+    { uri: '/processed/vector/iiif/manifest/17270_304_1_1.json', score: 0.51, confidence: 0.08 },
+    { uri: '/processed/vector/iiif/manifest/17270_304_2_1.json', score: 0.49, confidence: 0.07 },
   ]
 
   const docs = {
-    '/processed/json-ld-vector/iiif/manifests/17270_304_1_1.json': {
+    '/processed/vector/iiif/manifest/17270_304_1_1.json': {
       title: '304 卷一',
       text_norm_zh: '304 古籍卷一注释文本',
       evidence: {
         canvas_id: 'http://localhost:8083/iiif/3/canvas/ancientBook/304/17270_304/p15',
-        manifest: '/processed/json-ld-vector/iiif/manifests/17270_304_1_1.json',
+        manifest: '/processed/vector/iiif/manifest/17270_304_1_1.json',
       },
     },
-    '/processed/json-ld-vector/iiif/manifests/17270_304_2_1.json': {
+    '/processed/vector/iiif/manifest/17270_304_2_1.json': {
       title: '304 卷二',
       text_norm_zh: '304 古籍卷二注释文本',
       evidence: {
@@ -231,7 +231,7 @@ function createFusionMarklogicFetchMockForIiifCanonicalManifest() {
         uri: '/iiif/manifests/17270_304?page=550',
       },
     },
-    '/processed/entities/ancient_book/iiif/manifests/ancientBook/304/17270_304/manifest.json': {
+    '/processed/iiif/manifests/ancientBook/304/17270_304/manifest.json': {
       id: 'http://localhost:8083/iiif/manifests/304/manifest.json',
       items: [
         {
@@ -279,7 +279,7 @@ function createFusionMarklogicFetchMockForIiifCanonicalManifest() {
 
     if (parsed.pathname === '/v1/search') {
       const directory = parsed.searchParams.get('directory')
-      if (directory === '/processed/json-ld-vector/iiif/') {
+      if (directory === '/processed/vector/iiif/') {
         return jsonResponse({ total: iiifRows.length, results: iiifRows })
       }
       return jsonResponse({ total: 0, results: [] })
@@ -307,9 +307,9 @@ function createFusionMarklogicFetchMockForIiifCanonicalManifest() {
 }
 
 function createFusionMarklogicFetchMockForIiifManifestLiteral() {
-  const iiifRows = [{ uri: '/processed/json-ld-vector/iiif/manifests/literal_manifest.json', score: 0.45, confidence: 0.08 }]
+  const iiifRows = [{ uri: '/processed/vector/iiif/manifest/literal_manifest.json', score: 0.45, confidence: 0.08 }]
   const docs = {
-    '/processed/json-ld-vector/iiif/manifests/literal_manifest.json': {
+    '/processed/vector/iiif/manifest/literal_manifest.json': {
       title: 'literal manifest',
       text_norm_zh: 'manifest 字面量路径测试',
       evidence: {
@@ -343,7 +343,7 @@ function createFusionMarklogicFetchMockForIiifManifestLiteral() {
     const parsed = new URL(String(url))
     if (parsed.pathname === '/v1/search') {
       const directory = parsed.searchParams.get('directory')
-      if (directory === '/processed/json-ld-vector/iiif/') {
+      if (directory === '/processed/vector/iiif/') {
         return jsonResponse({ total: iiifRows.length, results: iiifRows })
       }
       return jsonResponse({ total: 0, results: [] })
@@ -360,9 +360,9 @@ function createFusionMarklogicFetchMockForIiifManifestLiteral() {
 }
 
 function createFusionMarklogicFetchMockForIiifManifestCanvasConflict() {
-  const iiifRows = [{ uri: '/processed/json-ld-vector/iiif/manifests/17270_303_345_1.json', score: 0.52, confidence: 0.08 }]
+  const iiifRows = [{ uri: '/processed/vector/iiif/manifest/17270_303_345_1.json', score: 0.52, confidence: 0.08 }]
   const docs = {
-    '/processed/json-ld-vector/iiif/manifests/17270_303_345_1.json': {
+    '/processed/vector/iiif/manifest/17270_303_345_1.json': {
       title: '杜诗攟巻四',
       text_norm_zh: '杜诗攟巻四相关注释片段',
       evidence: {
@@ -397,7 +397,7 @@ function createFusionMarklogicFetchMockForIiifManifestCanvasConflict() {
     const parsed = new URL(String(url))
     if (parsed.pathname === '/v1/search') {
       const directory = parsed.searchParams.get('directory')
-      if (directory === '/processed/json-ld-vector/iiif/') {
+      if (directory === '/processed/vector/iiif/') {
         return jsonResponse({ total: iiifRows.length, results: iiifRows })
       }
       return jsonResponse({ total: 0, results: [] })
@@ -414,18 +414,18 @@ function createFusionMarklogicFetchMockForIiifManifestCanvasConflict() {
 }
 
 function createFusionMarklogicFetchMockForIiifTitleFallback() {
-  const iiifRows = [{ uri: '/processed/json-ld-vector/iiif/manifests/17270_1181_1397_1.json', score: 0.52, confidence: 0.08 }]
+  const iiifRows = [{ uri: '/processed/vector/iiif/manifest/17270_1181_1397_1.json', score: 0.52, confidence: 0.08 }]
   const docs = {
-    '/processed/json-ld-vector/iiif/manifests/17270_1181_1397_1.json': {
+    '/processed/vector/iiif/manifest/17270_1181_1397_1.json': {
       title: '17270_1181_1397_1',
       text_norm_zh: '卷十五相关影像片段',
       evidence: {
         manifest_id: '17270_1181',
         canvas_id: 'http://localhost:8083/iiif/3/canvas/ancientBook/1181/17270_1181/p1397',
-        uri: '/processed/entities/ancient_book/iiif/manifests/ancientBook/1181/17270_1181/manifest.json',
+        uri: '/processed/iiif/manifests/ancientBook/1181/17270_1181/manifest.json',
       },
     },
-    '/processed/entities/ancient_book/iiif/manifests/ancientBook/1181/17270_1181/manifest.json': {
+    '/processed/iiif/manifests/ancientBook/1181/17270_1181/manifest.json': {
       id: 'http://localhost:8083/iiif/manifests/1181/manifest.json',
       label: { none: ['集千家注杜工部诗集'] },
       items: [
@@ -441,7 +441,7 @@ function createFusionMarklogicFetchMockForIiifTitleFallback() {
     const parsed = new URL(String(url))
     if (parsed.pathname === '/v1/search') {
       const directory = parsed.searchParams.get('directory')
-      if (directory === '/processed/json-ld-vector/iiif/') {
+      if (directory === '/processed/vector/iiif/') {
         return jsonResponse({
           total: iiifRows.length,
           results: [

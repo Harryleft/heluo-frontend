@@ -179,7 +179,7 @@ export async function queryPoemsByPerson(personId) {
   // 在诗文集合目录中搜索（支持大量诗文）
   const searchDirectories = [
     '/processed/json-ld/poem/set/',
-    '/data/processed/json-ld/poem/set/',
+    '/processed/json-ld/poem/set/',
   ]
   const searchResults = await Promise.all(
     searchDirectories.map((directory) =>
@@ -259,8 +259,8 @@ export async function getPlaceInfo(placeUri) {
   const possibleUris = [
     `/processed/json-ld/place/${placeId}.json`,
     `/processed/json-ld/place/${placeId}`,
-    `/data/processed/json-ld/place/${placeId}.json`,
-    `/data/processed/json-ld/place/${placeId}`,
+    `/processed/json-ld/place/${placeId}.json`,
+    `/processed/json-ld/place/${placeId}`,
     placeUri,
   ]
 
@@ -555,8 +555,8 @@ export async function getPersonPoemTrack(personId, dependencies = {}) {
   const possiblePersonUris = [
     `/processed/json-ld/person/${normalizedPersonId}.json`,
     `/processed/json-ld/person/${normalizedPersonId}`,
-    `/data/processed/json-ld/person/${normalizedPersonId}.json`,
-    `/data/processed/json-ld/person/${normalizedPersonId}`,
+    `/processed/json-ld/person/${normalizedPersonId}.json`,
+    `/processed/json-ld/person/${normalizedPersonId}`,
   ]
 
   for (const uri of possiblePersonUris) {

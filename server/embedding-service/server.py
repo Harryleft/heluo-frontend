@@ -3,7 +3,7 @@
 使用 FastAPI + Transformers 提供 REST API
 
 模型：bge-large-zh
-本地路径：D:\\hf_models\\bge-large-zh
+本地路径：~/.cache/heluo/models/bge-large-zh
 向量维度：1024
 
 启动方式：
@@ -17,6 +17,7 @@
 
 import os
 import time
+from pathlib import Path
 from typing import Optional
 
 import torch
@@ -27,7 +28,8 @@ import uvicorn
 
 # ========== 配置 ==========
 # 模型路径（本地）
-MODEL_PATH = os.environ.get("EMBEDDING_MODEL_PATH", r"D:\hf_models\text2vec-base-chinese")
+DEFAULT_MODELS_DIR = Path(os.environ.get("HELUO_MODELS_DIR", Path.home() / ".cache" / "heluo" / "models"))
+MODEL_PATH = os.environ.get("EMBEDDING_MODEL_PATH", str(DEFAULT_MODELS_DIR / "text2vec-base-chinese"))
 MODEL_NAME = "text2vec-base-chinese"
 # 设备选择
 DEVICE = "cuda" if torch.cuda.is_available() else "cpu"

@@ -319,7 +319,7 @@ describe('API 函数测试', () => {
                 title: '杜甫',
                 snippet: '',
                 score: 0.95,
-                uri: '/processed/json-ld-vector/persons/17170.json',
+                uri: '/processed/vector/person/17170.json',
               },
               {
                 type: 'book',
@@ -327,7 +327,7 @@ describe('API 函数测试', () => {
                 title: '杜工部集',
                 snippet: '',
                 score: 0.91,
-                uri: '/processed/json-ld-vector/books/bk001.json',
+                uri: '/processed/vector/book/bk001.json',
               },
             ],
           },
@@ -340,8 +340,8 @@ describe('API 函数测试', () => {
       if (result.success) {
         expect(result.data.items).toHaveLength(2)
         expect(result.data.items.map((item) => item.uri)).toEqual([
-          '/processed/json-ld-vector/persons/17170.json',
-          '/processed/json-ld-vector/books/bk001.json',
+          '/processed/vector/person/17170.json',
+          '/processed/vector/book/bk001.json',
         ])
       }
     })

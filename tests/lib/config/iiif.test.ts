@@ -51,12 +51,12 @@ describe('iiif config utils', () => {
 
   describe('向量索引 URI 转换', () => {
     it('应将向量索引 URI 转换为正确的 IIIF manifest 路径', () => {
-      const url = buildManifestUrl('/processed/json-ld-vector/iiif/manifests/17270_304_766_1.json')
+      const url = buildManifestUrl('/processed/vector/iiif/manifest/17270_304_766_1.json')
       expect(url).toBe('http://127.0.0.1:9011/iiif/manifests/304/manifest.json')
     })
 
     it('应将绝对路径的向量索引 URI 也正确转换', () => {
-      const url = buildManifestUrl('http://127.0.0.1:9011/processed/json-ld-vector/iiif/manifests/17270_303_766_2.json')
+      const url = buildManifestUrl('http://127.0.0.1:9011/processed/vector/iiif/manifest/17270_303_766_2.json')
       expect(url).toBe('http://127.0.0.1:9011/iiif/manifests/303/manifest.json')
     })
 

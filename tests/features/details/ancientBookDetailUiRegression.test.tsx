@@ -46,7 +46,7 @@ vi.mock('@/features/details/hooks/useOverviewTabData', async () => {
 
 function buildAncientBookDetail(overrides: Partial<DetailViewModel> = {}): DetailViewModel {
   return {
-    uri: '/processed/entities/ancient_book/ancient_book_object/volume/17270_303_1.json',
+    uri: '/processed/json-ld/ancient-book/object/volume/17270_303_1.json',
     title: '古籍测试条目',
     summary: '测试摘要',
     internalLinks: [],

@@ -26,7 +26,7 @@ export function UnknownDetailsPage(): JSX.Element {
         </p>
         <ul>
           <li>
-            <strong>诗文</strong>：包含 <code>/poem/set/</code> 或 <code>/poem/txt/</code> 的 URI
+            <strong>诗文</strong>：包含 <code>/poem/set/</code> 或 <code>/poem/text/</code> 的 URI
           </li>
           <li>
             <strong>人物</strong>：包含 <code>/person/</code> 的 URI

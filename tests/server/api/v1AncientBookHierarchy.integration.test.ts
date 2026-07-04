@@ -14,35 +14,35 @@ function jsonResponse(payload: unknown, status = 200) {
 }
 
 function createAncientBookHierarchyFetchMock() {
-  const book303Uri = '/processed/json-ld/ancient_book/ancient_book_set/book_entry/17270_303.json'
-  const book304Uri = '/processed/json-ld/ancient_book/ancient_book_set/book_entry/17270_304.json'
-  const departmentUri = '/processed/json-ld/ancient_book/ancient_book_set/department/jibu.json'
-  const rootUri = '/processed/json-ld/ancient_book/ancient_book_set/root/siku.json'
-  const txt303Uri = '/processed/json-ld/ancient_book/ancient_book_txt/book/17270_303.json'
-  const txt304Uri = '/processed/json-ld/ancient_book/ancient_book_txt/book/17270_304.json'
+  const book303Uri = '/processed/json-ld/ancient-book/set/book-entry/17270_303.json'
+  const book304Uri = '/processed/json-ld/ancient-book/set/book-entry/17270_304.json'
+  const departmentUri = '/processed/json-ld/ancient-book/set/department/jibu.json'
+  const rootUri = '/processed/json-ld/ancient-book/set/root/siku.json'
+  const txt303Uri = '/processed/json-ld/ancient-book/text/book/17270_303.json'
+  const txt304Uri = '/processed/json-ld/ancient-book/text/book/17270_304.json'
 
   const docs: Record<string, unknown> = {
     [book303Uri]: {
-      id: 'http://localhost:8000/set/ancient_book/siku/jibu/303',
+      id: 'http://localhost:8000/set/ancient-book/siku/jibu/303',
       _label: '杜诗捃',
-      member_of: [{ id: 'http://localhost:8000/set/ancient_book/siku/jibu', _label: '集部' }],
+      member_of: [{ id: 'http://localhost:8000/set/ancient-book/siku/jibu', _label: '集部' }],
     },
     [book304Uri]: {
-      id: 'http://localhost:8000/set/ancient_book/siku/jibu/304',
+      id: 'http://localhost:8000/set/ancient-book/siku/jibu/304',
       _label: '杜诗详注',
-      member_of: [{ id: 'http://localhost:8000/set/ancient_book/siku/jibu', _label: '集部' }],
+      member_of: [{ id: 'http://localhost:8000/set/ancient-book/siku/jibu', _label: '集部' }],
     },
     [departmentUri]: {
-      id: 'http://localhost:8000/set/ancient_book/siku/jibu',
+      id: 'http://localhost:8000/set/ancient-book/siku/jibu',
       _label: '集部',
-      member_of: [{ id: 'http://localhost:8000/set/ancient_book/siku', _label: '钦定四库荟要' }],
+      member_of: [{ id: 'http://localhost:8000/set/ancient-book/siku', _label: '钦定四库荟要' }],
     },
     [rootUri]: {
-      id: 'http://localhost:8000/set/ancient_book/siku',
+      id: 'http://localhost:8000/set/ancient-book/siku',
       _label: '钦定四库荟要',
     },
     [txt303Uri]: {
-      id: 'http://localhost:8000/txt/ancient_book/303',
+      id: 'http://localhost:8000/text/ancient-book/303',
       _label: '杜诗捃',
       digitally_carried_by: [
         {
@@ -51,7 +51,7 @@ function createAncientBookHierarchyFetchMock() {
       ],
     },
     [txt304Uri]: {
-      id: 'http://localhost:8000/txt/ancient_book/304',
+      id: 'http://localhost:8000/text/ancient-book/304',
       _label: '杜诗详注',
       digitally_carried_by: [
         {
@@ -67,7 +67,7 @@ function createAncientBookHierarchyFetchMock() {
     if (parsed.pathname === '/v1/search') {
       const directory = parsed.searchParams.get('directory')
       const query = parsed.searchParams.get('q') || ''
-      if (directory === '/processed/json-ld/ancient_book/ancient_book_txt/book/') {
+      if (directory === '/processed/json-ld/ancient-book/text/book/') {
         if (query === '303') {
           return jsonResponse({ total: 1, results: [{ uri: txt303Uri, score: 0.9, confidence: 0.1 }] }, 200)
         }
@@ -119,7 +119,7 @@ describe('GET /api/v1/ancient-books hierarchy', () => {
   })
 
   it('303 详情应返回 root > department > entry 层级', async () => {
-    const uri = encodeURIComponent('/processed/json-ld/ancient_book/ancient_book_set/book_entry/17270_303.json')
+    const uri = encodeURIComponent('/processed/json-ld/ancient-book/set/book-entry/17270_303.json')
     const response = await fetch(`${baseUrl}/api/v1/ancient-books/17270_303?uri=${uri}`)
     const result = await response.json() as { success: boolean; data: { hierarchy?: Array<{ label: string; level: string }> } }
 
@@ -130,7 +130,7 @@ describe('GET /api/v1/ancient-books hierarchy', () => {
   })
 
   it('304 详情应返回 root > department > entry 层级', async () => {
-    const uri = encodeURIComponent('/processed/json-ld/ancient_book/ancient_book_set/book_entry/17270_304.json')
+    const uri = encodeURIComponent('/processed/json-ld/ancient-book/set/book-entry/17270_304.json')
     const response = await fetch(`${baseUrl}/api/v1/ancient-books/17270_304?uri=${uri}`)
     const result = await response.json() as { success: boolean; data: { hierarchy?: Array<{ label: string; level: string }> } }
 

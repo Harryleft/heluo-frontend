@@ -33,7 +33,7 @@ describe('detailService', () => {
   it('person 资源应返回人物详情视图模型', async () => {
     vi.mocked(fetchPersonByIdRepo).mockResolvedValueOnce(mockPersonDetailResponse)
 
-    const result = await fetchDetailByResource({ type: 'person', id: '17270' }, '/processed/entities/person/17270.json')
+    const result = await fetchDetailByResource({ type: 'person', id: '17270' }, '/processed/json-ld/person/17270.json')
 
     expect(fetchPersonByIdRepo).toHaveBeenCalledWith('17270')
     expect(result?.title).toBe('杜甫')
@@ -51,7 +51,7 @@ describe('detailService', () => {
       data: {
         id: '17270',
         name: '杜甫',
-        uri: '/processed/entities/person/17270.json',
+        uri: '/processed/json-ld/person/17270.json',
         summary: '人物摘要',
         doc: {
           attributed_by: [
@@ -75,7 +75,7 @@ describe('detailService', () => {
       },
     })
 
-    const result = await fetchDetailByResource({ type: 'person', id: '17270' }, '/processed/entities/person/17270.json')
+    const result = await fetchDetailByResource({ type: 'person', id: '17270' }, '/processed/json-ld/person/17270.json')
 
     expect(result?.internalLinks).toEqual(
       expect.arrayContaining([
@@ -99,12 +99,12 @@ describe('detailService', () => {
     expect(result).toBeNull()
   })
 
-  it('poem txt 资源应透传 format 参数', async () => {
+  it('poem text 资源应透传 format 参数', async () => {
     vi.mocked(fetchPoemByIdRepo).mockResolvedValueOnce(mockPoemDetailResponse)
 
     const result = await fetchDetailByResource(
       { type: 'poem', id: 'poem_001', format: 'txt' },
-      '/processed/entities/poem/txt/poem_001.json',
+      '/processed/json-ld/poem/text/poem_001.json',
     )
 
     expect(fetchPoemByIdRepo).toHaveBeenCalledWith('poem_001', { format: 'txt' })
@@ -223,7 +223,7 @@ describe('detailService', () => {
           title: '咏怀古迹',
           author: '杜甫',
           fullText: '群山万壑赴荆门，生长明妃尚有村。',
-          uri: '/poem/txt/poem_011.json',
+          uri: '/poem/text/poem_011.json',
           set: {
             id: 'set_011',
             uri: '/poem/set/poem_011.json',
@@ -252,7 +252,7 @@ describe('detailService', () => {
 
     const result = await fetchDetailByResource(
       { type: 'poem', id: 'poem_011', format: 'txt' },
-      '/poem/txt/poem_011.json',
+      '/poem/text/poem_011.json',
     )
 
     expect(result?.poemDetail?.relatedPlaces).toEqual([
@@ -277,12 +277,12 @@ describe('detailService', () => {
         id: 'b1',
         title: '杜诗别集',
         author: '某编者',
-        uri: '/processed/entities/marc/b1.json',
+        uri: '/processed/json-ld/book/b1.json',
         doc: { _label: '杜诗别集', type: 'LinguisticObject' },
       },
     })
 
-    const result = await fetchDetailByResource({ type: 'book', id: 'b1' }, '/processed/entities/marc/b1.json')
+    const result = await fetchDetailByResource({ type: 'book', id: 'b1' }, '/processed/json-ld/book/b1.json')
 
     expect(result?.title).toBe('杜诗别集')
     expect(result?.doc).toEqual({ _label: '杜诗别集', type: 'LinguisticObject' })
@@ -311,7 +311,7 @@ describe('detailService', () => {
       data: {
         id: '17270_2263_15',
         title: '集千家注杜工部诗集·卷十五',
-        uri: '/processed/entities/ancient_book/ancient_book_object/volume/17270_2263_15.json',
+        uri: '/processed/json-ld/ancient-book/object/volume/17270_2263_15.json',
         summary: '古籍摘要',
         volumeLabel: '卷十五',
         volumeText: '卷十五正文示例',
@@ -321,9 +321,9 @@ describe('detailService', () => {
           {
             id: '2263_15',
             label: '卷15',
-            uri: '/processed/entities/ancient_book/ancient_book_txt/volume/17270_2263_15.json',
-            textUri: '/processed/entities/ancient_book/ancient_book_txt/volume/17270_2263_15.json',
-            objectUri: '/processed/entities/ancient_book/ancient_book_object/volume/17270_2263_15.json',
+            uri: '/processed/json-ld/ancient-book/text/volume/17270_2263_15.json',
+            textUri: '/processed/json-ld/ancient-book/text/volume/17270_2263_15.json',
+            objectUri: '/processed/json-ld/ancient-book/object/volume/17270_2263_15.json',
             iiifUri: 'https://api.heluo.site/iiif/3/manifest/ancientBook/2263/17270_2263',
             volumeNo: 15,
           },
@@ -331,7 +331,7 @@ describe('detailService', () => {
       },
     })
 
-    const uri = '/processed/entities/ancient_book/ancient_book_object/volume/17270_2263_15.json'
+    const uri = '/processed/json-ld/ancient-book/object/volume/17270_2263_15.json'
     const result = await fetchDetailByResource({ type: 'ancient_book', id: '17270_2263_15' }, uri)
 
     expect(fetchAncientBookByIdRepo).toHaveBeenCalledWith('17270_2263_15', uri)
@@ -344,8 +344,8 @@ describe('detailService', () => {
   })
 
   it('ancient_book 有 objectUri 时应优先使用 object 文档作为字段数据源', async () => {
-    const entryUri = '/processed/json-ld/ancient_book/ancient_book_set/book_entry/17270_303.json'
-    const objectUri = '/processed/entities/ancient_book/ancient_book_object/volume/17270_303_1.json'
+    const entryUri = '/processed/json-ld/ancient-book/set/book-entry/17270_303.json'
+    const objectUri = '/processed/json-ld/ancient-book/object/volume/17270_303_1.json'
     vi.mocked(fetchAncientBookByIdRepo)
       .mockResolvedValueOnce({
         success: true,
@@ -359,8 +359,8 @@ describe('detailService', () => {
             {
               id: '17270_303_1',
               label: '卷一',
-              uri: '/processed/entities/ancient_book/ancient_book_txt/volume/17270_303_1.json',
-              textUri: '/processed/entities/ancient_book/ancient_book_txt/volume/17270_303_1.json',
+              uri: '/processed/json-ld/ancient-book/text/volume/17270_303_1.json',
+              textUri: '/processed/json-ld/ancient-book/text/volume/17270_303_1.json',
               objectUri,
               iiifUri: 'https://api.heluo.site/iiif/manifests/303/manifest.json',
               volumeNo: 1,
@@ -389,7 +389,7 @@ describe('detailService', () => {
   })
 
   it('ancient_book 无 objectUri 时不应触发二次 object 详情请求', async () => {
-    const entryUri = '/processed/json-ld/ancient_book/ancient_book_set/book_entry/17270_304.json'
+    const entryUri = '/processed/json-ld/ancient-book/set/book-entry/17270_304.json'
     vi.mocked(fetchAncientBookByIdRepo).mockResolvedValueOnce({
       success: true,
       data: {
@@ -401,8 +401,8 @@ describe('detailService', () => {
           {
             id: '17270_304_1',
             label: '卷一',
-            uri: '/processed/entities/ancient_book/ancient_book_txt/volume/17270_304_1.json',
-            textUri: '/processed/entities/ancient_book/ancient_book_txt/volume/17270_304_1.json',
+            uri: '/processed/json-ld/ancient-book/text/volume/17270_304_1.json',
+            textUri: '/processed/json-ld/ancient-book/text/volume/17270_304_1.json',
             volumeNo: 1,
           },
         ],
@@ -417,8 +417,8 @@ describe('detailService', () => {
   })
 
   it('ancient_book object 二次请求失败时应回退首次文档', async () => {
-    const entryUri = '/processed/json-ld/ancient_book/ancient_book_set/book_entry/17270_305.json'
-    const objectUri = '/processed/entities/ancient_book/ancient_book_object/volume/17270_305_1.json'
+    const entryUri = '/processed/json-ld/ancient-book/set/book-entry/17270_305.json'
+    const objectUri = '/processed/json-ld/ancient-book/object/volume/17270_305_1.json'
     vi.mocked(fetchAncientBookByIdRepo)
       .mockResolvedValueOnce({
         success: true,
@@ -431,8 +431,8 @@ describe('detailService', () => {
             {
               id: '17270_305_1',
               label: '卷一',
-              uri: '/processed/entities/ancient_book/ancient_book_txt/volume/17270_305_1.json',
-              textUri: '/processed/entities/ancient_book/ancient_book_txt/volume/17270_305_1.json',
+              uri: '/processed/json-ld/ancient-book/text/volume/17270_305_1.json',
+              textUri: '/processed/json-ld/ancient-book/text/volume/17270_305_1.json',
               objectUri,
               volumeNo: 1,
             },
@@ -453,8 +453,8 @@ describe('detailService', () => {
   })
 
   it('ancient_book object 文档应补充而非覆盖主文档中的创作者与时间线索', async () => {
-    const entryUri = '/processed/json-ld/ancient_book/ancient_book_txt/book/17270_303.json'
-    const objectUri = '/processed/json-ld/ancient_book/ancient_book_object/volume/17270_303_1.json'
+    const entryUri = '/processed/json-ld/ancient-book/text/book/17270_303.json'
+    const objectUri = '/processed/json-ld/ancient-book/object/volume/17270_303_1.json'
     vi.mocked(fetchAncientBookByIdRepo)
       .mockResolvedValueOnce({
         success: true,
@@ -467,8 +467,8 @@ describe('detailService', () => {
             {
               id: '17270_303_1',
               label: '卷一',
-              uri: '/processed/json-ld/ancient_book/ancient_book_txt/volume/17270_303_1.json',
-              textUri: '/processed/json-ld/ancient_book/ancient_book_txt/volume/17270_303_1.json',
+              uri: '/processed/json-ld/ancient-book/text/volume/17270_303_1.json',
+              textUri: '/processed/json-ld/ancient-book/text/volume/17270_303_1.json',
               objectUri,
               volumeNo: 1,
             },

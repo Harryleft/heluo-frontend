@@ -263,7 +263,7 @@ function buildEntitySearchKeys(value) {
 export function isPoemSetUri(uri) {
   const value = String(uri || '')
   return value.startsWith('/processed/json-ld/poem/set/') ||
-    value.startsWith('/data/processed/json-ld/poem/set/')
+    value.startsWith('/processed/json-ld/poem/set/')
 }
 
 /**
@@ -274,8 +274,8 @@ export function isPoemSetUri(uri) {
  */
 export function isPoemTextUri(uri) {
   const value = String(uri || '')
-  return value.startsWith('/processed/json-ld/poem/txt/') ||
-    value.startsWith('/data/processed/json-ld/poem/txt/')
+  return value.startsWith('/processed/json-ld/poem/text/') ||
+    value.startsWith('/processed/json-ld/poem/text/')
 }
 
 // ============================================================================
@@ -396,7 +396,7 @@ async function enrichPoemRelatedPlaces(places, mlGetDoc) {
     const placeId = normalizeEntityId(place?.uri)
     const candidates = placeId
       ? [
-          `/data/processed/json-ld/place/${placeId}.json`,
+          `/processed/json-ld/place/${placeId}.json`,
           `/processed/json-ld/place/${placeId}.json`,
         ]
       : []
@@ -767,12 +767,12 @@ async function resolvePoemSetFromTextDoc(textUri, textDoc, { mlGetDoc, searchWit
     const directUris = [
       `/processed/json-ld/poem/set/${setId}.json`,
       `/processed/json-ld/poem/set/${setId}`,
-      `/data/processed/json-ld/poem/set/${setId}.json`,
-      `/data/processed/json-ld/poem/set/${setId}`,
-      `/heluo/poems_set/${setId}.json`,
-      `/heluo/poems-set/${setId}.json`,
-      `/processed/entities/poem/set/${setId}.json`,
-      `/processed/entities/poem/set/${setId}`,
+      `/processed/json-ld/poem/set/${setId}.json`,
+      `/processed/json-ld/poem/set/${setId}`,
+      `/heluo/poems/sets/${setId}.json`,
+      `/heluo/poems/sets/${setId}.json`,
+      `/processed/json-ld/poem/set/${setId}.json`,
+      `/processed/json-ld/poem/set/${setId}`,
     ]
     for (let i = 0; i < directUris.length; i += 1) {
       const uri = directUris[i]
@@ -785,8 +785,8 @@ async function resolvePoemSetFromTextDoc(textUri, textDoc, { mlGetDoc, searchWit
     const searchData = await searchWithFallback({
       query: setId,
       pageLength: 8,
-      directories: ['/processed/json-ld/poem/set/', '/data/processed/json-ld/poem/set/', '/processed/entities/poem/set/'],
-      collections: ['/heluo/poems_set', '/heluo/poems-set'],
+      directories: ['/processed/json-ld/poem/set/', '/processed/json-ld/poem/set/', '/processed/json-ld/poem/set/'],
+      collections: ['/heluo/poems/sets', '/heluo/poems/sets'],
     })
     const match = (searchData.results || []).find((row) => normalizeEntityId(row?.uri) === setId)
     if (match?.uri) {
@@ -812,12 +812,12 @@ async function resolvePoemTextDocForSet(poemSetUri, poemSetDoc, { mlGetDoc, sear
   const setStemNormalized = normalizeEntityId(setStem)
 
   const directTextUris = [
-    `/processed/json-ld/poem/txt/${setStem}.json`,
-    `/processed/json-ld/poem/txt/${setStemNormalized}.json`,
-    `/data/processed/json-ld/poem/txt/${setStem}.json`,
-    `/data/processed/json-ld/poem/txt/${setStemNormalized}.json`,
-    `/processed/entities/poem/txt/${setStem}.json`,
-    `/processed/entities/poem/txt/${setStemNormalized}.json`,
+    `/processed/json-ld/poem/text/${setStem}.json`,
+    `/processed/json-ld/poem/text/${setStemNormalized}.json`,
+    `/processed/json-ld/poem/text/${setStem}.json`,
+    `/processed/json-ld/poem/text/${setStemNormalized}.json`,
+    `/processed/json-ld/poem/text/${setStem}.json`,
+    `/processed/json-ld/poem/text/${setStemNormalized}.json`,
   ]
 
   for (const uri of directTextUris) {
@@ -852,8 +852,8 @@ async function collectPoemTextDocsForSet(poemSetDoc, { mlGetDoc, searchWithFallb
     const searchData = await searchWithFallback({
       query,
       pageLength: 120,
-      directories: ['/processed/json-ld/poem/txt/', '/data/processed/json-ld/poem/txt/', '/processed/entities/poem/txt/'],
-      collections: ['/heluo/poems-txt', '/heluo/poems_txt'],
+      directories: ['/processed/json-ld/poem/text/', '/processed/json-ld/poem/text/', '/processed/json-ld/poem/text/'],
+      collections: ['/heluo/poems/texts', '/heluo/poems/texts'],
     })
     rowsPool.push(...(searchData.results || []))
   }

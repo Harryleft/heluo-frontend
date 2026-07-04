@@ -146,10 +146,10 @@ export function rerankFusionCandidates(candidates = [], rankingQuery = '', rawQu
       const bTitle = normalizeText(b?.title || '')
 
       const aRichness =
-        (aUri.includes('/poems-txt/') ? 2 : 0) +
+        (aUri.includes('/poem/text/') ? 2 : 0) +
         (aSnippet && aSnippet !== aTitle ? 1 : 0)
       const bRichness =
-        (bUri.includes('/poems-txt/') ? 2 : 0) +
+        (bUri.includes('/poem/text/') ? 2 : 0) +
         (bSnippet && bSnippet !== bTitle ? 1 : 0)
 
       if (aRichness !== bRichness) return bRichness - aRichness

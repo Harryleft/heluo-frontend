@@ -279,7 +279,7 @@ export function parseFusionTopK(rawTopK) {
  */
 export function normalizeFusionMode(rawMode) {
   const mode = String(rawMode || '').trim().toLowerCase()
-  if (['rag', 'graphrag', 'hybrid'].includes(mode)) return mode
+  if (['rag', 'hybrid'].includes(mode)) return mode
   return 'hybrid'
 }
 

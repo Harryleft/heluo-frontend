@@ -36,10 +36,10 @@ function createVectorSearchMock(options: { vectorSimilarity?: number; enableVect
 
   // 模拟向量文档（包含 embedding）
   const vectorDoc = {
-    uri: '/processed/json-ld-vector/poems-set/poem_31190.json',
+    uri: '/processed/vector/poem/set/poem_31190.json',
     embedding: Array.from({ length: 768 }, () => Math.random() * 2 - 1), // 768维随机向量
     text_norm: '登高',
-    scope: 'poems-set',
+    scope: 'poem/set',
     entity_iri: 'http://heluo.site/poem/31190',
     evidence: {
       poem_id: '31190',
@@ -50,7 +50,7 @@ function createVectorSearchMock(options: { vectorSimilarity?: number; enableVect
   // 模拟搜索结果（包含向量相似度）
   const vectorSearchResults = [
     {
-      uri: '/processed/json-ld-vector/poems-set/poem_31190.json',
+      uri: '/processed/vector/poem/set/poem_31190.json',
       score: 0.5, // MarkLogic 搜索分数
       confidence: 0.1,
       similarity: vectorSimilarity, // 向量相似度（关键）
@@ -59,8 +59,8 @@ function createVectorSearchMock(options: { vectorSimilarity?: number; enableVect
 
   // 模拟文档内容
   const docs: Record<string, unknown> = {
-    '/processed/json-ld-vector/poems-set/poem_31190.json': vectorDoc,
-    '/processed/entities/poem/set/poem_31190.json': {
+    '/processed/vector/poem/set/poem_31190.json': vectorDoc,
+    '/processed/json-ld/poem/set/poem_31190.json': {
       _label: '登高',
       author_name: '杜甫',
       dynasty: '唐代',
@@ -77,7 +77,7 @@ function createVectorSearchMock(options: { vectorSimilarity?: number; enableVect
     // 模拟目录搜索（获取候选文档）
     if (parsed.pathname === '/v1/search') {
       const directory = parsed.searchParams.get('directory')
-      if (directory === '/processed/json-ld-vector/poems-set/') {
+      if (directory === '/processed/vector/poem/set/') {
         return jsonResponse({
           total: 1,
           results: vectorSearchResults,
@@ -103,24 +103,24 @@ function createVectorSearchMock(options: { vectorSimilarity?: number; enableVect
  */
 function createHybridSearchMock() {
   const vectorDoc = {
-    uri: '/processed/json-ld-vector/poems-set/poem_31190.json',
+    uri: '/processed/vector/poem/set/poem_31190.json',
     embedding: Array.from({ length: 768 }, () => Math.random() * 2 - 1),
     text_norm: '登高',
-    scope: 'poems-set',
+    scope: 'poem/set',
     entity_iri: 'http://heluo.site/poem/31190',
   }
 
   const keywordRows = [
     {
-      uri: '/processed/entities/poem/set/poem_31190.json',
+      uri: '/processed/json-ld/poem/set/poem_31190.json',
       score: 0.6,
       confidence: 0.2,
     },
   ]
 
   const docs: Record<string, unknown> = {
-    '/processed/json-ld-vector/poems-set/poem_31190.json': vectorDoc,
-    '/processed/entities/poem/set/poem_31190.json': {
+    '/processed/vector/poem/set/poem_31190.json': vectorDoc,
+    '/processed/json-ld/poem/set/poem_31190.json': {
       _label: '登高',
       author_name: '杜甫',
     },
@@ -136,13 +136,13 @@ function createHybridSearchMock() {
       const q = parsed.searchParams.get('q')
 
       // 向量搜索目录
-      if (directory === '/processed/json-ld-vector/poems-set/') {
+      if (directory === '/processed/vector/poem/set/') {
         vectorSearchCalled = true
         return jsonResponse({
           total: 1,
           results: [
             {
-              uri: '/processed/json-ld-vector/poems-set/poem_31190.json',
+              uri: '/processed/vector/poem/set/poem_31190.json',
               score: 0.5,
               confidence: 0.1,
             },
@@ -151,7 +151,7 @@ function createHybridSearchMock() {
       }
 
       // 关键字搜索目录
-      if (directory === '/processed/entities/poem/set/') {
+      if (directory === '/processed/json-ld/poem/set/') {
         return jsonResponse({
           total: 1,
           results: keywordRows,
@@ -270,7 +270,7 @@ describe('向量分数传递链路集成测试', () => {
           id: 'poem_31190',
           title: '登高',
           snippet: '风急天高猿啸哀',
-          uri: '/processed/entities/poem/set/poem_31190.json',
+          uri: '/processed/json-ld/poem/set/poem_31190.json',
           score: 0.5,
           confidence: 0.1,
           vectorScore: 0.92, // 向量分数
@@ -291,7 +291,7 @@ describe('向量分数传递链路集成测试', () => {
           id: 'poem_31190',
           title: '登高',
           snippet: '风急天高猿啸哀',
-          uri: '/processed/entities/poem/set/poem_31190.json',
+          uri: '/processed/json-ld/poem/set/poem_31190.json',
           score: 0.5,
           confidence: 0.1,
           similarity: 0.88, // 向量相似度
@@ -312,7 +312,7 @@ describe('向量分数传递链路集成测试', () => {
           id: 'poem_31190',
           title: '登高',
           snippet: '风急天高猿啸哀',
-          uri: '/processed/entities/poem/set/poem_31190.json',
+          uri: '/processed/json-ld/poem/set/poem_31190.json',
           score: 0.5,
           confidence: 0.1,
           vectorScore: 0.85,
@@ -380,7 +380,7 @@ describe('向量分数传递链路集成测试', () => {
     it('完整追踪：向量相似度 → similarity → vectorScore → computeHybridScore.vector', () => {
       // 步骤 1: 模拟 mlVectorSearch 返回
       const mlVectorSearchResult = {
-        uri: '/processed/json-ld-vector/poems-set/poem_31190.json',
+        uri: '/processed/vector/poem/set/poem_31190.json',
         similarity: 0.92, // 真正的向量相似度
         title: '登高',
         snippet: '风急天高猿啸哀',
@@ -430,7 +430,7 @@ describe('向量分数传递链路集成测试', () => {
 
     it('兜底路径：source=vector 但无 vectorScore 时应从 similarity 提取', () => {
       const resultWithoutVectorScore = {
-        uri: '/processed/json-ld-vector/poems-set/poem_31190.json',
+        uri: '/processed/vector/poem/set/poem_31190.json',
         similarity: 0.88, // 只有 similarity
         title: '登高',
         score: 0.5,

@@ -27,13 +27,13 @@ function createFetchMock(options?: {
   const withVectorText = options?.withVectorText === true
   const useJsonLdObjectOnly = options?.useJsonLdObjectOnly === true
   const withManifestAnnotationText = options?.withManifestAnnotationText === true
-  const targetUri = '/processed/entities/ancient_book/ancient_book_object/volume/17270_2263_15.json'
-  const jsonLdTargetUri = '/processed/json-ld/ancient_book/ancient_book_object/volume/17270_2263_15.json'
-  const txtBookUri = '/processed/entities/ancient_book/ancient_book_txt/book/17270_2263.json'
-  const txtVolumeUri = '/processed/entities/ancient_book/ancient_book_txt/volume/17270_2263_15.json'
-  const txtVolumeUri2 = '/processed/entities/ancient_book/ancient_book_txt/volume/17270_2263_16.json'
-  const objectVolumeUri2 = '/processed/entities/ancient_book/ancient_book_object/volume/17270_2263_16.json'
-  const jsonLdObjectVolumeUri2 = '/processed/json-ld/ancient_book/ancient_book_object/volume/17270_2263_16.json'
+  const targetUri = '/processed/json-ld/ancient-book/object/volume/17270_2263_15.json'
+  const jsonLdTargetUri = '/processed/json-ld/ancient-book/object/volume/17270_2263_15.json'
+  const txtBookUri = '/processed/json-ld/ancient-book/text/book/17270_2263.json'
+  const txtVolumeUri = '/processed/json-ld/ancient-book/text/volume/17270_2263_15.json'
+  const txtVolumeUri2 = '/processed/json-ld/ancient-book/text/volume/17270_2263_16.json'
+  const objectVolumeUri2 = '/processed/json-ld/ancient-book/object/volume/17270_2263_16.json'
+  const jsonLdObjectVolumeUri2 = '/processed/json-ld/ancient-book/object/volume/17270_2263_16.json'
   const vectorUri = '/heluo/vector/iiif/manifests/17270_2263_1068_1.json'
   const publicManifestPath = '/iiif/manifests/2263/manifest.json'
   const targetDoc = {
@@ -122,22 +122,22 @@ function createFetchMock(options?: {
 
     if (parsed.pathname === '/v1/search') {
       const directory = parsed.searchParams.get('directory')
-      if (directory === '/processed/entities/ancient_book/ancient_book_txt/book/') {
+      if (directory === '/processed/json-ld/ancient-book/text/book/') {
         return jsonResponse({ total: 1, results: [{ uri: txtBookUri, score: 1, confidence: 1 }] }, 200)
       }
-      if (directory === '/processed/entities/ancient_book/ancient_book_txt/volume/') {
+      if (directory === '/processed/json-ld/ancient-book/text/volume/') {
         return jsonResponse({ total: 2, results: [{ uri: txtVolumeUri, score: 1, confidence: 1 }, { uri: txtVolumeUri2, score: 1, confidence: 1 }] }, 200)
       }
-      if (directory === '/processed/entities/ancient_book/ancient_book_object/volume/') {
+      if (directory === '/processed/json-ld/ancient-book/object/volume/') {
         if (useJsonLdObjectOnly) {
           return jsonResponse({ total: 0, results: [] }, 200)
         }
         return jsonResponse({ total: 2, results: [{ uri: targetUri, score: 1, confidence: 1 }, { uri: objectVolumeUri2, score: 1, confidence: 1 }] }, 200)
       }
-      if (directory === '/processed/json-ld/ancient_book/ancient_book_txt/volume/') {
+      if (directory === '/processed/json-ld/ancient-book/text/volume/') {
         return jsonResponse({ total: 0, results: [] }, 200)
       }
-      if (directory === '/processed/json-ld/ancient_book/ancient_book_object/volume/') {
+      if (directory === '/processed/json-ld/ancient-book/object/volume/') {
         if (!useJsonLdObjectOnly) {
           return jsonResponse({ total: 0, results: [] }, 200)
         }
@@ -188,7 +188,7 @@ describe('GET /api/v1/ancient-books/:id', () => {
   })
 
   it('应支持通过 query.uri 定位古籍详情', async () => {
-    const uri = encodeURIComponent('/processed/entities/ancient_book/ancient_book_object/volume/17270_2263_15.json')
+    const uri = encodeURIComponent('/processed/json-ld/ancient-book/object/volume/17270_2263_15.json')
     const response = await fetch(`${baseUrl}/api/v1/ancient-books/17270_2263_15?uri=${uri}`)
     const result = await response.json()
 
@@ -208,7 +208,7 @@ describe('GET /api/v1/ancient-books/:id', () => {
   it('卷详情无正文时应返回 missing 状态与提示', async () => {
     setMarklogicFetchForTest(createFetchMock({ withText: false }))
 
-    const uri = encodeURIComponent('/processed/entities/ancient_book/ancient_book_object/volume/17270_2263_15.json')
+    const uri = encodeURIComponent('/processed/json-ld/ancient-book/object/volume/17270_2263_15.json')
     const response = await fetch(`${baseUrl}/api/v1/ancient-books/17270_2263_15?uri=${uri}`)
     const result = await response.json()
 
@@ -222,7 +222,7 @@ describe('GET /api/v1/ancient-books/:id', () => {
   it('卷详情无正文时应回退到 IIIF 向量文本', async () => {
     setMarklogicFetchForTest(createFetchMock({ withText: false, withVectorText: true }))
 
-    const uri = encodeURIComponent('/processed/entities/ancient_book/ancient_book_object/volume/17270_2263_15.json')
+    const uri = encodeURIComponent('/processed/json-ld/ancient-book/object/volume/17270_2263_15.json')
     const response = await fetch(`${baseUrl}/api/v1/ancient-books/17270_2263_15?uri=${uri}`)
     const result = await response.json()
 
@@ -236,7 +236,7 @@ describe('GET /api/v1/ancient-books/:id', () => {
   it('卷详情无正文时应回退到 manifest 注释文本', async () => {
     setMarklogicFetchForTest(createFetchMock({ withText: false, withManifestAnnotationText: true }))
 
-    const uri = encodeURIComponent('/processed/entities/ancient_book/ancient_book_object/volume/17270_2263_15.json')
+    const uri = encodeURIComponent('/processed/json-ld/ancient-book/object/volume/17270_2263_15.json')
     const response = await fetch(`${baseUrl}/api/v1/ancient-books/17270_2263_15?uri=${uri}`)
     const result = await response.json()
 
@@ -249,10 +249,10 @@ describe('GET /api/v1/ancient-books/:id', () => {
 
 
   it('书目详情应兼容 json-ld object 目录并返回 objectUri', async () => {
-    const entryUri = '/processed/json-ld/ancient_book/ancient_book_set/book_entry/17270_303.json'
-    const txtBookUri = '/processed/json-ld/ancient_book/ancient_book_txt/book/17270_303.json'
-    const txtVolumeUri = '/processed/json-ld/ancient_book/ancient_book_txt/volume/17270_303_1.json'
-    const objectVolumeUri = '/processed/json-ld/ancient_book/ancient_book_object/volume/17270_303_1.json'
+    const entryUri = '/processed/json-ld/ancient-book/set/book-entry/17270_303.json'
+    const txtBookUri = '/processed/json-ld/ancient-book/text/book/17270_303.json'
+    const txtVolumeUri = '/processed/json-ld/ancient-book/text/volume/17270_303_1.json'
+    const objectVolumeUri = '/processed/json-ld/ancient-book/object/volume/17270_303_1.json'
 
     setMarklogicFetchForTest(async (url) => {
       const parsed = new URL(String(url))
@@ -262,7 +262,7 @@ describe('GET /api/v1/ancient-books/:id', () => {
         if (target === entryUri) {
           return jsonResponse({
             _label: '杜诗捃',
-            id: 'http://localhost:8000/set/ancient_book/siku/jibu/303',
+            id: 'http://localhost:8000/set/ancient-book/siku/jibu/303',
           })
         }
         if (target === txtBookUri) {
@@ -292,22 +292,13 @@ describe('GET /api/v1/ancient-books/:id', () => {
 
       if (parsed.pathname === '/v1/search') {
         const directory = parsed.searchParams.get('directory')
-        if (directory === '/processed/entities/ancient_book/ancient_book_txt/book/') {
-          return jsonResponse({ total: 0, results: [] }, 200)
-        }
-        if (directory === '/processed/json-ld/ancient_book/ancient_book_txt/book/') {
+        if (directory === '/processed/json-ld/ancient-book/text/book/') {
           return jsonResponse({ total: 1, results: [{ uri: txtBookUri, score: 1, confidence: 1 }] }, 200)
         }
-        if (directory === '/processed/entities/ancient_book/ancient_book_txt/volume/') {
-          return jsonResponse({ total: 0, results: [] }, 200)
-        }
-        if (directory === '/processed/json-ld/ancient_book/ancient_book_txt/volume/') {
+        if (directory === '/processed/json-ld/ancient-book/text/volume/') {
           return jsonResponse({ total: 1, results: [{ uri: txtVolumeUri, score: 1, confidence: 1 }] }, 200)
         }
-        if (directory === '/processed/entities/ancient_book/ancient_book_object/volume/') {
-          return jsonResponse({ total: 0, results: [] }, 200)
-        }
-        if (directory === '/processed/json-ld/ancient_book/ancient_book_object/volume/') {
+        if (directory === '/processed/json-ld/ancient-book/object/volume/') {
           return jsonResponse({ total: 1, results: [{ uri: objectVolumeUri, score: 1, confidence: 1 }] }, 200)
         }
         return jsonResponse({ total: 0, results: [] }, 200)

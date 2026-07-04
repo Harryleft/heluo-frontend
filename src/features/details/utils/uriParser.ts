@@ -21,7 +21,7 @@ export type DetailResourceType = Exclude<ResourceType, 'iiif'> | 'unknown'
 /**
  * 概念子类型
  */
-export type ConceptSubType = 'rhyme' | 'poetic_form' | 'ancient_book_concept'
+export type ConceptSubType = 'rhyme' | 'poetic_form' | 'ancient_book'
 
 /**
  * 解析后的 URI 资源信息
@@ -42,19 +42,19 @@ export interface ParsedUriResource {
 // ============================================================================
 
 const UNKNOWN_RESOURCE: ParsedUriResource = { type: 'unknown', id: '' }
-const POEM_SET_PATTERNS = ['/poem/set/', '/poems-set/']
-const POEM_TXT_PATTERNS = ['/poem/txt/', '/poems-txt/']
+const POEM_SET_PATTERNS = ['/poem/set/']
+const POEM_TXT_PATTERNS = ['/poem/text/']
 const PERSON_PATTERNS = ['/person/', '/persons/']
-const ANCIENT_BOOK_PATTERNS = ['/ancient-book/', '/ancient-books/', '/ancient_book/', '/ancient-book-', '/ancient_book_']
-const ANCIENT_BOOK_SET_PATTERNS = ['/set/', '-sets/']
-const ANCIENT_BOOK_TXT_PATTERNS = ['/txt/', '-texts/']
-const ANCIENT_BOOK_OBJECT_PATTERNS = ['/object/', '-objects/']
+const ANCIENT_BOOK_PATTERNS = ['/ancient-book/', '/ancient-books/', '/ancient-book-']
+const ANCIENT_BOOK_SET_PATTERNS = ['/set/', '/sets/', '-sets/']
+const ANCIENT_BOOK_TXT_PATTERNS = ['/text/', '/texts/', '-texts/']
+const ANCIENT_BOOK_OBJECT_PATTERNS = ['/object/', '/objects/', '-objects/']
 const BOOK_PATTERNS = ['/book/', '/books/', '/marc/']
 const PLACE_PATTERNS = ['/place/', '/places/']
 const CONCEPT_PATTERNS = ['/concept/', '/concepts/']
 const RHYME_PATTERNS = ['/rhyme', 'rhyme']
 const POETIC_FORM_PATTERNS = ['/poetic_form', 'poetic-form']
-const ANCIENT_BOOK_CONCEPT_PATTERNS = ['/ancient_book_concept', 'ancient-book-concept']
+const ANCIENT_BOOK_CONCEPT_PATTERNS = ['/concept/ancient-book', '/ancient-book/concept']
 
 // ============================================================================
 // 私有实现
@@ -78,7 +78,7 @@ function parseAncientBookFormat(normalized: string): ParsedUriResource['format']
 function parseConceptType(normalized: string): ConceptSubType | undefined {
   if (includesAny(normalized, RHYME_PATTERNS)) return 'rhyme'
   if (includesAny(normalized, POETIC_FORM_PATTERNS)) return 'poetic_form'
-  if (includesAny(normalized, ANCIENT_BOOK_CONCEPT_PATTERNS)) return 'ancient_book_concept'
+  if (includesAny(normalized, ANCIENT_BOOK_CONCEPT_PATTERNS)) return 'ancient_book'
   return undefined
 }
 

@@ -78,10 +78,10 @@ describe('v1Repository', () => {
       data: { success: true, data: { id: '17270_2263_15', title: '卷十五', uri: '/x' } },
     })
 
-    await fetchAncientBookByIdRepo('17270_2263_15', '/processed/entities/ancient_book/ancient_book_object/volume/17270_2263_15.json')
+    await fetchAncientBookByIdRepo('17270_2263_15', '/processed/json-ld/ancient-book/object/volume/17270_2263_15.json')
 
     expect(http.get).toHaveBeenCalledWith('/api/v1/ancient-books/17270_2263_15', {
-      params: { uri: '/processed/entities/ancient_book/ancient_book_object/volume/17270_2263_15.json' },
+      params: { uri: '/processed/json-ld/ancient-book/object/volume/17270_2263_15.json' },
     })
   })
 

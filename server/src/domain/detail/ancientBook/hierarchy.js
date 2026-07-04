@@ -23,7 +23,7 @@ export function pickAncientBookHierarchyParentNode(doc) {
   for (const item of memberOf) {
     if (!item || typeof item !== 'object') continue
     const nodeId = String(item.id || '').trim()
-    if (nodeId.includes('/set/ancient_book/')) return item
+    if (nodeId.includes('/set/ancient-book/')) return item
   }
   return null
 }

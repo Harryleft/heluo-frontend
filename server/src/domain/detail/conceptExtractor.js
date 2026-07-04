@@ -179,7 +179,7 @@ export function extractConceptDetail(uri, doc) {
       } else if (typeId.includes('form') || typeId.includes('ti')) {
         type = 'poetic_form'
       } else if (typeId.includes('ancient') || typeId.includes('gu')) {
-        type = 'ancient_book_concept'
+        type = 'ancient_book'
       }
     }
   }

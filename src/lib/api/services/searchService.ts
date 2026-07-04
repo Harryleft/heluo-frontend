@@ -4,7 +4,7 @@
  * 提供统一的搜索功能，包括：
  * - 统一搜索（跨类型）
  * - 多维度搜索（并行）
- * - 融合查询（RAG/GraphRAG）
+ * - 融合查询
  * - 相关资源搜索（带缓存、降级、可用性校验）
  */
 
@@ -489,7 +489,7 @@ export async function searchByDimsService(
   return output
 }
 
-/** 融合问答服务（RAG/GraphRAG） */
+/** 融合问答服务 */
 export async function queryFusionService(params: FusionQueryParamsV1): Promise<FusionQueryApiResponse> {
   const safeQuery = normalizeSearchQuery(params.query)
   return queryFusionRepo({

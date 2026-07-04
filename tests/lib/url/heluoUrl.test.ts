@@ -24,8 +24,8 @@ describe('heluoUrl', () => {
   })
 
   it('应从相对路径中提取实体路径', () => {
-    const result = extractEntityPathFromUri('/processed/entities/ancient_book/ancient_book_txt/book/17270_2263.json')
-    expect(result).toContain('/ancient_book/')
+    const result = extractEntityPathFromUri('/processed/json-ld/ancient-book/text/book/17270_2263.json')
+    expect(result).toContain('/ancient-book/')
   })
 
   it('非实体 URL 不应生成详情路由', () => {

@@ -304,7 +304,7 @@ export interface UnifiedSearchParamsV1 {
 // ========== 融合问答接口类型 ==========
 
 /** 融合检索模式 */
-export type FusionModeV1 = 'rag' | 'graphrag' | 'hybrid'
+export type FusionModeV1 = 'rag' | 'hybrid'
 
 /** 融合回答生成策略 */
 export type FusionAnswerStrategyV1 = FusionModeV1 | 'llm' | 'template'
@@ -576,7 +576,7 @@ export type PlaceDetailApiResponse = ApiResponse<PlaceDetailV1> | ApiError
 // ========== 概念接口类型 ==========
 
 /** 概念子类型 */
-export type ConceptType = 'rhyme' | 'poetic_form' | 'ancient_book_concept' | 'other'
+export type ConceptType = 'rhyme' | 'poetic_form' | 'ancient_book' | 'other'
 
 /** 概念详情（v1） */
 export interface ConceptDetailV1 {

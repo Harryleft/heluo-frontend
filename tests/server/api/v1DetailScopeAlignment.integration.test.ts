@@ -20,16 +20,16 @@ function jsonResponse(payload, status = 200) {
 function createFetchMock(options = {}) {
   const includeTxtManifest = options.includeTxtManifest !== false
   const personUri = '/processed/json-ld/person/17270.json'
-  const dataPersonUri = '/data/processed/json-ld/person/15188.json'
+  const dataPersonUri = '/processed/json-ld/person/15188.json'
   const poemUri = '/processed/json-ld/poem/set/poem_31848.json'
-  const dataDufuPoemUri = '/data/processed/json-ld/poem/set/poem_30546.json'
-  const poemTextUri1 = '/processed/json-ld/poem/txt/poem_31848_01.json'
-  const poemTextUri2 = '/processed/json-ld/poem/txt/poem_31848_02.json'
+  const dataDufuPoemUri = '/processed/json-ld/poem/set/poem_30546.json'
+  const poemTextUri1 = '/processed/json-ld/poem/text/poem_31848_01.json'
+  const poemTextUri2 = '/processed/json-ld/poem/text/poem_31848_02.json'
   const bookUri = '/processed/json-ld/book/978-7-5470-5738-4.json'
   const placeUri = '/processed/json-ld/place/CN510922.json'
-  const dataDufuPlaceUri = '/data/processed/json-ld/place/CN500236.json'
-  const ancientUri = '/processed/json-ld/ancient_book/ancient_book_set/book_entry/17270_303.json'
-  const ancientTxtBookUri = '/processed/json-ld/ancient_book/ancient_book_txt/book/17270_303.json'
+  const dataDufuPlaceUri = '/processed/json-ld/place/CN500236.json'
+  const ancientUri = '/processed/json-ld/ancient-book/set/book-entry/17270_303.json'
+  const ancientTxtBookUri = '/processed/json-ld/ancient-book/text/book/17270_303.json'
 
   const poemRows = [{ uri: poemUri, score: 0.91, confidence: 0.05 }]
   const bookRows = [{ uri: bookUri, score: 0.8, confidence: 0.1 }]
@@ -62,12 +62,12 @@ function createFetchMock(options = {}) {
       },
     },
     [poemTextUri1]: {
-      id: 'https://api.heluo.site/poem/txt/poem_31848_01',
+      id: 'https://api.heluo.site/poem/text/poem_31848_01',
       text_norm_zh: '昔闻洞庭水，今上岳阳楼。',
       member_of: [{ id: 'https://api.heluo.site/poem/set/poem_31848' }],
     },
     [poemTextUri2]: {
-      id: 'https://api.heluo.site/poem/txt/poem_31848_02',
+      id: 'https://api.heluo.site/poem/text/poem_31848_02',
       text_norm_zh: '吴楚东南坼，乾坤日夜浮。',
       member_of: [{ id: 'https://api.heluo.site/poem/set/poem_31848' }],
     },
@@ -125,7 +125,7 @@ function createFetchMock(options = {}) {
     if (parsed.pathname === '/v1/search') {
       const directory = parsed.searchParams.get('directory')
       if (directory) {
-        if (directory === '/processed/json-ld/poem/txt/') {
+        if (directory === '/processed/json-ld/poem/text/') {
           const query = parsed.searchParams.get('q') || ''
           if (query === '31848') {
             return jsonResponse({
@@ -138,7 +138,7 @@ function createFetchMock(options = {}) {
           }
           return jsonResponse({ total: 0, results: [] }, 200)
         }
-        if (directory === '/processed/json-ld/ancient_book/ancient_book_txt/book/') {
+        if (directory === '/processed/json-ld/ancient-book/text/book/') {
           const query = parsed.searchParams.get('q') || ''
           if (query === '303') {
             return jsonResponse({
@@ -148,7 +148,7 @@ function createFetchMock(options = {}) {
           }
           return jsonResponse({ total: 0, results: [] }, 200)
         }
-        if (directory === '/data/processed/json-ld/poem/set/') {
+        if (directory === '/processed/json-ld/poem/set/') {
           const query = parsed.searchParams.get('q') || ''
           if (query === '17270') {
             return jsonResponse({
@@ -162,7 +162,7 @@ function createFetchMock(options = {}) {
       }
 
       const collection = parsed.searchParams.get('collection')
-      if (collection === '/heluo/poems_set') {
+      if (collection === '/heluo/poems/sets') {
         return jsonResponse({ total: 1, results: poemRows }, 200)
       }
       if (collection === '/heluo/books') {
@@ -171,10 +171,10 @@ function createFetchMock(options = {}) {
       if (collection === '/heluo/places') {
         return jsonResponse({ total: 1, results: placeRows }, 200)
       }
-      if (collection === '/heluo/ancient-book-sets') {
+      if (collection === '/heluo/ancient-books/sets') {
         return jsonResponse({ total: 1, results: ancientRows }, 200)
       }
-      if (collection === '/heluo/ancient_book_sets') {
+      if (collection === '/heluo/ancient-books/sets') {
         return jsonResponse({ total: 0, results: [] }, 200)
       }
       return jsonResponse({ total: 0, results: [] }, 200)
@@ -237,7 +237,7 @@ describe('GET /api/v1 details 口径对齐', () => {
     expect(result.success).toBe(true)
     expect(result.data.fullText).toContain('昔闻洞庭水')
     expect(result.data.fullText).toContain('吴楚东南坼')
-    expect(result.data.textUri).toBe('/processed/json-ld/poem/txt/poem_31848_01.json')
+    expect(result.data.textUri).toBe('/processed/json-ld/poem/text/poem_31848_01.json')
   })
 
   it('person search 结果进入 details 不应 404', async () => {
@@ -300,7 +300,7 @@ describe('GET /api/v1 details 口径对齐', () => {
   })
 
   it('ancient_book search 结果进入 details 不应 404', async () => {
-    const uri = encodeURIComponent('/processed/json-ld/ancient_book/ancient_book_set/book_entry/17270_303.json')
+    const uri = encodeURIComponent('/processed/json-ld/ancient-book/set/book-entry/17270_303.json')
     const response = await fetch(`${baseUrl}/api/v1/ancient-books/17270_303?uri=${uri}`)
     const result = await response.json()
 
@@ -310,7 +310,7 @@ describe('GET /api/v1 details 口径对齐', () => {
   })
 
   it('ancient_book details 应能回填 IIIF manifests', async () => {
-    const uri = encodeURIComponent('/processed/json-ld/ancient_book/ancient_book_set/book_entry/17270_303.json')
+    const uri = encodeURIComponent('/processed/json-ld/ancient-book/set/book-entry/17270_303.json')
     const response = await fetch(`${baseUrl}/api/v1/ancient-books/17270_303?uri=${uri}`)
     const result = await response.json()
 
@@ -322,7 +322,7 @@ describe('GET /api/v1 details 口径对齐', () => {
 
   it('ancient_book details 缺少显式 IIIF 时应回填 collection manifest', async () => {
     setMarklogicFetchForTest(createFetchMock({ includeTxtManifest: false }))
-    const uri = encodeURIComponent('/processed/json-ld/ancient_book/ancient_book_set/book_entry/17270_303.json')
+    const uri = encodeURIComponent('/processed/json-ld/ancient-book/set/book-entry/17270_303.json')
     const response = await fetch(`${baseUrl}/api/v1/ancient-books/17270_303?uri=${uri}`)
     const result = await response.json()
 
