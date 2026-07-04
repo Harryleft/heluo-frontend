@@ -14,7 +14,6 @@ import type { InternalLinkViewModel, SearchResultItemV1 } from '@/types/api'
 import type { RelatedPickContext } from '@/features/details/types/overviewTab'
 import {
   BOOK_DIVERSITY_RESOURCE_TYPES,
-  RELATED_RESOURCE_FALLBACK_TYPES,
   RELATED_RESOURCE_FETCH_SIZE,
   RELATED_RESOURCE_TYPES,
   RELATED_SEARCH_MODE,
@@ -122,25 +121,6 @@ export function useRelatedResources(params: UseRelatedResourcesParams): UseRelat
           currentResourceKey: extractBookResourceKey(dataUri),
         }
 
-        const resolveKeywordFallback = async () => {
-          const fallbackResponse = await searchUnified(
-            relatedQuery,
-            RELATED_RESOURCE_FALLBACK_TYPES,
-            'keyword',
-            { page: 1, pageSize: RELATED_RESOURCE_FETCH_SIZE },
-          )
-          if (!fallbackResponse.success) return []
-          return pickTopRelatedResources(fallbackResponse.data.items || [], relatedContext)
-        }
-
-        if (!response.success) {
-          const fallbackItems = await resolveKeywordFallback()
-          cacheRelatedResourcesIfValid(cacheKey, fallbackItems)
-          setRelatedResources(fallbackItems)
-          setRelatedState('success')
-          return
-        }
-
         let recommended = pickTopRelatedResources(response.data.items || [], relatedContext)
 
         const needSupplement = isBookResource
@@ -166,8 +146,10 @@ export function useRelatedResources(params: UseRelatedResourcesParams): UseRelat
           }
         }
 
-        if (recommended.length === 0) {
-          recommended = await resolveKeywordFallback()
+        if (response.data?.items && response.data.items.length === 0) {
+          setRelatedResources([])
+          setRelatedState('success')
+          return
         }
         if (recommended.length === 0) {
           recommended = buildRelatedFromInternalLinks(internalLinks, relatedContext)
@@ -188,18 +170,7 @@ export function useRelatedResources(params: UseRelatedResourcesParams): UseRelat
             currentIsbn: normalizeIsbn(bookIsbn),
             currentResourceKey: extractBookResourceKey(dataUri),
           }
-          const fallbackResponse = await searchUnified(
-            relatedQuery,
-            RELATED_RESOURCE_FALLBACK_TYPES,
-            'keyword',
-            { page: 1, pageSize: RELATED_RESOURCE_FETCH_SIZE },
-          )
-          const fallbackItems = fallbackResponse.success
-            ? pickTopRelatedResources(fallbackResponse.data.items || [], relatedContext)
-            : []
-          const finalItems = fallbackItems.length > 0
-            ? fallbackItems
-            : buildRelatedFromInternalLinks(internalLinks, relatedContext)
+          const finalItems = buildRelatedFromInternalLinks(internalLinks, relatedContext)
           cacheRelatedResourcesIfValid(cacheKey, finalItems)
           setRelatedResources(finalItems)
           setRelatedState('success')
