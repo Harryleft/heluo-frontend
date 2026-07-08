@@ -54,9 +54,9 @@ flowchart LR
     A --> A3[PoemDetailCard]
     B[兼容回退失稳] --> B1[searchOrchestrator concept fallback]
     B --> B2[getDetailUseCase vector or legacy URI]
-    C[外部依赖重复接入] --> C1[BookLocationMapPanel loader]
-    C --> C2[PlaceCoordinateMapPanel loader]
-    C --> C3[PersonPoemTrackMap amapLoader]
+    C[外部依赖接入契约] --> C1[BookLocationMapPanel map facade]
+    C --> C2[PlaceCoordinateMapPanel map facade]
+    C --> C3[PersonPoemTrackMap mapLoader]
     D[状态持久化脆弱] --> D1[useDetailData global Map cache]
     D --> D2[fusion localStorage session]
     E[大文件编排层] --> E1[getDetailUseCase 880 lines]
@@ -146,32 +146,26 @@ flowchart LR
 
 这类问题短期会表现为“偶发看见旧数据”，长期会表现为“为什么我改了后端，前端还像没更新”。
 
-### 5. 地图加载器被复制了三遍，外部依赖接入逻辑已经分叉
+### 5. 地图加载器已经收口，但地图面板契约仍需要统一
 
-重复实现证据：
+当前实现证据：
 
-- `src/features/details/components/entity-fields/BookLocationMapPanel.tsx:54`
-- `src/features/details/components/entity-fields/BookLocationMapPanel.tsx:93`
-- `src/features/details/components/entity-fields/PlaceCoordinateMapPanel.tsx:23`
-- `src/features/details/components/entity-fields/PlaceCoordinateMapPanel.tsx:44`
-- `src/features/details/components/PersonPoemTrackMap/services/amapLoader.ts:16`
-- `src/features/details/components/PersonPoemTrackMap/services/amapLoader.ts:34`
+- `src/features/details/components/entity-fields/BookLocationMapPanel.tsx:3`
+- `src/features/details/components/entity-fields/PlaceCoordinateMapPanel.tsx:3`
+- `src/features/details/components/PersonPoemTrackMap/services/mapLoader.ts:299`
 
-三个 loader 都在做同一组事：
+图书、地点、人物轨迹地图现在都复用 `loadMapJsApi()`，外部地图资源已经从旧的分散接入收口到 Leaflet 加载器。
 
-- 检查 `window.AMap`
-- 检查 Key 和安全码
-- 检查脚本标签
-- 设置 `window._AMapSecurityConfig`
-- 处理脚本重复加载
+剩余问题不再是“多个 loader”，而是三个面板仍各自处理：
 
-这会带来三个问题：
+- 容器生命周期
+- 加载/错误状态
+- 点位与视野适配
+- 测试 mock 与回归样例
 
-- 一个地方修 race condition，另外两个地方照旧
-- 不同地图面板的报错、缩放、销毁语义开始分叉
-- 测试无法稳定 mock 一个统一入口
+这类问题平时不一定炸，但每次扩展地图能力时仍可能出现状态、缩放和测试语义不一致。
 
-这类问题平时不一定炸，但每次碰地图都在增加不一致。
+下一步不需要再做地图供应商兼容层，而应该把图书、地点、人物轨迹地图的状态机和测试 fixture 收敛到同一套地图面板契约。
 
 ### 6. 融合问答会话持久化没有版本层，恢复逻辑偏“尽量不崩”，不偏“严格可信”
 
@@ -326,7 +320,7 @@ Reuses:
 1. 先把 11 个失败测试按“真实产品回归 / 过度依赖 DOM 细节”做一次分组。
 2. 为 details 体系补一份共享契约清单，覆盖推荐资源、外部链接、IIIF、地图容器和字段面板。
 3. 为 `concept` 回退链路补同层单元测试，不只依赖 API 集成测试。
-4. 把 AMap loader 收成一个公共服务，再让图书、地点、轨迹地图复用。
+4. 把图书、地点、人物轨迹地图的状态、错误和测试 fixture 收敛到同一地图面板契约。
 5. 拆 `getDetailUseCase.js` 与 `detailController.js` 的兼容判断和分发逻辑，避免继续把共享入口做厚。
 
 ## What I noticed about how you think
