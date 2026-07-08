@@ -2,7 +2,7 @@
 
 ## 1. 概述
 
-本文档定义"人物诗文地理轨迹地图"功能的 API 设计，用于高德地图展示某个人物所有诗文的地理轨迹。
+本文档定义"人物诗文地理轨迹地图"功能的 API 设计，用于地图前端展示某个人物所有诗文的地理轨迹。
 
 **设计原则**
 - RESTful 风格
@@ -563,4 +563,4 @@ console.info(`[poem-geo-trace] personId=${personId} ${JSON.stringify(metrics)}`)
 | 地点详情提取 | `app.js:2635-2687` |
 | 人物详情提取 | `app.js:2534-2587` |
 | 缓存模式参考 | `app.js:122-128` (MVP_DETAIL_CACHE) |
-| 高德地图前端 | `PlaceCoordinateMapPanel.tsx:1-213` |
+| 地图前端 | `PlaceCoordinateMapPanel.tsx` |
