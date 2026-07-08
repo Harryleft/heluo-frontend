@@ -8,7 +8,7 @@ import poemDetailCardStyles from '@/styles/features/details/PoemDetailCard'
 import type { PoemDetailViewModel } from '@/types/api'
 import { injectStyles } from '@/lib/dom/injectStyles'
 import { normalizeText } from '@/lib/utils/text'
-import { loadAmapJsApi } from '@/features/details/components/PersonPoemTrackMap/services'
+import { loadMapJsApi } from '@/features/details/components/PersonPoemTrackMap/services'
 
 const TEST_ID = 'poem-detail-card'
 const DEFAULT_TITLE = '无标题'
@@ -203,16 +203,16 @@ function PoemPlaceMap({ places }: { places: _PlaceLinkItem[] }): JSX.Element {
 
     let active = true
     setStatus('loading')
-    loadAmapJsApi()
-      .then((AMap) => {
+    loadMapJsApi()
+      .then((MapApi) => {
         if (!active || !mapContainerRef.current) return
-        const map = new AMap.Map(mapContainerRef.current, {
+        const map = new MapApi.Map(mapContainerRef.current, {
           center: [points[0].lng, points[0].lat],
           zoom: points.length > 1 ? 10 : 13,
           viewMode: '2D',
         })
         points.forEach((point) => {
-          new AMap.Marker({
+          new MapApi.Marker({
             map,
             position: [point.lng, point.lat],
             title: point.label,
@@ -241,7 +241,7 @@ function PoemPlaceMap({ places }: { places: _PlaceLinkItem[] }): JSX.Element {
     <>
       <div ref={mapContainerRef} className="poem-detail-card__map-canvas" aria-label="诗文地理地图容器" />
       {status === 'loading' && <p className="poem-detail-card__map-status">正在加载地图...</p>}
-      {status === 'error' && <p className="poem-detail-card__map-status poem-detail-card__map-status--error">地图加载失败，请检查网络或 Key 配置。</p>}
+      {status === 'error' && <p className="poem-detail-card__map-status poem-detail-card__map-status--error">地图加载失败，请检查网络或资源配置。</p>}
     </>
   )
 }

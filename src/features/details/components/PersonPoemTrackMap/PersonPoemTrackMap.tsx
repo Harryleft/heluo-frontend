@@ -2,7 +2,7 @@
  * PersonPoemTrackMap 人物诗文地理轨迹地图组件
  *
  * 功能：
- * - 动态加载高德地图 API
+ * - 动态加载地图 API
  * - 显示轨迹标记点（带数字，表示诗文数量）
  * - 绘制轨迹连线
  * - 自动适配地图视野
@@ -33,13 +33,13 @@ import type {
   PoemTrackPoint,
   MapLoadStatus,
 } from '@/types/contracts/poemTrackContracts'
-import '@/types/amap.global'
+import '@/types/map.global'
 
 // 导入拆分后的模块
-import { DEFAULT_ANIMATION_INTERVAL, AMAP_DEFAULT_ZOOM } from './constants'
+import { DEFAULT_ANIMATION_INTERVAL, DEFAULT_MAP_ZOOM } from './constants'
 import { useLazyLoad } from './hooks/useLazyLoad'
 import { useTrackData, useSelection } from './hooks/useTrackData'
-import { loadAmapJsApi, getTrackPointKey, createMarkers } from './services'
+import { loadMapJsApi, getTrackPointKey, createMarkers } from './services'
 import { INK_COLORS } from './styles'
 import { extractTrackPoints, getYearRange } from './utils'
 
@@ -103,15 +103,15 @@ export function PersonPoemTrackMap({
   const selectionRef = useRef({ currentYear, selectedTrackKey })
   selectionRef.current = { currentYear, selectedTrackKey }
 
-  // 加载高德地图
+  // 加载地图
   useEffect(() => {
     if (!trackData?.trackPoints.length || !mapContainerRef.current) return
 
     let active = true
     setMapStatus('loading')
 
-    loadAmapJsApi()
-      .then((AMap) => {
+    loadMapJsApi()
+      .then((MapApi) => {
         if (!active || !mapContainerRef.current) return
 
         const points = extractTrackPoints(trackData.trackPoints)
@@ -119,9 +119,9 @@ export function PersonPoemTrackMap({
 
         // 创建地图实例
         const center: [number, number] = [points[0].lng, points[0].lat]
-        const map = new AMap.Map(mapContainerRef.current, {
+        const map = new MapApi.Map(mapContainerRef.current, {
           center,
-          zoom: AMAP_DEFAULT_ZOOM,
+          zoom: DEFAULT_MAP_ZOOM,
           viewMode: '2D',
         })
 
@@ -130,7 +130,7 @@ export function PersonPoemTrackMap({
         // 绘制轨迹连线（使用墨色）
         if (points.length > 1) {
           const path = points.map((p) => [p.lng, p.lat] as [number, number])
-          const polyline = new AMap.Polyline({
+          const polyline = new MapApi.Polyline({
             map,
             path,
             borderWeight: 2,
@@ -143,7 +143,7 @@ export function PersonPoemTrackMap({
         // 添加标记点
         const yearRange = trackData.stats.yearRange || { start: 0, end: 0 }
         updateMarkers(
-          AMap,
+          MapApi,
           map,
           trackData.trackPoints,
           yearRange,
@@ -188,7 +188,7 @@ export function PersonPoemTrackMap({
    */
   const updateMarkers = useCallback(
     (
-      AMap: any,
+      MapApi: any,
       map: any,
       trackPoints: PoemTrackPoint[],
       yearRange: { start: number; end: number },
@@ -203,7 +203,7 @@ export function PersonPoemTrackMap({
       }
 
       createMarkers(
-        AMap,
+        MapApi,
         map,
         trackPoints,
         yearRange,
@@ -221,9 +221,9 @@ export function PersonPoemTrackMap({
     if (!mapRef.current || !trackData?.trackPoints) return
 
     const yearRange = trackData.stats.yearRange || { start: 0, end: 0 }
-    loadAmapJsApi().then((AMap) => {
+    loadMapJsApi().then((MapApi) => {
       if (!mapRef.current) return
-      updateMarkers(AMap, mapRef.current, trackData.trackPoints, yearRange, currentYear, selectedTrackKey)
+      updateMarkers(MapApi, mapRef.current, trackData.trackPoints, yearRange, currentYear, selectedTrackKey)
     })
   }, [currentYear, trackData, updateMarkers, selectedTrackKey])
 

@@ -1,10 +1,10 @@
 import { useEffect, useMemo, useRef, useState } from 'react'
 import { asArray, asRecord, normalizeText, pickNodeText } from './utils'
-import { loadAmapJsApi } from '@/features/details/components/PersonPoemTrackMap/services'
-import '@/types/amap.global'
+import { loadMapJsApi } from '@/features/details/components/PersonPoemTrackMap/services'
+import '@/types/map.global'
 
-const AMAP_DETAIL_ZOOM = 15
-const AMAP_MULTI_POINT_ZOOM = 11
+const MAP_DETAIL_ZOOM = 15
+const MAP_MULTI_POINT_ZOOM = 11
 
 interface BookLocationMapPanelProps {
   entity: Record<string, unknown>
@@ -16,7 +16,7 @@ interface MapPoint {
   lng: number
 }
 
-interface AMapMapInstance {
+interface MapInstance {
   setFitView(): void
   destroy(): void
 }
@@ -56,7 +56,7 @@ export function BookLocationMapPanel({ entity }: BookLocationMapPanelProps): JSX
   const pointsRef = useRef(points)
   pointsRef.current = points
   const mapContainerRef = useRef<HTMLDivElement | null>(null)
-  const mapRef = useRef<AMapMapInstance | null>(null)
+  const mapRef = useRef<MapInstance | null>(null)
   const [status, setStatus] = useState<'loading' | 'ready' | 'error'>('loading')
 
   useEffect(() => {
@@ -66,17 +66,17 @@ export function BookLocationMapPanel({ entity }: BookLocationMapPanelProps): JSX
     let active = true
     setStatus('loading')
 
-    loadAmapJsApi()
-      .then((AMap) => {
+    loadMapJsApi()
+      .then((MapApi) => {
         if (!active || !mapContainerRef.current) return
         const center: [number, number] = [nextPoints[0].lng, nextPoints[0].lat]
-        const map = new AMap.Map(mapContainerRef.current, {
+        const map = new MapApi.Map(mapContainerRef.current, {
           center,
-          zoom: nextPoints.length > 1 ? AMAP_MULTI_POINT_ZOOM : AMAP_DETAIL_ZOOM,
+          zoom: nextPoints.length > 1 ? MAP_MULTI_POINT_ZOOM : MAP_DETAIL_ZOOM,
           viewMode: '2D',
         })
         nextPoints.forEach((point) => {
-          new AMap.Marker({
+          new MapApi.Marker({
             map,
             position: [point.lng, point.lat],
             title: point.label,
@@ -109,7 +109,7 @@ export function BookLocationMapPanel({ entity }: BookLocationMapPanelProps): JSX
       <h3 className="yale-overview-tab__type-title">馆藏地址</h3>
       <div ref={mapContainerRef} className="yale-overview-tab__map-canvas" />
       {status === 'loading' && <p className="yale-overview-tab__map-status">正在加载地图...</p>}
-      {status === 'error' && <p className="yale-overview-tab__map-status yale-overview-tab__map-status--error">地图加载失败，请检查网络或 Key 配置。</p>}
+      {status === 'error' && <p className="yale-overview-tab__map-status yale-overview-tab__map-status--error">地图加载失败，请检查网络或资源配置。</p>}
     </section>
   )
 }

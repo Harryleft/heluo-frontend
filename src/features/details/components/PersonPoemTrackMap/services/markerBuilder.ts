@@ -22,7 +22,7 @@ export function getTrackPointKey(point: Pick<PoemTrackPoint, 'year' | 'place'>):
  *
  * 采用累积显示模式：只显示当前年份及之前的轨迹点
  *
- * @param AMap - 高德地图 API
+ * @param MapApi - 地图 API
  * @param map - 地图实例
  * @param trackPoints - 轨迹点数组
  * @param yearRange - 年份范围
@@ -32,7 +32,7 @@ export function getTrackPointKey(point: Pick<PoemTrackPoint, 'year' | 'place'>):
  * @param markersRef - 标记点引用数组（用于清理）
  */
 export function createMarkers(
-  AMap: any,
+  MapApi: any,
   map: any,
   trackPoints: PoemTrackPoint[],
   yearRange: { start: number; end: number },
@@ -56,7 +56,7 @@ export function createMarkers(
     const isCurrent = selectedTrackKey === trackKey
     const contentHtml = createMarkerContent(point.poems.length, point.year, yearRange, isCurrent)
 
-    const marker = new AMap.Marker({
+    const marker = new MapApi.Marker({
       map,
       position: [point.place.lng, point.place.lat],
       content: contentHtml,

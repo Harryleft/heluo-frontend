@@ -228,7 +228,7 @@ export interface PoemListPanelProps {
 // ============================================================================
 
 /**
- * 高德地图 Marker 配置
+ * 地图 Marker 配置
  */
 export interface TrackMarkerConfig {
   /** 经纬度 */

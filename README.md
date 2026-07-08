@@ -40,7 +40,7 @@ cp .env.example .env
 ```
 
 - `REACT_BACKEND_URL` 默认 `http://127.0.0.1:9011`
-- `REACT_AMAP_KEY` / `REACT_AMAP_SECURITY_JS_CODE`：高德地图 JS API 配置
+- `REACT_LEAFLET_JS_URL` / `REACT_LEAFLET_CSS_URL` / `REACT_MAP_TILE_URL`：可选地图资源配置
 
 ## 4. 启动
 

@@ -1,10 +1,10 @@
 import { useEffect, useMemo, useRef, useState } from 'react'
 import { asArray, asRecord, normalizeText, pickNodeText } from './utils'
-import { loadAmapJsApi } from '@/features/details/components/PersonPoemTrackMap/services'
-import '@/types/amap.global' // 导入全局声明
+import { loadMapJsApi } from '@/features/details/components/PersonPoemTrackMap/services'
+import '@/types/map.global' // 导入全局声明
 
-const AMAP_DETAIL_ZOOM = 13
-const AMAP_MULTI_POINT_ZOOM = 10
+const MAP_DETAIL_ZOOM = 13
+const MAP_MULTI_POINT_ZOOM = 10
 
 interface PlaceCoordinateMapPanelProps {
   entity: Record<string, unknown>
@@ -59,7 +59,7 @@ export function PlaceCoordinateMapPanel({ entity }: PlaceCoordinateMapPanelProps
   const pointsRef = useRef(points)
   pointsRef.current = points
   const mapContainerRef = useRef<HTMLDivElement | null>(null)
-  const mapRef = useRef<any>(null) // 高德地图实例
+  const mapRef = useRef<any>(null) // 地图实例
   const [status, setStatus] = useState<'loading' | 'ready' | 'error'>('loading')
 
   useEffect(() => {
@@ -69,19 +69,19 @@ export function PlaceCoordinateMapPanel({ entity }: PlaceCoordinateMapPanelProps
     let active = true
     setStatus('loading')
 
-    loadAmapJsApi()
-      .then((AMap) => {
+    loadMapJsApi()
+      .then((MapApi) => {
         if (!active || !mapContainerRef.current) return
 
         const center: [number, number] = [nextPoints[0].lng, nextPoints[0].lat]
-        const map = new AMap.Map(mapContainerRef.current, {
+        const map = new MapApi.Map(mapContainerRef.current, {
           center,
-          zoom: nextPoints.length > 1 ? AMAP_MULTI_POINT_ZOOM : AMAP_DETAIL_ZOOM,
+          zoom: nextPoints.length > 1 ? MAP_MULTI_POINT_ZOOM : MAP_DETAIL_ZOOM,
           viewMode: '2D',
         })
 
         nextPoints.forEach((point) => {
-          new AMap.Marker({
+          new MapApi.Marker({
             map,
             position: [point.lng, point.lat],
             title: point.label,
@@ -116,7 +116,7 @@ export function PlaceCoordinateMapPanel({ entity }: PlaceCoordinateMapPanelProps
       <h3 className="yale-place-detail__title">地理坐标与地图</h3>
       <div ref={mapContainerRef} className="yale-place-detail__map-canvas" />
       {status === 'loading' && <p className="yale-place-detail__meta">正在加载地图...</p>}
-      {status === 'error' && <p className="yale-place-detail__meta yale-place-detail__meta--error">地图加载失败，请检查网络或 Key 配置。</p>}
+      {status === 'error' && <p className="yale-place-detail__meta yale-place-detail__meta--error">地图加载失败，请检查网络或资源配置。</p>}
     </section>
   )
 }

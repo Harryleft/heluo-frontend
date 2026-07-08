@@ -1,9 +1,6 @@
 /// <reference types="vite/client" />
 
 interface ImportMetaEnv {
-  readonly REACT_AMAP_KEY?: string
-  readonly REACT_AMAP_SECURITY_JS_CODE?: string
-  readonly REACT_MAP_PROVIDER?: string
   readonly REACT_LEAFLET_JS_URL?: string
   readonly REACT_LEAFLET_CSS_URL?: string
   readonly REACT_MAP_TILE_URL?: string

@@ -56,7 +56,7 @@ export function PersonDetailsPage(): JSX.Element {
     return (
       <Box>
         <PersonPoemTrackMap
-          key={`amap-${personId}`}
+          key={`map-${personId}`}
           personId={personId}
           onPoemClick={handlePoemClick}
         />
