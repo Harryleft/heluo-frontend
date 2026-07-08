@@ -31,7 +31,7 @@ flowchart TD
 - 编号拆分：按标识类型拆成独立字段（如 `ISBN`、`馆藏检索号`），不再混合为同一行。
 - 编号清洗：排除书名/题名类值，仅保留真实标识。
 - 外链策略：图书类型 `externalUris` 直接返回空数组，前端同时禁用图书外链卡片渲染。
-- 方案A验证：从 `current_location.defined_by` 解析 WKT 坐标，使用高德地图 JS API v2 自动渲染地图（`_AMapSecurityConfig` + `maps?v=2.0`）。
+- 方案A验证：从 `current_location.defined_by` 解析 WKT 坐标，复用当前地图加载器自动渲染地图。
 
 ## 验证项
 - 图书详情不出现“外部链接”标题。
