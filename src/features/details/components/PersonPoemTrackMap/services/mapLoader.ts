@@ -87,6 +87,19 @@ function ensureSingleLink(id: string, href: string): void {
   document.head.appendChild(link)
 }
 
+function resolveLeafletAssetUrl(fileName: string): string {
+  return new URL(`images/${fileName}`, LEAFLET_CSS_URL).toString()
+}
+
+function configureDefaultMarkerIcons(Leaflet: any): void {
+  Leaflet.Icon.Default.imagePath = ''
+  Leaflet.Icon.Default.mergeOptions({
+    iconRetinaUrl: resolveLeafletAssetUrl('marker-icon-2x.png'),
+    iconUrl: resolveLeafletAssetUrl('marker-icon.png'),
+    shadowUrl: resolveLeafletAssetUrl('marker-shadow.png'),
+  })
+}
+
 async function createMapNamespace(): Promise<MapNamespace> {
   const win = window as MaybeWindow
   ensureSingleLink(LEAFLET_CSS_ID, LEAFLET_CSS_URL)
@@ -97,6 +110,7 @@ async function createMapNamespace(): Promise<MapNamespace> {
   }
 
   const Leaflet = win.L as any
+  configureDefaultMarkerIcons(Leaflet)
 
   class LeafletMap {
     private map: any
