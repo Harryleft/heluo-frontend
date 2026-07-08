@@ -595,7 +595,7 @@ export function createGetDetailUseCase(dependencies) {
     }
 
     const manifest = await getIiifDocumentByPath(
-      `/iiif/manifests/ancientBook/${safeBookId}/${safeCarrierId}/manifest.json`,
+      `/iiif/manifests/${safeBookId}/manifest.json`,
       publicOrigin,
     )
     const results = extractIiifSearchMatches(manifest, safeQuery)

@@ -13,7 +13,7 @@ describe('resolvePrimaryEntityUri — IIIF 向量 URI 解析', () => {
       entity_iri: 'http://localhost:8083/iiif/manifests/ancientBook/304/17270_304/manifest.json',
     }
     const result = resolvePrimaryEntityUri('ancient_book', '/processed/vector/iiif/manifest/17270_304_766_1.json', doc)
-    expect(result).toBe('/iiif/manifests/ancientBook/304/17270_304/manifest.json')
+    expect(result).toBe('/iiif/manifests/304/manifest.json')
   })
 
   it('应忽略指向向量路径的 entity_iri', async () => {
@@ -60,14 +60,14 @@ describe('iiif 回填 entities detailLink', () => {
     const { resolvePrimaryEntityUri } = await import('../../server/src/usecases/fusionShared.js')
 
     // 模拟完整回填逻辑的核心匹配
-    const entityUri = '/iiif/manifests/ancientBook/304/17270_304/manifest.json'
+    const entityUri = '/iiif/manifests/304/manifest.json'
     const iiifMatch = {
       uri: entityUri,
       openUrl: '/iiif?manifest=%2Fiiif%2Fmanifests%2F304%2Fmanifest.json&canvas=http%3A%2F%2Flocalhost%3A8083%2Fiiif%2F3%2Fcanvas%2FancientBook%2F304%2F17270_304%2Fp766',
     }
 
     const entities = [
-      { uri: entityUri, detailLink: '/details?uri=%2Fiiif%2Fmanifests%2FancientBook%2F304%2F17270_304%2Fmanifest.json' },
+      { uri: entityUri, detailLink: '/details?uri=%2Fiiif%2Fmanifests%2F304%2Fmanifest.json' },
       { uri: '/processed/json-ld/poem/set/poem_123.json', detailLink: '/details?uri=...' },
     ]
 

@@ -138,10 +138,10 @@ function createFusionMarklogicFetchMockForIiifPrimaryScope() {
       evidence: {
         manifest_id: '17270_303',
         canvas_id: 'http://localhost:8083/iiif/3/canvas/ancientBook/303/17270_303/p9',
-        uri: '/processed/iiif/manifests/ancientBook/303/17270_303/manifest.json',
+        uri: '/processed/iiif/manifests/303/manifest.json',
       },
     },
-    '/processed/iiif/manifests/ancientBook/303/17270_303/manifest.json': {
+    '/processed/iiif/manifests/303/manifest.json': {
       id: 'http://localhost:8083/iiif/manifests/303/manifest.json',
       items: [
         {
@@ -200,7 +200,7 @@ function createFusionMarklogicFetchMockForIiifPrimaryScope() {
       return jsonResponse(iiifManifest)
     }
 
-    if (parsed.pathname === '/processed/iiif/manifests/ancientBook/303/17270_303/manifest.json') {
+    if (parsed.pathname === '/processed/iiif/manifests/303/manifest.json') {
       return jsonResponse(iiifManifest)
     }
 
@@ -231,7 +231,7 @@ function createFusionMarklogicFetchMockForIiifCanonicalManifest() {
         uri: '/iiif/manifests/17270_304?page=550',
       },
     },
-    '/processed/iiif/manifests/ancientBook/304/17270_304/manifest.json': {
+    '/processed/iiif/manifests/304/manifest.json': {
       id: 'http://localhost:8083/iiif/manifests/304/manifest.json',
       items: [
         {
@@ -422,10 +422,10 @@ function createFusionMarklogicFetchMockForIiifTitleFallback() {
       evidence: {
         manifest_id: '17270_1181',
         canvas_id: 'http://localhost:8083/iiif/3/canvas/ancientBook/1181/17270_1181/p1397',
-        uri: '/processed/iiif/manifests/ancientBook/1181/17270_1181/manifest.json',
+        uri: '/processed/iiif/manifests/1181/manifest.json',
       },
     },
-    '/processed/iiif/manifests/ancientBook/1181/17270_1181/manifest.json': {
+    '/processed/iiif/manifests/1181/manifest.json': {
       id: 'http://localhost:8083/iiif/manifests/1181/manifest.json',
       label: { none: ['集千家注杜工部诗集'] },
       items: [

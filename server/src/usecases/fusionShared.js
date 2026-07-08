@@ -132,20 +132,20 @@ function deriveIiifManifestDocUri(row) {
     const text = String(candidate || '').trim()
     if (!text) continue
 
-    if (/^\/processed\/entities\/ancient_book\/iiif\/manifests\/ancientBook\/[^/]+\/[^/]+\/manifest\.json$/i.test(text)) {
-      return text
-    }
-
     const longMatch = text.match(/\/iiif\/manifests\/ancientBook\/([^/]+)\/([^/]+)\/manifest\.json$/i)
     if (longMatch) {
-      return `/processed/iiif/manifests/ancientBook/${longMatch[1]}/${longMatch[2]}/manifest.json`
+      return `/processed/iiif/manifests/${longMatch[1]}/manifest.json`
+    }
+
+    const shortMatch = text.match(/\/iiif\/manifests\/([^/]+)\/manifest\.json$/i)
+    if (shortMatch) {
+      return `/processed/iiif/manifests/${shortMatch[1]}/manifest.json`
     }
   }
 
   const uriMatch = String(row?.uri || '').trim().match(/\/processed\/vector\/iiif\/manifest\/(\d+)_(\d+)_\d+_\d+\.json$/i)
   if (!uriMatch) return ''
-  const carrierId = `${uriMatch[1]}_${uriMatch[2]}`
-  return `/processed/iiif/manifests/ancientBook/${uriMatch[2]}/${carrierId}/manifest.json`
+  return `/processed/iiif/manifests/${uriMatch[2]}/manifest.json`
 }
 
 function deriveIiifCanvasId(row) {
@@ -323,6 +323,10 @@ export function resolvePrimaryEntityUri(scope, rawUri, doc) {
           path = new URL(text).pathname
         }
       } catch { continue }
+      const legacyIiifMatch = path.match(/^\/iiif\/manifests\/ancientBook\/([^/]+)\/([^/]+)\/manifest\.json$/i)
+      if (legacyIiifMatch) return `/iiif/manifests/${legacyIiifMatch[1]}/manifest.json`
+      const canonicalIiifMatch = path.match(/^\/iiif\/manifests\/([^/]+)\/manifest\.json$/i)
+      if (canonicalIiifMatch) return `/iiif/manifests/${canonicalIiifMatch[1]}/manifest.json`
       if (path.startsWith('/') && path.length > 1) return path
     }
   }
