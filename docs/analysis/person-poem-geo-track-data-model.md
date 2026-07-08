@@ -18,7 +18,7 @@ flowchart TD
     E --> I[排序轨迹点]
     H --> I
     I --> J[生成轨迹数据]
-    J --> K[高德地图渲染]
+    J --> K[Leaflet 地图渲染]
 ```
 
 ## 3. 现有 JSON-LD 数据结构
@@ -236,11 +236,11 @@ export interface PersonPoemTrackError {
 export type PersonPoemTrackApiResponse = PersonPoemTrackResponse | PersonPoemTrackError
 ```
 
-### 4.2 高德地图组件类型
+### 4.2 地图组件类型
 
 ```typescript
 /**
- * 高德地图轨迹展示组件类型
+ * 轨迹地图展示组件类型
  * 文件位置: src/types/view/geoTrackModels.ts
  */
 
