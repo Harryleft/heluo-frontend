@@ -1,6 +1,6 @@
 import { getEntityDirectories } from '../../bootstrap/config.js'
 
-function isLikelyVectorOrFragmentUri(uri) {
+export function isLikelyVectorOrFragmentUri(uri) {
   const value = String(uri || '').toLowerCase()
   if (!value) return false
   return value.includes('/heluo/vector/') || value.includes('/processed/vector/')
