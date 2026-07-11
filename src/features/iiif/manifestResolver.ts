@@ -129,7 +129,13 @@ export async function resolveIiifManifestUrl(manifestPath: string): Promise<stri
   const manifestUrl = buildManifestUrl(manifestPath)
   if (!manifestUrl) return ''
   if (!manifestResolutionCache.has(manifestUrl)) {
-    manifestResolutionCache.set(manifestUrl, resolveIiifManifestUrlInternal(manifestUrl))
+    const task = resolveIiifManifestUrlInternal(manifestUrl)
+    manifestResolutionCache.set(manifestUrl, task)
+    void task.catch(() => {
+      if (manifestResolutionCache.get(manifestUrl) === task) {
+        manifestResolutionCache.delete(manifestUrl)
+      }
+    })
   }
   return manifestResolutionCache.get(manifestUrl) || Promise.resolve(manifestUrl)
 }
