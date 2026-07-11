@@ -110,7 +110,7 @@ export function parseUriResource(uri: string): ParsedUriResource {
   const normalized = String(uri || '').trim()
   if (!normalized) return UNKNOWN_RESOURCE
 
-  const fileName = normalized.split('/').pop() || ''
+  const fileName = normalized.split(/[?#]/, 1)[0].split('/').pop() || ''
   const id = fileName.replace(/\.json$/i, '')
 
   // 检测诗文类型
