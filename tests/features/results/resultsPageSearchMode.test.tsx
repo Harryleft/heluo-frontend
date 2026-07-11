@@ -5,7 +5,7 @@
 
 import { act } from 'react'
 import { createRoot, type Root } from 'react-dom/client'
-import { MemoryRouter, Route, Routes } from 'react-router-dom'
+import { MemoryRouter, Route, Routes, useNavigate } from 'react-router-dom'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 import { ResultsPage } from '@/features/results/ResultsPage'
 import { searchUnified } from '@/lib/api/v1Api'
@@ -74,6 +74,22 @@ function unmount(root: Root, container: HTMLDivElement): void {
     root.unmount()
   })
   container.remove()
+}
+
+function ResultsNavigationHarness(): JSX.Element {
+  const navigate = useNavigate()
+  return (
+    <>
+      <button
+        type="button"
+        data-testid="navigate-results"
+        onClick={() => navigate('/results?q=李白&scope=person')}
+      >
+        切换查询
+      </button>
+      <ResultsPage />
+    </>
+  )
 }
 
 describe('ResultsPage 检索模式', () => {
@@ -157,6 +173,41 @@ describe('ResultsPage 检索模式', () => {
 
     expect(searchUnified).toHaveBeenNthCalledWith(2, '杜甫', 'poem', 'keyword', { page: 2, pageSize: 12 })
     expect(container.textContent || '').toContain('诗文三')
+    unmount(root, container)
+  })
+
+  it('URL 查询条件变化后应同步搜索框与范围选择', async () => {
+    vi.mocked(searchUnified).mockResolvedValue(buildSearchSuccessResponse())
+
+    const { container, root } = mount(
+      <MemoryRouter initialEntries={['/results?q=杜甫&scope=poem']}>
+        <Routes>
+          <Route path="/results" element={<ResultsNavigationHarness />} />
+        </Routes>
+      </MemoryRouter>,
+    )
+
+    await act(async () => {
+      await Promise.resolve()
+    })
+
+    const input = container.querySelector('input[name="q"]') as HTMLInputElement
+    const select = container.querySelector('select[name="scope"]') as HTMLSelectElement
+    expect(input.value).toBe('杜甫')
+    expect(select.value).toBe('poem')
+
+    await act(async () => {
+      const button = container.querySelector('[data-testid="navigate-results"]') as HTMLButtonElement
+      button.click()
+      await Promise.resolve()
+      await Promise.resolve()
+    })
+
+    expect(searchUnified).toHaveBeenLastCalledWith('李白', 'person', 'keyword', { page: 1, pageSize: 12 })
+    const updatedInput = container.querySelector('input[name="q"]') as HTMLInputElement
+    const updatedSelect = container.querySelector('select[name="scope"]') as HTMLSelectElement
+    expect(updatedInput.value).toBe('李白')
+    expect(updatedSelect.value).toBe('person')
     unmount(root, container)
   })
 })
