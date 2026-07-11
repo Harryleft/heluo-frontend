@@ -36,7 +36,7 @@ usage() {
   --with-browser     安装 Playwright Chromium 浏览器
   --with-docker      同时启动 heluo-history-famous-figures/docker-compose.yml
   --with-llm         同时启动本地 LLM 服务
-  --no-health        跳过启动前健康检查
+  --no-health        跳过启动后的端到端健康检查
   -h, --help         显示帮助
 EOF
 }
@@ -142,20 +142,28 @@ start_docker() {
   docker compose -f "$FIGURES_DIR/docker-compose.yml" up -d
 }
 
-health_check() {
-  if [[ "$RUN_HEALTH" != "1" ]]; then
-    return
-  fi
+preflight_check() {
   command -v node >/dev/null || { echo "缺少 node" >&2; exit 1; }
   command -v npm >/dev/null || { echo "缺少 npm" >&2; exit 1; }
   "$PYTHON_BIN" --version >/dev/null || { echo "缺少 python" >&2; exit 1; }
+
+  if [[ "$INSTALL_DEPS" == "0" ]]; then
+    [[ -x "$FRONTEND_DIR/node_modules/.bin/concurrently" ]] || {
+      echo "Node 依赖未安装，请先运行 npm run bootstrap" >&2
+      exit 1
+    }
+    [[ -x "$PYTHON" ]] || {
+      echo "Embedding Python 环境未安装，请先运行 npm run bootstrap" >&2
+      exit 1
+    }
+  fi
 }
 
 ensure_env
 load_local_env
 setup_mirrors
 setup_proxy
-health_check
+preflight_check
 
 if [[ "$INSTALL_DEPS" == "1" ]]; then
   install_deps
@@ -179,4 +187,31 @@ fi
 
 echo "启动服务..."
 cd "$FRONTEND_DIR"
-npx concurrently -n "$names" -c "$colors" "${commands[@]}"
+npx concurrently -n "$names" -c "$colors" "${commands[@]}" &
+SERVICE_PID=$!
+
+cleanup() {
+  if kill -0 "$SERVICE_PID" 2>/dev/null; then
+    kill "$SERVICE_PID" 2>/dev/null || true
+    wait "$SERVICE_PID" 2>/dev/null || true
+  fi
+}
+trap cleanup EXIT
+trap 'cleanup; exit 130' INT
+trap 'cleanup; exit 143' TERM
+
+if [[ "$RUN_HEALTH" == "1" ]]; then
+  echo "等待全部服务通过端到端健康检查..."
+  SMOKE_RETRIES="${SMOKE_RETRIES:-60}" \
+  SMOKE_RETRY_DELAY_MS="${SMOKE_RETRY_DELAY_MS:-5000}" \
+    node "$FRONTEND_DIR/scripts/smoke-check.mjs"
+  echo "服务已就绪: http://127.0.0.1:3000"
+fi
+
+if wait "$SERVICE_PID"; then
+  SERVICE_STATUS=0
+else
+  SERVICE_STATUS=$?
+fi
+trap - EXIT INT TERM
+exit "$SERVICE_STATUS"

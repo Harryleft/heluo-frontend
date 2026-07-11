@@ -2,8 +2,8 @@
  * 文本嵌入服务
  * 将文本转换为向量表示，用于语义搜索
  *
- * 本地版本：调用 bge-large-zh 模型服务
- * 模型路径：~/.cache/heluo/models/bge-large-zh
+ * 本地版本：调用 text2vec-base-chinese 模型服务
+ * 服务入口：server/embedding-service/server.py
  */
 
 import crypto from 'crypto'

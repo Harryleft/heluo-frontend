@@ -44,13 +44,15 @@ cp .env.example .env
 
 ## 4. 启动
 
-一键启动前后端：
+一键安装依赖、生成本地配置、启动前端/后端/Embedding，并等待端到端健康检查通过：
 
 ```bash
-npm run dev
+npm run bootstrap
 ```
 
-或分别启动：
+已有依赖时可运行 `npm run bootstrap:fast`。默认健康检查覆盖 MarkLogic 文档数、后端、统计、搜索、IIIF、Embedding 和前端首页；缺少任何依赖都会明确失败。只在诊断启动问题时使用 `bash scripts/start-all.sh --no-health`。
+
+开发时也可以分别启动：
 
 ```bash
 npm run dev:server
@@ -60,6 +62,12 @@ npm run dev:frontend
 访问：
 - 前端：`http://127.0.0.1:3000`
 - 后端健康检查：`http://127.0.0.1:9011/health`
+
+对已经运行的环境重新验收：
+
+```bash
+npm run smoke
+```
 
 ## 5. 主要接口
 

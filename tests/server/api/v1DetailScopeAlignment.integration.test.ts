@@ -279,6 +279,9 @@ describe('GET /api/v1 details 口径对齐', () => {
     expect(result.data.stats.totalPoems).toBe(1)
     expect(result.data.trackPoints).toHaveLength(1)
     expect(result.data.trackPoints[0].place.label).toBe('奉节县')
+    expect(result.data.trackPoints[0].place.lng).toBeTypeOf('number')
+    expect(result.data.trackPoints[0].place.lat).toBeTypeOf('number')
+    expect(result.data.stats.placesCount).toBe(1)
   })
 
   it('book search 结果进入 details 不应 404', async () => {

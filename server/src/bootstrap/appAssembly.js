@@ -143,7 +143,9 @@ export function registerAppMiddleware(app, options = {}) {
   // 这使得 getRequestOrigin() 等函数在 HTTPS 反代后能正确生成 https:// URL
   app.set('trust proxy', true)
 
-  app.use(morgan('dev'))
+  if (process.env.NODE_ENV !== 'test') {
+    app.use(morgan('dev'))
+  }
   app.use(express.json({ limit: JSON_BODY_LIMIT }))
 
   app.use((req, res, next) => {

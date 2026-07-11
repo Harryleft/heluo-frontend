@@ -1,9 +1,14 @@
 #!/usr/bin/env node
 
 import 'dotenv/config'
-import { execFileSync } from 'node:child_process'
+import { execFile } from 'node:child_process'
+import { promisify } from 'node:util'
+
+const execFileAsync = promisify(execFile)
 
 const timeoutMs = Number(process.env.SMOKE_TIMEOUT_MS) || 5000
+const retries = Math.max(1, Number(process.env.SMOKE_RETRIES) || 1)
+const retryDelayMs = Math.max(100, Number(process.env.SMOKE_RETRY_DELAY_MS) || 5000)
 const backendUrl = strip(process.env.REACT_BACKEND_URL || 'http://127.0.0.1:9011')
 const frontendUrl = strip(process.env.FRONTEND_URL || 'http://127.0.0.1:3000')
 const embeddingUrl = strip(process.env.EMBEDDING_SERVICE_URL || 'http://127.0.0.1:8080')
@@ -27,8 +32,8 @@ async function getText(url) {
   return response.text()
 }
 
-function getMarklogicSearch() {
-  const output = execFileSync('curl', [
+async function getMarklogicSearch() {
+  const { stdout } = await execFileAsync('curl', [
     '-sS',
     '--digest',
     '-u',
@@ -37,12 +42,12 @@ function getMarklogicSearch() {
     String(Math.ceil(timeoutMs / 1000)),
     `${marklogicUrl}/v1/search?format=json&pageLength=1`,
   ], { encoding: 'utf-8' })
-  return JSON.parse(output)
+  return JSON.parse(stdout)
 }
 
 const checks = [
   ['MarkLogic 文档数', async () => {
-    const data = getMarklogicSearch()
+    const data = await getMarklogicSearch()
     if (!Number.isFinite(Number(data.total))) throw new Error('missing total')
     return `${data.total}`
   }],
@@ -80,15 +85,41 @@ const checks = [
   }],
 ]
 
-let failed = 0
-for (const [name, run] of checks) {
-  try {
-    const detail = await run()
-    console.log(`[ok] ${name}: ${detail}`)
-  } catch (error) {
-    failed += 1
-    console.error(`[fail] ${name}: ${error.message}`)
+async function runChecks() {
+  const outcomes = await Promise.all(checks.map(async ([name, run]) => {
+    try {
+      const detail = await run()
+      return { passed: [name, detail] }
+    } catch (error) {
+      return { failed: [name, error.message] }
+    }
+  }))
+
+  return {
+    passed: outcomes.flatMap((outcome) => outcome.passed ? [outcome.passed] : []),
+    failed: outcomes.flatMap((outcome) => outcome.failed ? [outcome.failed] : []),
   }
 }
 
-if (failed > 0) process.exit(1)
+function delay(ms) {
+  return new Promise((resolve) => setTimeout(resolve, ms))
+}
+
+for (let attempt = 1; attempt <= retries; attempt += 1) {
+  const result = await runChecks()
+  if (result.failed.length === 0) {
+    result.passed.forEach(([name, detail]) => console.log(`[ok] ${name}: ${detail}`))
+    process.exit(0)
+  }
+
+  if (attempt < retries) {
+    const failedNames = result.failed.map(([name]) => name).join('、')
+    console.log(`[wait] 健康检查 ${attempt}/${retries} 未就绪: ${failedNames}`)
+    await delay(retryDelayMs)
+    continue
+  }
+
+  result.failed.forEach(([name, message]) => console.error(`[fail] ${name}: ${message}`))
+}
+
+process.exit(1)

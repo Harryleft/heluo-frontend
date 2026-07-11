@@ -170,9 +170,15 @@ export function formatConversationHistory(session: ConversationSession): string 
     .join('\n')
 }
 
+function getLocalStorage(): Storage | null {
+  if (typeof window !== 'undefined') return window.localStorage
+  const descriptor = Object.getOwnPropertyDescriptor(globalThis, 'localStorage')
+  return descriptor && 'value' in descriptor ? descriptor.value as Storage : null
+}
+
 export function saveSessionToStorage(session: ConversationSession): boolean {
   try {
-    globalThis.localStorage?.setItem(STORAGE_KEY, JSON.stringify(session))
+    getLocalStorage()?.setItem(STORAGE_KEY, JSON.stringify(session))
     return true
   } catch {
     return false
@@ -207,7 +213,7 @@ function normalizeSourceSnapshot(rawSnapshot: unknown): ConversationSourceSnapsh
 
 export function loadSessionFromStorage(): ConversationSession | null {
   try {
-    const raw = globalThis.localStorage?.getItem(STORAGE_KEY)
+    const raw = getLocalStorage()?.getItem(STORAGE_KEY)
     if (!raw) return null
     const parsed = JSON.parse(raw)
     if (!parsed || typeof parsed !== 'object') return null
@@ -223,7 +229,7 @@ export function loadSessionFromStorage(): ConversationSession | null {
 }
 
 export function clearSessionFromStorage(): void {
-  globalThis.localStorage?.removeItem(STORAGE_KEY)
+  getLocalStorage()?.removeItem(STORAGE_KEY)
 }
 
 export function getSessionSummary(session: ConversationSession): {

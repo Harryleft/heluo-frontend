@@ -62,9 +62,28 @@ function safeClone<T>(value: T): T {
   return JSON.parse(JSON.stringify(value)) as T
 }
 
+function getBrowserStorage(): Storage | null {
+  if (typeof window === 'undefined') return null
+
+  const descriptor = Object.getOwnPropertyDescriptor(window, 'localStorage')
+  if (descriptor && 'value' in descriptor) {
+    return descriptor.value as Storage | null
+  }
+
+  // Node 25 exposes an experimental localStorage getter that warns unless a
+  // persistence file is configured. It is not browser storage and must not be
+  // used by server-side rendering or node-based tests.
+  const runtime = globalThis as typeof globalThis & {
+    process?: { versions?: { node?: string } }
+  }
+  if (runtime.process?.versions?.node) return null
+
+  return window.localStorage
+}
+
 function safeReadStorage(key: string): string | null {
   try {
-    return globalThis.localStorage.getItem(key)
+    return getBrowserStorage()?.getItem(key) ?? null
   } catch {
     return null
   }
@@ -72,7 +91,7 @@ function safeReadStorage(key: string): string | null {
 
 function safeWriteStorage(key: string, value: string): void {
   try {
-    globalThis.localStorage.setItem(key, value)
+    getBrowserStorage()?.setItem(key, value)
   } catch {
     // 存储不可用或配额不足时静默降级到内存缓存
   }
@@ -80,7 +99,7 @@ function safeWriteStorage(key: string, value: string): void {
 
 function safeRemoveStorage(key: string): void {
   try {
-    globalThis.localStorage.removeItem(key)
+    getBrowserStorage()?.removeItem(key)
   } catch {
     // 忽略存储异常
   }
@@ -88,9 +107,11 @@ function safeRemoveStorage(key: string): void {
 
 function listStorageKeysByPrefix(prefix: string): string[] {
   try {
+    const storage = getBrowserStorage()
+    if (!storage) return []
     const keys: string[] = []
-    for (let i = 0; i < globalThis.localStorage.length; i += 1) {
-      const key = globalThis.localStorage.key(i)
+    for (let i = 0; i < storage.length; i += 1) {
+      const key = storage.key(i)
       if (key && key.startsWith(prefix)) {
         keys.push(key)
       }

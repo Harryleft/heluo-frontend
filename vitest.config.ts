@@ -13,8 +13,10 @@ export default defineConfig({
   test: {
     globals: true,
     environment: 'node',
+    setupFiles: ['tests/setup.ts'],
+    silent: true,
     include: ['tests/**/*.test.ts', 'tests/**/*.test.tsx', 'tests/**/*.test.js'],
-    exclude: ['node_modules', 'dist', 'tests/styles/**'],
+    exclude: ['node_modules', 'dist'],
     coverage: {
       provider: 'v8',
       reporter: ['text', 'json', 'html'],

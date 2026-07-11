@@ -1,5 +1,7 @@
 # 人物诗文地理轨迹 API 设计文档
 
+> 历史设计稿。当前字段、接口路径和坐标约定以 [`../reference/person-poem-track-contract.md`](../reference/person-poem-track-contract.md) 为准。
+
 ## 1. 概述
 
 本文档定义"人物诗文地理轨迹地图"功能的 API 设计，用于地图前端展示某个人物所有诗文的地理轨迹。

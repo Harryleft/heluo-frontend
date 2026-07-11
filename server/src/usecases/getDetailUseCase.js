@@ -85,15 +85,6 @@ export function createGetDetailUseCase(dependencies) {
   }
 
   /**
-   * 获取实体详情
-   *
-   * @param {object} params - 查询参数
-   * @param {string} params.uri - 文档 URI
-   * @param {string} params.query - 关联查询（可选，用于推荐）
-   * @param {boolean} params.useCache - 是否使用缓存
-   * @returns {Promise<object>} 详情结果
-   */
-  /**
    * 将向量 URI 解析为对应的主实体 URI
    *
    * 向量文档通常包含 id 或 entity_iri 字段指向原始实体文档，
@@ -128,6 +119,15 @@ export function createGetDetailUseCase(dependencies) {
     return null
   }
 
+  /**
+   * 获取实体详情
+   *
+   * @param {object} params - 查询参数
+   * @param {string} params.uri - 文档 URI
+   * @param {string} params.query - 关联查询（可选，用于推荐）
+   * @param {boolean} params.useCache - 是否使用缓存
+   * @returns {Promise<object>} 详情结果
+   */
   async function execute(params) {
     const { uri, query = '', useCache = true } = params
 

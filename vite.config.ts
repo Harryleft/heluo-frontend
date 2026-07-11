@@ -37,16 +37,5 @@ export default defineConfig(({ mode }) => {
         },
       },
     },
-    // Vitest 测试配置
-    test: {
-      globals: true,
-      environment: 'node',
-      include: ['tests/**/*.test.ts'],
-      coverage: {
-        provider: 'v8',
-        reporter: ['text', 'json', 'html'],
-        include: ['src/lib/api/**/*.ts'],
-      },
-    },
   }
 })

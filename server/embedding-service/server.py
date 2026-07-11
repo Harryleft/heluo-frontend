@@ -2,9 +2,9 @@
 本地 Embedding 服务
 使用 FastAPI + Transformers 提供 REST API
 
-模型：bge-large-zh
-本地路径：~/.cache/heluo/models/bge-large-zh
-向量维度：1024
+默认模型：text2vec-base-chinese
+本地路径：~/.cache/heluo/models/text2vec-base-chinese
+默认向量维度：768
 
 启动方式：
     python server.py
@@ -17,6 +17,7 @@
 
 import os
 import time
+from contextlib import asynccontextmanager
 from pathlib import Path
 from typing import Optional
 
@@ -37,13 +38,6 @@ DEVICE = "cuda" if torch.cuda.is_available() else "cpu"
 PORT = int(os.environ.get("EMBEDDING_SERVICE_PORT", 8080))
 # 最大序列长度
 MAX_SEQ_LENGTH = 512
-
-# ========== FastAPI 应用 ==========
-app = FastAPI(
-    title="河洛 Embedding 服务",
-    description="基于 bge-large-zh 的文本向量化服务",
-    version="1.0.0",
-)
 
 # ========== 全局模型 ==========
 model: Optional[SentenceTransformer] = None
@@ -81,8 +75,6 @@ class HealthResponse(BaseModel):
     model_load_time_s: Optional[float] = None
 
 
-# ========== 启动事件 ==========
-@app.on_event("startup")
 async def load_model():
     """启动时加载模型"""
     global model, model_load_time
@@ -106,11 +98,37 @@ async def load_model():
 
         model_load_time = time.time() - start_time
         print(f"[Startup] 模型加载完成，耗时: {model_load_time:.2f}s")
-        print(f"[Startup] 向量维度: {model.get_sentence_embedding_dimension()}")
+        print(f"[Startup] 向量维度: {get_model_dimension()}")
 
     except Exception as e:
         print(f"[Startup] 模型加载失败: {e}")
         model = None
+
+
+def get_model_dimension() -> int:
+    """兼容新旧 sentence-transformers 的维度读取接口。"""
+    if model is None:
+        return 0
+
+    getter = getattr(model, "get_embedding_dimension", None)
+    if callable(getter):
+        return int(getter())
+    return int(model.get_sentence_embedding_dimension())
+
+
+@asynccontextmanager
+async def lifespan(_app: FastAPI):
+    await load_model()
+    yield
+
+
+# ========== FastAPI 应用 ==========
+app = FastAPI(
+    title="河洛 Embedding 服务",
+    description="基于 text2vec-base-chinese 的文本向量化服务",
+    version="1.0.0",
+    lifespan=lifespan,
+)
 
 
 # ========== API 端点 ==========
@@ -120,7 +138,7 @@ async def root():
     return {
         "service": "河洛 Embedding 服务",
         "model": MODEL_NAME,
-        "dimension": model.get_sentence_embedding_dimension() if model else None,
+        "dimension": get_model_dimension() if model else None,
         "endpoints": {
             "embed": "POST /embed - 获取文本嵌入向量",
             "health": "GET /health - 健康检查",
@@ -136,7 +154,7 @@ async def health():
         status="ok" if model is not None else "model_not_loaded",
         model=MODEL_NAME,
         device=DEVICE,
-        dimension=model.get_sentence_embedding_dimension() if model else 0,
+        dimension=get_model_dimension(),
         model_loaded=model is not None,
         model_load_time_s=model_load_time,
     )

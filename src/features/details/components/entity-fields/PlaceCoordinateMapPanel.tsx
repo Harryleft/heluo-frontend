@@ -1,7 +1,8 @@
 import { useEffect, useMemo, useRef, useState } from 'react'
-import { asArray, asRecord, normalizeText, pickNodeText } from './utils'
+import { asArray, asRecord, pickNodeText } from './utils'
 import { loadMapJsApi } from '@/features/details/components/PersonPoemTrackMap/services'
 import '@/types/map.global' // 导入全局声明
+import { parseWktPoint } from '@/lib/geo/wkt'
 
 const MAP_DETAIL_ZOOM = 13
 const MAP_MULTI_POINT_ZOOM = 10
@@ -14,17 +15,6 @@ interface PlacePoint {
   label: string
   lat: number
   lng: number
-}
-
-function parseWktPoint(value: unknown): { lat: number; lng: number } | null {
-  const raw = normalizeText(value)
-  if (!raw || !raw.includes('POINT')) return null
-  const match = raw.match(/POINT\s*\(\s*([\d.-]+)\s+([\d.-]+)\s*\)/i)
-  if (!match) return null
-  const lng = Number.parseFloat(match[1] || '')
-  const lat = Number.parseFloat(match[2] || '')
-  if (!Number.isFinite(lat) || !Number.isFinite(lng)) return null
-  return { lat, lng }
 }
 
 function extractPlacePoints(entity: Record<string, unknown>): PlacePoint[] {

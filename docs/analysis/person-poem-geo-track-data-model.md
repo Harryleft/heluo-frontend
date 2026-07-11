@@ -1,5 +1,7 @@
 # 人物诗文地理轨迹数据模型分析
 
+> 历史设计稿。当前字段、接口路径和坐标约定以 [`../reference/person-poem-track-contract.md`](../reference/person-poem-track-contract.md) 为准。
+
 ## 1. 概述
 
 本文档分析"人物诗文地理轨迹地图"功能的数据模型，包括 TypeScript 接口定义、数据提取逻辑、WKT POINT 解析方案及边界情况处理。
