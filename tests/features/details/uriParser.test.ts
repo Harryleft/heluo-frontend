@@ -35,4 +35,15 @@ describe('uriParser', () => {
     expect(result.format).toBe('set')
     expect(result.id).toBe('18804_1523')
   })
+
+  it('查询参数和锚点不应污染资源 ID', () => {
+    expect(parseUriResource('https://api.heluo.site/person/17270.json?source=test#bio')).toEqual({
+      type: 'person',
+      id: '17270',
+    })
+    expect(parseUriResource('/processed/json-ld/book/978-7.json?foo=1#bar')).toEqual({
+      type: 'book',
+      id: '978-7',
+    })
+  })
 })
