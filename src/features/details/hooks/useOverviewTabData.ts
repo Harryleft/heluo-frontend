@@ -154,11 +154,6 @@ export function useRelatedResources(params: UseRelatedResourcesParams): UseRelat
           }
         }
 
-        if (response.data.items && response.data.items.length === 0) {
-          setRelatedResources([])
-          setRelatedState('success')
-          return
-        }
         if (recommended.length === 0) {
           recommended = buildRelatedFromInternalLinks(internalLinks, relatedContext)
         }
