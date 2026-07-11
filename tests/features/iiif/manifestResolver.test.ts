@@ -135,4 +135,35 @@ describe('manifestResolver', () => {
     )
     expect(fetchMock).toHaveBeenCalledTimes(2)
   })
+
+  it('首次解析失败后再次调用同一地址应重新请求', async () => {
+    const htmlResponse = {
+      ok: true,
+      headers: {
+        get: (name: string) => (name.toLowerCase() === 'content-type' ? 'text/html; charset=utf-8' : null),
+      },
+      text: async () => '<!doctype html><html><body>temporary error</body></html>',
+    }
+    const fetchMock = vi.fn()
+      .mockResolvedValueOnce(htmlResponse)
+      .mockResolvedValueOnce(htmlResponse)
+      .mockResolvedValueOnce({
+        ok: true,
+        headers: {
+          get: (name: string) => (name.toLowerCase() === 'content-type' ? 'application/json' : null),
+        },
+        json: async () => ({
+          type: 'Manifest',
+          items: [{ type: 'Canvas', id: 'canvas-1' }],
+        }),
+      })
+    vi.stubGlobal('fetch', fetchMock)
+
+    const manifestPath = '/iiif/manifests/306/manifest.json'
+    await expect(resolveIiifManifestUrl(manifestPath)).rejects.toThrow('IIIF manifest 返回了 HTML 页面')
+    await expect(resolveIiifManifestUrl(manifestPath)).resolves.toBe(
+      'http://127.0.0.1:9011/iiif/manifests/306/manifest.json',
+    )
+    expect(fetchMock).toHaveBeenCalledTimes(3)
+  })
 })
