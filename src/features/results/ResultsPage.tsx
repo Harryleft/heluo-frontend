@@ -314,6 +314,7 @@ export function ResultsPage(): JSX.Element {
       {/* 搜索面板 */}
       <section className="classic-search-panel">
         <form
+          key={`${query}:${safeScope}`}
           className="classic-search-panel__form"
           onSubmit={(event) => {
             event.preventDefault()
