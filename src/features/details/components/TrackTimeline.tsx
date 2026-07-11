@@ -7,7 +7,7 @@
  * - 当前年份显示（使用 MUI Typography）
  * - 可用年份标签（使用 MUI Chip）
  *
- * 参考: docs/analysis/poem-track-map-plan.md
+ * 参考: docs/reference/person-poem-track-contract.md
  */
 
 import { useEffect, useMemo, useRef, useState, useCallback } from 'react'

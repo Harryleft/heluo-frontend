@@ -12,23 +12,8 @@ import {
   LEAFLET_SCRIPT_ID,
   LEAFLET_TILE_URL,
 } from '@/features/details/components/PersonPoemTrackMap/constants'
-
-type MapPoint = [number, number]
-type MapBounds = { getSouthWest(): { lng: number; lat: number }; getNorthEast(): { lng: number; lat: number } }
-type MapInstance = { setFitView(): void; destroy(): void; setCenter: (center: MapPoint) => void; setZoom: (zoom: number) => void; getZoom: () => number; getBounds: () => MapBounds; addControl: (control: unknown) => void; panTo: (center: MapPoint, _opts?: unknown, duration?: number) => void }
-
-type MapNamespace = {
-  Map: new (container: HTMLElement, options?: Record<string, any>) => MapInstance
-  Marker: new (options: Record<string, any>) => {
-    setMap: (map: MapInstance | null) => void
-    setPosition: (position: MapPoint) => void
-    getContent: () => HTMLElement | string
-    setContent: (content: string) => void
-  }
-  Polyline: new (options: Record<string, any>) => {
-    setMap: (map: MapInstance | null) => void
-  }
-}
+import type { MapBounds, MapNamespace, MapPoint } from '@/types/map'
+import { isWgs84Coordinate } from '@/lib/geo/wkt'
 
 type MaybeWindow = Window & {
   L?: Record<string, unknown> & { map: any; marker: any; polyline: any; tileLayer: any; divIcon: any; latLngBounds: any; latLng: any }
@@ -36,16 +21,22 @@ type MaybeWindow = Window & {
 
 let mapLoadPromise: Promise<MapNamespace> | null = null
 
-function normalizePoint(point: unknown, fallback: MapPoint = [116.4, 39.9]): MapPoint {
-  if (!Array.isArray(point) || point.length < 2) return fallback
+export function normalizeMapPoint(point: unknown): MapPoint | null {
+  if (!Array.isArray(point) || point.length < 2) return null
 
   const lng = Number(point[0])
   const lat = Number(point[1])
-  if (!Number.isFinite(lng) || !Number.isFinite(lat)) return fallback
+  if (!isWgs84Coordinate(lng, lat)) return null
   return [lng, lat]
 }
 
-function toLeafletLatLng(point: MapPoint): [number, number] {
+function requireMapPoint(point: unknown): MapPoint {
+  const normalized = normalizeMapPoint(point)
+  if (!normalized) throw new Error('地图坐标无效。')
+  return normalized
+}
+
+export function toLeafletLatLng(point: MapPoint): [number, number] {
   return [point[1], point[0]]
 }
 
@@ -117,7 +108,7 @@ async function createMapNamespace(): Promise<MapNamespace> {
     private layers = new Set<any>()
 
     constructor(container: HTMLElement, options: Record<string, any> = {}) {
-      const center = normalizePoint(options.center, [116.4, 39.9])
+      const center = normalizeMapPoint(options.center) || [116.4, 39.9]
       const zoom = Number.isFinite(Number(options.zoom)) ? Number(options.zoom) : 10
       this.map = Leaflet.map(container, {
         center: toLeafletLatLng(center),
@@ -170,7 +161,7 @@ async function createMapNamespace(): Promise<MapNamespace> {
     }
 
     setCenter(center: MapPoint): void {
-      this.map.setView(toLeafletLatLng(center))
+      this.map.setView(toLeafletLatLng(requireMapPoint(center)))
     }
 
     setZoom(zoom: number): void {
@@ -204,7 +195,7 @@ async function createMapNamespace(): Promise<MapNamespace> {
 
     panTo(center: MapPoint, _opts?: unknown, duration?: number): void {
       const durationSec = Number.isFinite(duration || 0) ? duration! / 1000 : 0.5
-      this.map.flyTo(toLeafletLatLng(center), this.map.getZoom(), {
+      this.map.flyTo(toLeafletLatLng(requireMapPoint(center)), this.map.getZoom(), {
         animate: true,
         duration: durationSec,
       })
@@ -213,10 +204,10 @@ async function createMapNamespace(): Promise<MapNamespace> {
 
   const createDivIcon = (content: string) =>
     Leaflet.divIcon({
-      html: `<div style="pointer-events:auto;">${content}</div>`,
+      html: `<div style="width:56px;height:56px;display:flex;align-items:center;justify-content:center;pointer-events:auto;">${content}</div>`,
       className: 'heluo-map-marker-wrapper',
-      iconSize: [64, 64],
-      iconAnchor: [32, 64],
+      iconSize: [56, 56],
+      iconAnchor: [28, 28],
     })
 
   const createMarkerOptions = (content: string, title: string) => {
@@ -230,7 +221,7 @@ async function createMapNamespace(): Promise<MapNamespace> {
     private mapRef: LeafletMap | null = null
 
     constructor(options: Record<string, any>) {
-      const position = normalizePoint(options.position, [116.4, 39.9])
+      const position = requireMapPoint(options.position)
       const content = String(options.content || '')
       const title = String(options.title || '')
 
@@ -250,7 +241,7 @@ async function createMapNamespace(): Promise<MapNamespace> {
     }
 
     setPosition(position: MapPoint): void {
-      this.marker.setLatLng(toLeafletLatLng(position))
+      this.marker.setLatLng(toLeafletLatLng(requireMapPoint(position)))
     }
 
     getContent(): HTMLElement | string {
@@ -271,9 +262,11 @@ async function createMapNamespace(): Promise<MapNamespace> {
       const style: Record<string, unknown> = {
         color: options.strokeColor || '#4a4a4a',
         weight: Number.isFinite(Number(options.borderWeight)) ? Number(options.borderWeight) : 2,
+        opacity: Number.isFinite(Number(options.strokeOpacity)) ? Number(options.strokeOpacity) : 1,
+        dashArray: String(options.strokeDasharray || '').trim() || undefined,
         lineJoin: options.lineJoin || 'round',
       }
-      this.polyline = Leaflet.polyline(path.map((point: unknown) => toLeafletLatLng(normalizePoint(point))), style)
+      this.polyline = Leaflet.polyline(path.map((point: unknown) => toLeafletLatLng(requireMapPoint(point))), style)
       if (options.map) this.setMap(options.map)
     }
 

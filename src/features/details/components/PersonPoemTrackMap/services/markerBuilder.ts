@@ -6,6 +6,7 @@
 
 import type { PoemTrackPoint } from '@/types/contracts/poemTrackContracts'
 import { createMarkerContent } from '@/features/details/components/PersonPoemTrackMap/styles/markerStyles'
+import { groupVisibleTrackPointsByPlace } from '@/features/details/components/PersonPoemTrackMap/utils/trackUtils'
 
 /**
  * 获取轨迹点的唯一标识
@@ -45,22 +46,21 @@ export function createMarkers(
   markersRef.forEach((marker) => marker.setMap(null))
   markersRef.length = 0
 
-  // 累积过滤：只显示当前年份及之前的轨迹点
-  const accumulatedPoints = currentYear
-    ? trackPoints.filter((point) => point.year <= currentYear)
-    : trackPoints
-
-  // 创建新标记
-  accumulatedPoints.forEach((point) => {
+  // 同一地点跨年份合并，避免在相同坐标重复堆叠标记。
+  groupVisibleTrackPointsByPlace(trackPoints, currentYear).forEach((group) => {
+    const point = group.representative
     const trackKey = getTrackPointKey(point)
-    const isCurrent = selectedTrackKey === trackKey
-    const contentHtml = createMarkerContent(point.poems.length, point.year, yearRange, isCurrent)
+    const isCurrent = group.points.some((candidate) => getTrackPointKey(candidate) === selectedTrackKey)
+    const contentHtml = createMarkerContent(group.poemCount, point.year, yearRange, isCurrent)
+    const yearLabel = group.startYear === group.endYear
+      ? `${group.startYear}年`
+      : `${group.startYear}-${group.endYear}年`
 
     const marker = new MapApi.Marker({
       map,
       position: [point.place.lng, point.place.lat],
       content: contentHtml,
-      title: `${point.place.label} (${point.yearLabel}) - ${point.poems.length}首诗`,
+      title: `${point.place.label} (${yearLabel}) - 累计 ${group.poemCount} 首诗`,
     })
 
     // 点击事件

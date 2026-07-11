@@ -7,7 +7,7 @@
  * - 年份刻度标记
  * - 半透明背景，覆盖在地图底部
  *
- * 参考: docs/analysis/poem-track-map-plan.md
+ * 参考: docs/reference/person-poem-track-contract.md
  */
 
 import { useEffect, useMemo, useRef, useState, useCallback, SyntheticEvent } from 'react'

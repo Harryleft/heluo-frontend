@@ -1,7 +1,7 @@
 /**
  * 人物诗文地理轨迹相关类型定义
  *
- * 参考: docs/analysis/poem-track-map-plan.md
+ * 参考: docs/reference/person-poem-track-contract.md
  */
 
 // ============================================================================
@@ -26,9 +26,9 @@ export interface TrackPlace {
   uri: string
   /** 地点名称 */
   label: string
-  /** 纬度 */
+  /** WGS84 纬度，范围 [-90, 90] */
   lat: number
-  /** 经度 */
+  /** WGS84 经度，范围 [-180, 180] */
   lng: number
   /** 历史地名列表（可选） */
   historicalNames?: HistoricalName[]
@@ -72,6 +72,8 @@ export interface UndatedPoem {
   id: string
   /** 诗文标题 */
   title: string
+  /** 诗文 URI */
+  uri: string
   /** 关联地点（可选） */
   place?: {
     label: string
@@ -127,7 +129,7 @@ export interface PersonPoemTrack {
   /** 生卒年 */
   lifespan: Lifespan
   /** 朝代 */
-  dynasty: string
+  dynasty?: string
   /** 轨迹点列表（按年份排序） */
   trackPoints: PoemTrackPoint[]
   /** 无时间信息的诗文（附加显示） */
@@ -156,7 +158,7 @@ export interface PersonPoemTrackApiError {
   error: {
     code: 'PERSON_NOT_FOUND' | 'INVALID_PARAMS' | 'INTERNAL_ERROR' | 'REQUEST_CANCELED'
     message: string
-    statusCode: number
+    statusCode?: number
   }
 }
 
@@ -181,8 +183,6 @@ export interface PersonPoemTrackMapProps {
   trackData?: PersonPoemTrack
   /** 初始选中年份 */
   initialYear?: number
-  /** 是否自动播放 */
-  autoPlay?: boolean
   /** 动画间隔（毫秒） */
   animationInterval?: number
   /** 点击诗文回调 */

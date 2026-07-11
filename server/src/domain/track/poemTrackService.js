@@ -88,14 +88,15 @@ function extractYear(timespan) {
  * @param {string} wkt - WKT 字符串，如 "POINT(108.946306 34.347436)"
  * @returns {{lng: number, lat: number}|null} 坐标对象或 null
  */
-function parseWktPoint(wkt) {
+export function parseWktPoint(wkt) {
   if (typeof wkt !== 'string') return null
   const match = wkt.match(/POINT\s*\(\s*([\d.-]+)\s+([\d.-]+)\s*\)/i)
   if (!match) return null
-  return {
-    lng: parseFloat(match[1]),
-    lat: parseFloat(match[2]),
-  }
+  const lng = parseFloat(match[1])
+  const lat = parseFloat(match[2])
+  if (!Number.isFinite(lng) || !Number.isFinite(lat)) return null
+  if (lng < -180 || lng > 180 || lat < -90 || lat > 90) return null
+  return { lng, lat }
 }
 
 // ============================================================================
@@ -178,7 +179,6 @@ export async function queryPoemsByPerson(personId) {
 
   // 在诗文集合目录中搜索（支持大量诗文）
   const searchDirectories = [
-    '/processed/json-ld/poem/set/',
     '/processed/json-ld/poem/set/',
   ]
   const searchResults = await Promise.all(
@@ -476,13 +476,15 @@ export async function buildPersonPoemTrack(personId, personName, poems, personDo
     })
   }
 
-  // 按年份排序轨迹点
-  const trackPoints = Array.from(trackMap.values()).sort((a, b) => a.year - b.year)
+  // 同年内按地点 URI 固定次序，避免上游输入顺序改变地图结果。
+  const trackPoints = Array.from(trackMap.values()).sort(
+    (a, b) => a.year - b.year || a.place.uri.localeCompare(b.place.uri),
+  )
 
   // 计算统计信息
   const totalPoems = poems.length
   const datedPoems = trackPoints.reduce((sum, point) => sum + point.poems.length, 0)
-  const placesCount = placeInfoMap.size
+  const placesCount = new Set(trackPoints.map((point) => point.place.uri)).size
 
   let yearRange = null
   if (trackPoints.length > 0) {
@@ -553,8 +555,6 @@ export async function getPersonPoemTrack(personId, dependencies = {}) {
   let personName = ''
 
   const possiblePersonUris = [
-    `/processed/json-ld/person/${normalizedPersonId}.json`,
-    `/processed/json-ld/person/${normalizedPersonId}`,
     `/processed/json-ld/person/${normalizedPersonId}.json`,
     `/processed/json-ld/person/${normalizedPersonId}`,
   ]

@@ -11,9 +11,9 @@ export const INK_COLORS = {
   /** 晚期 - 浅灰 */
   light: '#7a7a7a',
   /** 朱砂红 - 当前强调边框 */
-  vermilion: '#c0392b',
+  vermilion: '#a43b32',
   /** 轨迹线颜色 */
-  line: '#4a4a4a',
+  line: '#514a42',
 } as const
 
 /**

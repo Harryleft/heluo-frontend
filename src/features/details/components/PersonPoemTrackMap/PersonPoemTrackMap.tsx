@@ -9,7 +9,7 @@
  * - 使用 MUI 组件改进 UI
  * - 懒加载：只有进入视口时才请求数据
  *
- * 参考: docs/analysis/poem-track-map-plan.md
+ * 参考: docs/reference/person-poem-track-contract.md
  */
 
 import { useEffect, useRef, useState, useCallback } from 'react'
@@ -41,11 +41,39 @@ import { useLazyLoad } from './hooks/useLazyLoad'
 import { useTrackData, useSelection } from './hooks/useTrackData'
 import { loadMapJsApi, getTrackPointKey, createMarkers } from './services'
 import { INK_COLORS } from './styles'
-import { extractTrackPoints, getYearRange } from './utils'
+import { buildTrackPath, extractTrackPoints, getVisibleTrackPoints, getYearRange } from './utils'
+import './styles/mapTheme.css'
 
 // ============================================================================
 // 主组件
 // ============================================================================
+
+function replacePolyline(
+  MapApi: any,
+  map: any,
+  trackPoints: PoemTrackPoint[],
+  currentYear: number | null,
+  polylineRef: { current: any },
+): void {
+  if (polylineRef.current) {
+    polylineRef.current.setMap(null)
+    polylineRef.current = null
+  }
+
+  const path = buildTrackPath(trackPoints, currentYear)
+    .map((point) => [point.lng, point.lat] as [number, number])
+  if (path.length < 2) return
+
+  polylineRef.current = new MapApi.Polyline({
+    map,
+    path,
+    borderWeight: 2,
+    strokeColor: INK_COLORS.line,
+    strokeOpacity: 0.55,
+    strokeDasharray: '6 8',
+    lineJoin: 'round',
+  })
+}
 
 /**
  * PersonPoemTrackMap 人物诗文地理轨迹地图组件
@@ -114,7 +142,9 @@ export function PersonPoemTrackMap({
       .then((MapApi) => {
         if (!active || !mapContainerRef.current) return
 
-        const points = extractTrackPoints(trackData.trackPoints)
+        const points = extractTrackPoints(
+          getVisibleTrackPoints(trackData.trackPoints, selectionRef.current.currentYear),
+        )
         if (points.length === 0) return
 
         // 创建地图实例
@@ -127,18 +157,13 @@ export function PersonPoemTrackMap({
 
         mapRef.current = map
 
-        // 绘制轨迹连线（使用墨色）
-        if (points.length > 1) {
-          const path = points.map((p) => [p.lng, p.lat] as [number, number])
-          const polyline = new MapApi.Polyline({
-            map,
-            path,
-            borderWeight: 2,
-            strokeColor: INK_COLORS.line,
-            lineJoin: 'round',
-          })
-          polylineRef.current = polyline
-        }
+        replacePolyline(
+          MapApi,
+          map,
+          trackData.trackPoints,
+          selectionRef.current.currentYear,
+          polylineRef,
+        )
 
         // 添加标记点
         const yearRange = trackData.stats.yearRange || { start: 0, end: 0 }
@@ -223,6 +248,7 @@ export function PersonPoemTrackMap({
     const yearRange = trackData.stats.yearRange || { start: 0, end: 0 }
     loadMapJsApi().then((MapApi) => {
       if (!mapRef.current) return
+      replacePolyline(MapApi, mapRef.current, trackData.trackPoints, currentYear, polylineRef)
       updateMarkers(MapApi, mapRef.current, trackData.trackPoints, yearRange, currentYear, selectedTrackKey)
     })
   }, [currentYear, trackData, updateMarkers, selectedTrackKey])
@@ -333,7 +359,7 @@ export function PersonPoemTrackMap({
   const yearRange = getYearRange(trackData, availableYears)
 
   return (
-    <Card ref={lazyLoadRef}>
+    <Card ref={lazyLoadRef} className="person-poem-track-map">
       <CardContent>
         {/* 标题区域 */}
         <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: { xs: 'flex-start', sm: 'center' }, flexDirection: { xs: 'column', sm: 'row' }, gap: 1, mb: 2 }}>
@@ -343,8 +369,13 @@ export function PersonPoemTrackMap({
           <Chip
             label={`共 ${trackData.stats.totalPoems} 首诗文 · ${trackData.stats.placesCount} 个地点`}
             size="small"
-            color="info"
             variant="outlined"
+            sx={{
+              color: '#5e4936',
+              borderColor: 'rgba(111, 78, 48, 0.42)',
+              bgcolor: 'rgba(247, 242, 230, 0.72)',
+              fontFamily: '"Noto Serif SC", "Songti SC", serif',
+            }}
           />
         </Box>
 
@@ -355,9 +386,10 @@ export function PersonPoemTrackMap({
             {/* 地图容器 */}
             <Box
               ref={mapContainerRef}
+              className="person-poem-track-map__canvas"
               sx={{
                 height: { xs: 280, sm: 340, md: 400 },
-                bgcolor: 'grey.100',
+                bgcolor: '#e8e3d7',
                 borderRadius: 1,
                 position: 'relative',
                 overflow: 'hidden',

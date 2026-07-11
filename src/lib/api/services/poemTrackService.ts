@@ -1,12 +1,13 @@
 /**
  * 人物诗文轨迹 API 服务
  *
- * 提供 /api/v1/person/:id/poem-track 接口的调用方法
+ * 提供 /api/v1/persons/:id/poem-track 接口的调用方法
  */
 
 import { http } from '@/lib/api/http'
 import { FRONTEND_CACHE_CONFIG, FRONTEND_CACHE_VERSION } from '@/lib/cache/cacheConfig'
 import { createUnifiedCache } from '@/lib/cache/unifiedCache'
+import { isPersonPoemTrack } from '@/lib/api/contracts/personPoemTrackContract'
 import type {
   PersonPoemTrackApiResult,
 } from '@/types/contracts/poemTrackContracts'
@@ -69,6 +70,16 @@ export async function fetchPersonPoemTrack(
 
     const response = await http.get<PersonPoemTrackApiResult>(url)
     if (response.data?.success) {
+      if (!isPersonPoemTrack(response.data.data)) {
+        return {
+          success: false,
+          error: {
+            code: 'INTERNAL_ERROR',
+            message: '诗文轨迹数据格式无效',
+            statusCode: 502,
+          },
+        }
+      }
       poemTrackCache.set(cacheKey, response.data)
     }
 
