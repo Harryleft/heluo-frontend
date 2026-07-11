@@ -86,9 +86,9 @@ export async function fetchPersonPoemTrack(
     // 后端已返回正确的 API 响应格式，直接返回
     return response.data
   } catch (error) {
-    // 检查是否是请求被取消（React StrictMode 双重渲染会导致）
+    // 仅识别显式取消；Axios 超时使用 ECONNABORTED，应作为请求失败处理。
     const axiosError = error as unknown as { name?: string; code?: string }
-    if (axiosError?.name === 'CanceledError' || axiosError?.code === 'ERR_CANCELED' || axiosError?.code === 'ECONNABORTED') {
+    if (axiosError?.name === 'CanceledError' || axiosError?.code === 'ERR_CANCELED') {
       // 请求被取消，返回一个特殊的错误对象，让调用方知道这不是真正的错误
       return {
         success: false,
