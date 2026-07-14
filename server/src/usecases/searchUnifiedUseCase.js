@@ -268,6 +268,13 @@ export function createSearchUnifiedUseCase(dependencies) {
       }),
     )
 
+    if (scopeResults.length > 0 && scopeResults.every((result) => result.status === 'error')) {
+      const error = new Error('All requested search scopes failed')
+      error.code = 'SEARCH_BACKEND_UNAVAILABLE'
+      error.details = scopeResults.map(({ scope, error: reason }) => ({ scope, reason }))
+      throw error
+    }
+
     // 合并结果
     for (const { scope, rows, total } of scopeResults) {
       counts[scope] = total
