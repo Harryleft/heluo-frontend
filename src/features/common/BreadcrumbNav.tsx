@@ -41,6 +41,10 @@ function buildBreadcrumbItems(pathname: string, search: string): BreadcrumbItem[
     return items
   }
 
+  if (pathname === '/topics/dufu-from-gongxian') {
+    return [...items, { label: '人物专题：杜甫' }]
+  }
+
   let pathAccumulator = ''
   segments.forEach((segment, index) => {
     pathAccumulator += `/${segment}`
