@@ -12,6 +12,7 @@ export default [
       'recovery/**',
       '.claude/**',
       'coverage/**',
+      'output/**',
       'node_modules/**',
       '.agents/**',
       '.codex/**',
