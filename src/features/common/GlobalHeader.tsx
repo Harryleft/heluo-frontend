@@ -9,7 +9,13 @@
  */
 
 import { useState, type FormEvent } from 'react'
-import { Link, useNavigate } from 'react-router-dom'
+import { Link, useLocation, useNavigate } from 'react-router-dom'
+
+const NAV_ITEMS = [
+  { to: '/', label: '首页', match: (pathname: string) => pathname === '/' },
+  { to: '/topics/dufu-from-gongxian', label: '人物专题', match: (pathname: string) => pathname.startsWith('/topics/') },
+  { to: '/chat', label: '智能对话', match: (pathname: string) => pathname === '/chat' },
+] as const
 
 /**
  * 判断是否应该显示全局 Header
@@ -23,6 +29,7 @@ export function shouldShowGlobalHeader(pathname: string): boolean {
  */
 export function GlobalHeader(): JSX.Element {
   const navigate = useNavigate()
+  const location = useLocation()
   const [query, setQuery] = useState('')
 
   function handleSearchSubmit(event: FormEvent<globalThis.HTMLFormElement>): void {
@@ -51,7 +58,17 @@ export function GlobalHeader(): JSX.Element {
           </svg>
         </Link>
 
-        <nav className="global-header-nav" aria-label="主导航" />
+        <nav className="global-header-nav" aria-label="主导航">
+          {NAV_ITEMS.map((item) => (
+            <Link
+              className={`global-header-nav-item${item.match(location.pathname) ? ' is-active' : ''}`}
+              key={item.to}
+              to={item.to}
+            >
+              <span className="global-header-nav-label">{item.label}</span>
+            </Link>
+          ))}
+        </nav>
 
         <form className="global-header-search" onSubmit={handleSearchSubmit}>
           <label htmlFor="global-header-search-input" className="global-header-search-label">
