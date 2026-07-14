@@ -172,6 +172,7 @@ export function ResultsPage(): JSX.Element {
   const [hasMore, setHasMore] = useState(false)
   const [isInitialLoading, setIsInitialLoading] = useState(true)
   const [isLoadingMore, setIsLoadingMore] = useState(false)
+  const [hasLoadError, setHasLoadError] = useState(false)
   const query = params.get('q') || ''
   const scope = params.get('scope') || DEFAULT_SCOPE
   const effectiveQuery = normalizeQuery(query)
@@ -203,6 +204,7 @@ export function ResultsPage(): JSX.Element {
         setItems(mergedItems)
         setTotal(totalCount)
         setSummary(buildSummaryText(totalCount))
+        setHasLoadError(false)
         setHasMore(mergedItems.length < totalCount && incomingItems.length > 0)
         setNextPage(page + 1)
         return
@@ -222,6 +224,7 @@ export function ResultsPage(): JSX.Element {
         }
         setHasMore(false)
         setSummary(`加载失败：${data.error.message}`)
+        setHasLoadError(true)
         return
       }
 
@@ -239,6 +242,7 @@ export function ResultsPage(): JSX.Element {
       setItems(mergedItems)
       setTotal(totalCount)
       setSummary(buildSummaryText(totalCount))
+      setHasLoadError(false)
       setHasMore(mergedItems.length < totalCount && incomingItems.length > 0)
       setNextPage(page + 1)
     } catch (error: unknown) {
@@ -250,6 +254,7 @@ export function ResultsPage(): JSX.Element {
       }
       setHasMore(false)
       setSummary(`加载失败：${String(error)}`)
+      setHasLoadError(true)
     }
   }, [effectiveQuery, safeType])
 
@@ -277,6 +282,7 @@ export function ResultsPage(): JSX.Element {
     setNextPage(2)
     setHasMore(false)
     setSummary(LOADING_TEXT)
+    setHasLoadError(false)
 
     void requestPage(1, false, session).finally(() => {
       if (session === sessionRef.current) {
@@ -367,7 +373,7 @@ export function ResultsPage(): JSX.Element {
               <p className="classic-results-end">{LOAD_END_TEXT}</p>
             ) : null}
           </>
-        ) : !isInitialLoading ? (
+        ) : !isInitialLoading && !hasLoadError ? (
           <div className="classic-results-empty">
             <div className="classic-results-empty__icon">.</div>
             <p className="classic-results-empty__text">暂无匹配结果</p>
