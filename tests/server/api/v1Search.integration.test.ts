@@ -307,6 +307,20 @@ describe('GET /api/v1/search 集成测试', () => {
     expect(result.data.items.length).toBe(0)
   })
 
+  it('检索后端不可用时应返回 503，而不是伪装成空结果', async () => {
+    setMarklogicFetchForTest(async () => {
+      throw new Error('MarkLogic offline')
+    })
+
+    const response = await fetch(`${baseUrl}/api/v1/search?q=杜甫&type=person&page=1&pageSize=2`)
+    const result = await response.json()
+
+    expect(response.status).toBe(503)
+    expect(result.success).toBe(false)
+    expect(result.error.code).toBe('SEARCH_BACKEND_UNAVAILABLE')
+    expect(result.error.message).toBe('检索服务暂不可用')
+  })
+
   it('ancient_book 检索在 json-ld only 模式下目录无数据时返回空结果', async () => {
     setMarklogicFetchForTest(createMarklogicFetchMock({ collectionOnly: true }))
 
