@@ -143,6 +143,7 @@ describe('ResultsPage 检索模式', () => {
 
     expect(container.textContent).toContain('加载失败：检索服务暂不可用')
     expect(container.textContent).not.toContain('暂无匹配结果')
+    expect(container.textContent).not.toContain('正在检索')
     unmount(root, container)
   })
 
