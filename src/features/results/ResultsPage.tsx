@@ -373,7 +373,7 @@ export function ResultsPage(): JSX.Element {
               <p className="classic-results-end">{LOAD_END_TEXT}</p>
             ) : null}
           </>
-        ) : !isInitialLoading && !hasLoadError ? (
+        ) : hasLoadError ? null : !isInitialLoading ? (
           <div className="classic-results-empty">
             <div className="classic-results-empty__icon">.</div>
             <p className="classic-results-empty__text">暂无匹配结果</p>
