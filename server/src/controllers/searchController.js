@@ -136,6 +136,15 @@ export function createSearchController(dependencies) {
         if (error.response) {
           return res.status(error.statusCode).json(error.response)
         }
+        if (error.code === 'SEARCH_BACKEND_UNAVAILABLE') {
+          const serviceError = apiV1Error(
+            'SEARCH_BACKEND_UNAVAILABLE',
+            '检索服务暂不可用',
+            error.details || null,
+            503,
+          )
+          return res.status(serviceError.statusCode).json(serviceError.response)
+        }
         console.error('Error in GET /api/v1/search:', error)
         res.status(500).json(apiV1Error('INTERNAL_ERROR', '服务器内部错误', String(error), 500).response)
       }
