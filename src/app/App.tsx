@@ -7,6 +7,8 @@ import { IiifPage } from '@/features/iiif/IiifPage'
 import { FusionChatPage } from '@/features/fusion/FusionChatPage'
 import { GlobalHeader, shouldShowGlobalHeader } from '@/features/common/GlobalHeader'
 import { BreadcrumbNav } from '@/features/common/BreadcrumbNav'
+import { TopicPage } from '@/features/topics/TopicPage'
+import { DUFU_TOPIC } from '@/features/topics/topicData'
 
 const APP_ROUTES = [
   { path: '/', element: <HomePageClassic /> },
@@ -15,6 +17,7 @@ const APP_ROUTES = [
   { path: '/details', element: <DetailsRouter /> },
   { path: '/iiif', element: <IiifPage /> },
   { path: '/mirador', element: <IiifPage /> },
+  { path: '/topics/dufu-from-gongxian', element: <TopicPage topic={DUFU_TOPIC} /> },
 ] as const
 
 /**
