@@ -140,6 +140,28 @@ export function HomePageClassic(): JSX.Element {
 
         </section>
 
+        <section className="classic-featured-topic" aria-labelledby="featured-topic-title">
+          <div className="classic-featured-topic-meta">
+            <span>人物专题 · 第一期</span>
+            <span>从河洛出发</span>
+          </div>
+          <div className="classic-featured-topic-content">
+            <div>
+              <p className="classic-featured-topic-kicker">本期策展</p>
+              <h2 id="featured-topic-title">杜甫：从巩县出发的诗史人生</h2>
+              <p>沿着地点、诗歌与文献，把分散的知识重新连成一条可阅读的生命路径。</p>
+            </div>
+            <Link className="classic-featured-topic-link" to="/topics/dufu-from-gongxian">
+              进入专题
+            </Link>
+          </div>
+          <div className="classic-featured-topic-facts" aria-label="杜甫专题资料概览">
+            <span><strong>46</strong> 种传记资料</span>
+            <span><strong>1,289</strong> 篇诗文</span>
+            <span><strong>1,270</strong> 条地点关联</span>
+          </div>
+        </section>
+
         {/* 数据统计区域 */}
         <section className="classic-stats-section">
           <div className="classic-stats-header">
