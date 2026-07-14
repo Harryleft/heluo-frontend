@@ -73,6 +73,25 @@ describe('v1Repository', () => {
     expect(result.success).toBe(true)
   })
 
+  it('searchUnifiedRepo 应保留后端返回的结构化错误', async () => {
+    const apiError = {
+      success: false as const,
+      error: {
+        code: 'SEARCH_BACKEND_UNAVAILABLE',
+        message: '检索服务暂不可用',
+      },
+    }
+    vi.mocked(http.get).mockRejectedValueOnce({
+      isAxiosError: true,
+      response: { status: 503, data: apiError },
+    })
+
+    const result = await searchUnifiedRepo('杜甫', 'person', 'keyword', { page: 1, pageSize: 12 })
+
+    expect(result).toEqual(apiError)
+    expect(http.get).toHaveBeenCalledTimes(1)
+  })
+
   it('fetchAncientBookByIdRepo 应支持传递 uri 参数', async () => {
     vi.mocked(http.get).mockResolvedValueOnce({
       data: { success: true, data: { id: '17270_2263_15', title: '卷十五', uri: '/x' } },
