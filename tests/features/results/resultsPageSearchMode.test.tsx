@@ -120,6 +120,32 @@ describe('ResultsPage 检索模式', () => {
     unmount(root, container)
   })
 
+  it('服务不可用时应显示明确错误，且不同时显示空结果', async () => {
+    vi.mocked(searchUnified).mockResolvedValueOnce({
+      success: false,
+      error: {
+        code: 'SEARCH_BACKEND_UNAVAILABLE',
+        message: '检索服务暂不可用',
+      },
+    })
+
+    const { container, root } = mount(
+      <MemoryRouter initialEntries={['/results?q=杜甫&scope=person']}>
+        <Routes>
+          <Route path="/results" element={<ResultsPage />} />
+        </Routes>
+      </MemoryRouter>,
+    )
+
+    await act(async () => {
+      await Promise.resolve()
+    })
+
+    expect(container.textContent).toContain('加载失败：检索服务暂不可用')
+    expect(container.textContent).not.toContain('暂无匹配结果')
+    unmount(root, container)
+  })
+
   it('应在触底后自动请求下一页', async () => {
     vi.mocked(searchUnified)
       .mockResolvedValueOnce({
