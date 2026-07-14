@@ -27,7 +27,7 @@
 
 - Vitest：65 个测试文件、454 个测试全部通过。
 - 生产构建：TypeScript 与 Vite 构建通过。
-- ESLint：限定 `src`、`server`、`tests` 范围通过。
+- ESLint：全项目 `npm run lint` 通过；测试输出目录已从源码扫描中排除。
 - 真实后端：MarkLogic 不可用时 `/api/v1/search` 返回 HTTP 503 与 `SEARCH_BACKEND_UNAVAILABLE`。
 - 真实前端：结果页展示“加载失败：检索服务暂不可用”，不再同时展示空结果或加载动画。
 
