@@ -110,6 +110,28 @@ async function postWithRetry<T>(url: string, body?: unknown): Promise<T> {
   })
 }
 
+function isStructuredSearchError(value: unknown): value is UnifiedSearchApiResponse {
+  if (!value || typeof value !== 'object') return false
+  const candidate = value as { success?: unknown; error?: { code?: unknown; message?: unknown } }
+  return candidate.success === false
+    && typeof candidate.error?.code === 'string'
+    && typeof candidate.error?.message === 'string'
+}
+
+async function getUnifiedSearchWithRetry(params: unknown): Promise<UnifiedSearchApiResponse> {
+  return withRetry(async () => {
+    try {
+      const response = await http.get<UnifiedSearchApiResponse>('/api/v1/search', { params })
+      return response.data
+    } catch (error) {
+      if (axios.isAxiosError(error) && isStructuredSearchError(error.response?.data)) {
+        return error.response.data
+      }
+      throw error
+    }
+  })
+}
+
 // ============================================================================
 // 公共 API - 实体查询
 // ============================================================================
@@ -181,7 +203,7 @@ export async function searchUnifiedRepo(
     ...(page && { page }),
     ...(pageSize && { pageSize }),
   }
-  return getWithRetry<UnifiedSearchApiResponse>('/api/v1/search', params)
+  return getUnifiedSearchWithRetry(params)
 }
 
 /** 融合问答查询 */
