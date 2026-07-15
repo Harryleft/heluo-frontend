@@ -11,12 +11,12 @@ const pagesCss = readFileSync(resolve(process.cwd(), 'src/styles/_pages.css'), '
 
 describe('面包屑配色契约', () => {
   it('应使用专题页的暖宣纸背景与金色边界', () => {
-    expect(pagesCss).toMatch(/\.global-breadcrumb\s*\{[\s\S]*background:\s*rgba\(245, 240, 225, 0\.72\);/)
-    expect(pagesCss).toMatch(/\.global-breadcrumb\s*\{[\s\S]*border-color:\s*rgba\(201, 162, 39, 0\.24\);/)
+    expect(pagesCss).toMatch(/\.global-breadcrumb\s*\{[^}]*background:\s*rgba\(245, 240, 225, 0\.72\);/)
+    expect(pagesCss).toMatch(/\.global-breadcrumb\s*\{[^}]*border-color:\s*rgba\(201, 162, 39, 0\.24\);/)
   })
 
   it('分隔符与当前层级应分别使用金色和深蓝色', () => {
-    expect(pagesCss).toMatch(/\.global-breadcrumb-item:not\(:last-child\)::after\s*\{[\s\S]*color:\s*var\(--classic-gold\);/)
-    expect(pagesCss).toMatch(/\.global-breadcrumb-item\.is-current\s*\{[\s\S]*color:\s*var\(--classic-primary\);/)
+    expect(pagesCss).toMatch(/\.global-breadcrumb-item:not\(:last-child\)::after\s*\{[^}]*color:\s*var\(--classic-gold\);/)
+    expect(pagesCss).toMatch(/\.global-breadcrumb-item\.is-current\s*\{[^}]*color:\s*var\(--classic-primary\);/)
   })
 })
