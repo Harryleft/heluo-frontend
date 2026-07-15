@@ -178,7 +178,12 @@
 .global-breadcrumb {
   max-width: 1400px;
   margin: 0 auto;
-  padding: 12px 32px 6px;
+  padding: 11px 32px;
+  border-width: 1px 0;
+  border-style: solid;
+  border-color: rgba(201, 162, 39, 0.24);
+  background: rgba(245, 240, 225, 0.72);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.72);
 }
 
 .global-breadcrumb-list {
@@ -188,7 +193,8 @@
   margin: 0;
   padding: 0;
   list-style: none;
-  color: var(--classic-text-muted);
+  color: #746a5e;
+  font-family: var(--yale-font-sans);
   font-size: 14px;
   line-height: 1.4;
 }
@@ -201,11 +207,12 @@
 
 .global-breadcrumb-item:not(:last-child)::after {
   content: '/';
-  color: var(--classic-border);
+  color: var(--classic-gold);
+  opacity: 0.62;
 }
 
 .global-breadcrumb-link {
-  color: var(--classic-text);
+  color: #665744;
   text-decoration: none;
   transition: color 0.2s ease;
 }
@@ -217,7 +224,7 @@
 
 .global-breadcrumb-item.is-current {
   color: var(--classic-primary);
-  font-weight: 500;
+  font-weight: 600;
 }
 
 /* 响应式 */
@@ -232,7 +239,7 @@
   }
 
   .global-breadcrumb {
-    padding: 10px 16px 4px;
+    padding: 10px 16px;
   }
 
   .global-breadcrumb-list {
