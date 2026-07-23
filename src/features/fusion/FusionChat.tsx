@@ -5,7 +5,8 @@
 
 import { createContext, useCallback, useContext, useEffect, useMemo, useRef, useState } from 'react'
 import { Link, useSearchParams } from 'react-router-dom'
-import { AssistantRuntimeProvider, useLocalRuntime, useThreadRuntime, type ChatModelAdapter, type ChatModelRunOptions, type MessageStatus, type ThreadAssistantMessagePart, type ThreadMessage } from '@assistant-ui/react'
+import ChevronRightRoundedIcon from '@mui/icons-material/ChevronRightRounded'
+import { AssistantRuntimeProvider, ThreadPrimitive, useLocalRuntime, useThreadRuntime, type ChatModelAdapter, type ChatModelRunOptions, type MessageStatus, type ThreadAssistantMessagePart, type ThreadMessage } from '@assistant-ui/react'
 
 // ============================================================================
 // 清除聊天按钮组件（需要在 AssistantRuntimeProvider 内部使用）
@@ -22,16 +23,11 @@ function ClearChatButton({ onClear }: ClearChatButtonProps): JSX.Element | null 
   // 只有当有消息时才显示按钮
   if (messageCount === 0) return null
 
-  const handleClear = () => {
-    threadRuntime.reset()
-    onClear()
-  }
-
   return (
     <button
       type="button"
       className="fusion-chat-native-clear-button"
-      onClick={handleClear}
+      onClick={onClear}
       title="清除对话"
       aria-label="清除当前对话"
     >
@@ -45,7 +41,7 @@ function ClearChatButton({ onClear }: ClearChatButtonProps): JSX.Element | null 
     </button>
   )
 }
-import { Thread, makeMarkdownText } from '@assistant-ui/react-ui'
+import { Composer, Thread, ThreadWelcome, makeMarkdownText } from '@assistant-ui/react-ui'
 import '@assistant-ui/react-ui/styles/index.css'
 import {
   buildSessionFromThreadMessages,
@@ -84,9 +80,9 @@ const TOP_K = 12
 const MAX_SOURCE_ITEMS = 10
 
 const QUICK_QUESTIONS = [
-  '杜甫写给李白的诗有哪些？',
-  '望岳这首诗讲了什么？',
-  '《春望》和《望岳》表达的情感有什么不同？',
+  { category: '人物', prompt: '杜甫写给李白的诗有哪些？' },
+  { category: '诗意', prompt: '望岳这首诗讲了什么？' },
+  { category: '比较', prompt: '《春望》和《望岳》表达的情感有什么不同？' },
 ]
 
 const MarkdownText = makeMarkdownText()
@@ -94,6 +90,54 @@ const DEFAULT_WELCOME_MESSAGE = '提出问题，我会结合检索证据作答�
 const DEFAULT_INPUT_PLACEHOLDER = '输入你的问题，例如：杜甫诗中如何体现现实关怀？'
 const RESTORED_SOURCE_EMPTY_TITLE = '来源暂未恢复'
 const RESTORED_SOURCE_EMPTY_DESCRIPTION = '当前为已恢复会话，原始来源未保留；如需查看来源，请重新提问。'
+
+function FusionChatWelcome(): JSX.Element {
+  return (
+    <ThreadWelcome.Root>
+      <ThreadWelcome.Center>
+        <p className="fusion-chat-native-welcome-eyebrow">智能问答</p>
+        <h1 className="fusion-chat-native-welcome-title">从一个问题，进入河洛文献</h1>
+        <ThreadWelcome.Message />
+      </ThreadWelcome.Center>
+    </ThreadWelcome.Root>
+  )
+}
+
+function FusionChatComposer(): JSX.Element {
+  return (
+    <>
+      <Composer.Root>
+        <Composer.Input aria-label="输入问题" autoFocus={false} />
+        <Composer.Action />
+      </Composer.Root>
+      <ThreadPrimitive.Empty>
+        <div className="fusion-chat-native-welcome-details">
+          <p className="fusion-chat-native-composer-trust">回答将附检索证据</p>
+          <section className="fusion-chat-native-welcome-index" aria-labelledby="fusion-chat-welcome-index-title">
+            <h2 id="fusion-chat-welcome-index-title">你也可以这样问</h2>
+            <div className="fusion-chat-native-welcome-index-list">
+              {QUICK_QUESTIONS.map(({ category, prompt }) => (
+                <ThreadPrimitive.Suggestion
+                  autoSend
+                  className="fusion-chat-native-welcome-index-item"
+                  key={prompt}
+                  method="replace"
+                  prompt={prompt}
+                >
+                  <span className="fusion-chat-native-welcome-index-category">
+                    {category}
+                  </span>
+                  <span className="fusion-chat-native-welcome-index-text">{prompt}</span>
+                  <ChevronRightRoundedIcon aria-hidden="true" className="fusion-chat-native-welcome-index-icon" />
+                </ThreadPrimitive.Suggestion>
+              ))}
+            </div>
+          </section>
+        </div>
+      </ThreadPrimitive.Empty>
+    </>
+  )
+}
 
 // ============================================================================
 // 检索状态上下文 —— 用于在 assistant-ui Empty 插槽中展示检索进度
@@ -459,6 +503,7 @@ export function FusionChat(): JSX.Element {
   const [showRestoredSourceFallback, setShowRestoredSourceFallback] = useState(
     () => Boolean(restoredSession?.messages?.length) && !restoredSourceSnapshot,
   )
+  const [isResettingConversation, setIsResettingConversation] = useState(false)
   const sessionRef = useRef<ConversationSession | null>(restoredSession)
 
   const dims = useMemo(() => parseDims(params.get('dims')), [params])
@@ -480,6 +525,7 @@ export function FusionChat(): JSX.Element {
 
   // 清除会话处理函数（清除来源相关状态）
   const handleClearConversation = useCallback(() => {
+    setIsResettingConversation(true)
     clearSessionFromStorage()
     sessionRef.current = null
     setEntities([])
@@ -628,6 +674,14 @@ export function FusionChat(): JSX.Element {
   const runtime = useLocalRuntime(adapter, { initialMessages })
 
   useEffect(() => {
+    if (!isResettingConversation) return
+
+    runtime.thread.cancelRun()
+    runtime.thread.reset()
+    setIsResettingConversation(false)
+  }, [isResettingConversation, runtime])
+
+  useEffect(() => {
     return () => {
       runtime.thread.cancelRun()
     }
@@ -669,6 +723,7 @@ export function FusionChat(): JSX.Element {
   return (
     <StreamStatusContext.Provider value={statusViewModel}>
       <AssistantRuntimeProvider runtime={runtime}>
+        {!isResettingConversation ? (
         <section className={`fusion-chat-native-shell ${showSourceSidebar ? 'has-source-sidebar' : 'without-source-sidebar'}`}>
           <section className="fusion-chat-native-main">
             <header className="fusion-chat-native-toolbar">
@@ -677,9 +732,14 @@ export function FusionChat(): JSX.Element {
             <Thread
               welcome={{
                 message: DEFAULT_WELCOME_MESSAGE,
-                suggestions: QUICK_QUESTIONS.map((prompt) => ({ prompt, text: prompt })),
+                suggestions: QUICK_QUESTIONS.map(({ prompt }) => ({ prompt, text: prompt })),
               }}
               composer={{ allowAttachments: false }}
+              components={{
+                Composer: FusionChatComposer,
+                ThreadWelcome: FusionChatWelcome,
+              }}
+              assistantAvatar={{}}
               assistantMessage={{
                 allowCopy: true,
                 allowReload: true,
@@ -721,6 +781,7 @@ export function FusionChat(): JSX.Element {
           </aside>
         ) : null}
       </section>
+        ) : null}
       </AssistantRuntimeProvider>
     </StreamStatusContext.Provider>
   )
