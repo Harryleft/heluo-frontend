@@ -12,6 +12,9 @@ import { FusionChatPage } from '@/features/fusion/FusionChatPage'
 import type { UnifiedEvidenceItem } from '@/features/fusion/evidenceUtils'
 
 const mockCancelRun = vi.fn()
+const mockResetRun = vi.fn(() => {
+  mockThreadMessages = []
+})
 const mockSubscribe = vi.fn(() => vi.fn())
 const mockGetState = vi.fn(() => ({ messages: mockThreadMessages }))
 const mockUseLocalRuntime = vi.fn()
@@ -22,7 +25,18 @@ const mockThread = vi.fn((props: Record<string, unknown>) => (
     data-testid="assistant-thread"
     data-has-markdown-text={String(Boolean((props.assistantMessage as { components?: { Text?: unknown } } | undefined)?.components?.Text))}
   >
-    assistant thread
+    {mockThreadMessages.length === 0 && (props.components as { ThreadWelcome?: () => JSX.Element } | undefined)?.ThreadWelcome
+      ? (() => {
+          const ThreadWelcomeComponent = (props.components as { ThreadWelcome: () => JSX.Element }).ThreadWelcome
+          return <ThreadWelcomeComponent />
+        })()
+      : null}
+    {(props.components as { Composer?: () => JSX.Element } | undefined)?.Composer
+      ? (() => {
+          const ComposerComponent = (props.components as { Composer: () => JSX.Element }).Composer
+          return <ComposerComponent />
+        })()
+      : null}
   </div>
 ))
 
@@ -48,22 +62,43 @@ Object.defineProperty(globalThis, 'localStorage', {
 
 vi.mock('@assistant-ui/react', () => ({
   AssistantRuntimeProvider: ({ children }: { children: JSX.Element }) => children,
+  ThreadPrimitive: {
+    Empty: ({ children }: { children: JSX.Element }) => mockThreadMessages.length === 0 ? children : null,
+    Suggestion: ({ autoSend, children, prompt }: { autoSend?: boolean; children: JSX.Element; prompt?: string }) => (
+      <button data-auto-send={String(Boolean(autoSend))} data-prompt={prompt} type="button">{children}</button>
+    ),
+  },
   useLocalRuntime: (...args: unknown[]) =>
     mockUseLocalRuntime(...args) || {
       thread: {
         cancelRun: mockCancelRun,
+        reset: mockResetRun,
         subscribe: mockSubscribe,
         getState: mockGetState,
       },
     },
   useThreadRuntime: () => ({
     getState: () => ({ messages: mockThreadMessages }),
-    reset: vi.fn(),
   }),
 }))
 
 vi.mock('@assistant-ui/react-ui', () => ({
+  Composer: Object.assign(
+    () => <div data-testid="assistant-composer" />,
+    {
+      Root: ({ children }: { children: JSX.Element }) => <div className="aui-composer-root">{children}</div>,
+      Input: ({ 'aria-label': ariaLabel, autoFocus }: { 'aria-label'?: string; autoFocus?: boolean }) => (
+        <textarea aria-label={ariaLabel} data-auto-focus={String(Boolean(autoFocus))} />
+      ),
+      Action: () => <button type="button">发送</button>,
+    },
+  ),
   Thread: (props: Record<string, unknown>) => mockThread(props),
+  ThreadWelcome: {
+    Root: ({ children }: { children: JSX.Element }) => children,
+    Center: ({ children }: { children: JSX.Element }) => children,
+    Message: () => <p>欢迎语</p>,
+  },
   makeMarkdownText: () => function MarkdownText(): JSX.Element {
     return <div data-testid="markdown-text">markdown text</div>
   },
@@ -111,6 +146,7 @@ describe('FusionChat 原生 assistant-ui 收敛', () => {
     mockUseLocalRuntime.mockImplementation(() => ({
       thread: {
         cancelRun: mockCancelRun,
+        reset: mockResetRun,
         subscribe: mockSubscribe,
         getState: mockGetState,
       },
@@ -196,7 +232,71 @@ describe('FusionChat 原生 assistant-ui 收敛', () => {
       { prompt: '《春望》和《望岳》表达的情感有什么不同？', text: '《春望》和《望岳》表达的情感有什么不同？' },
     ])
     expect((threadProps as { assistantMessage?: { allowReload?: boolean } }).assistantMessage?.allowReload).toBe(true)
+    expect((threadProps as { assistantAvatar?: Record<string, never> }).assistantAvatar).toEqual({})
     expect((threadProps as { strings?: { composer?: { cancel?: { tooltip?: string } } } }).strings?.composer?.cancel?.tooltip).toBe('停止')
+
+    unmount(root, container)
+  })
+
+  it('默认欢迎态应接入输入优先的自定义欢迎区与输入区', () => {
+    const { container, root } = mount(
+      <MemoryRouter initialEntries={['/chat']}>
+        <FusionChat />
+      </MemoryRouter>,
+    )
+
+    const threadProps = mockThread.mock.calls[0]?.[0] as {
+      components?: {
+        ThreadWelcome?: unknown
+        Composer?: unknown
+      }
+    }
+
+    expect(threadProps.components?.ThreadWelcome).toBeTypeOf('function')
+    expect(threadProps.components?.Composer).toBeTypeOf('function')
+    expect(container.textContent).toContain('从一个问题，进入河洛文献')
+    expect(container.textContent).toContain('你也可以这样问')
+    expect(container.querySelectorAll('[data-auto-send="true"]')).toHaveLength(3)
+    expect(container.querySelector('textarea')?.getAttribute('aria-label')).toBe('输入问题')
+    expect(container.querySelector('textarea')?.getAttribute('data-auto-focus')).toBe('false')
+
+    unmount(root, container)
+  })
+
+  it('有消息时应隐藏欢迎说明与示例索引，但保留输入区', () => {
+    mockThreadMessages = [{ id: 'user-1', role: 'user', content: [{ type: 'text', text: '望岳' }] }]
+
+    const { container, root } = mount(
+      <MemoryRouter initialEntries={['/chat']}>
+        <FusionChat />
+      </MemoryRouter>,
+    )
+
+    expect(container.textContent).not.toContain('从一个问题，进入河洛文献')
+    expect(container.textContent).not.toContain('你也可以这样问')
+    expect(container.querySelector('textarea')).toBeTruthy()
+
+    unmount(root, container)
+  })
+
+  it('清除失败后的对话时应先卸载线程，再重置运行时并恢复欢迎态', async () => {
+    mockThreadMessages = [{ id: 'assistant-1', role: 'assistant', content: [{ type: 'text', text: '请求失败' }] }]
+
+    const { container, root } = mount(
+      <MemoryRouter initialEntries={['/chat']}>
+        <FusionChat />
+      </MemoryRouter>,
+    )
+
+    const clearButton = container.querySelector('[aria-label="清除当前对话"]') as HTMLButtonElement
+    await act(async () => {
+      clearButton.click()
+    })
+
+    expect(mockCancelRun).toHaveBeenCalled()
+    expect(mockResetRun).toHaveBeenCalledTimes(1)
+    expect(mockCancelRun.mock.invocationCallOrder[0]).toBeLessThan(mockResetRun.mock.invocationCallOrder[0])
+    expect(container.textContent).toContain('从一个问题，进入河洛文献')
 
     unmount(root, container)
   })
