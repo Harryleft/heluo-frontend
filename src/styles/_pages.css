@@ -3384,6 +3384,356 @@
   }
 }
 
+/* 智能对话：输入优先的文献索引欢迎态 */
+.fusion-chat-page {
+  background: var(--classic-bg);
+}
+
+.fusion-chat-native-toolbar:empty {
+  display: none;
+}
+
+.fusion-chat-native .aui-thread-root {
+  min-height: max(620px, var(--fusion-chat-default-min-height));
+  border: 0;
+  border-radius: 0;
+  background: transparent;
+  box-shadow: none;
+  overflow: visible;
+}
+
+.fusion-chat-native .aui-thread-root::before,
+.fusion-chat-native .aui-thread-root::after {
+  display: none;
+}
+
+.fusion-chat-native .aui-thread-viewport {
+  padding-top: 0;
+}
+
+.fusion-chat-native .aui-thread-welcome-root {
+  align-self: center;
+  width: var(--fusion-chat-thread-width);
+  max-width: var(--fusion-chat-thread-width);
+  gap: 0;
+  padding: 64px 0 0;
+}
+
+.fusion-chat-native .aui-thread-welcome-center {
+  align-items: flex-start;
+  gap: 0;
+  padding: 0;
+  text-align: left;
+  animation: none;
+}
+
+.fusion-chat-native .aui-thread-welcome-center::before {
+  display: none;
+}
+
+.fusion-chat-native-welcome-eyebrow {
+  margin: 0 0 30px;
+  padding-bottom: 12px;
+  border-bottom: 3px solid var(--classic-accent);
+  color: var(--classic-gold-text);
+  font-family: var(--yale-font-serif);
+  font-size: 18px;
+  line-height: 1.4;
+}
+
+.fusion-chat-native-welcome-title {
+  margin: 0;
+  color: var(--classic-primary);
+  font-family: var(--yale-font-serif);
+  font-size: clamp(34px, 5vw, 50px);
+  font-weight: 500;
+  line-height: 1.35;
+  letter-spacing: 0.5px;
+}
+
+.fusion-chat-native .aui-thread-welcome-message {
+  max-width: 680px;
+  margin: 24px 0 0;
+  color: #5d6875;
+  font-family: var(--yale-font-serif);
+  font-size: 17px;
+  line-height: 1.8;
+  letter-spacing: 0.4px;
+}
+
+.fusion-chat-native .aui-thread-viewport-footer {
+  width: var(--fusion-chat-thread-width);
+  margin: 34px auto 0;
+  padding: 0 0 52px;
+}
+
+.fusion-chat-native .aui-composer-root {
+  position: relative;
+  min-height: 112px;
+  padding: 0;
+  border: 1px solid rgba(30, 58, 95, 0.28);
+  border-bottom: 3px solid var(--classic-primary);
+  border-radius: 10px;
+  background: #fff;
+  box-shadow: none;
+  backdrop-filter: none;
+  -webkit-backdrop-filter: none;
+}
+
+.fusion-chat-native .aui-composer-root:focus-within {
+  border-color: var(--classic-primary);
+  box-shadow: 0 0 0 3px rgba(30, 58, 95, 0.1);
+}
+
+.fusion-chat-native .aui-composer-input,
+.fusion-chat-native .aui-composer-textarea {
+  min-height: 106px;
+  padding: 32px 92px 30px 24px;
+  color: var(--classic-text);
+  font-family: var(--yale-font-sans);
+  font-size: 16px;
+  line-height: 1.7;
+  scrollbar-width: none;
+}
+
+.fusion-chat-native .aui-composer-input::-webkit-scrollbar,
+.fusion-chat-native .aui-composer-textarea::-webkit-scrollbar {
+  display: none;
+}
+
+.fusion-chat-native .aui-composer-send,
+.fusion-chat-native .aui-composer-send-button,
+.fusion-chat-native .aui-composer-cancel,
+.fusion-chat-native .aui-composer-cancel-button {
+  position: absolute;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  right: 22px;
+  bottom: 31px;
+  width: 48px;
+  height: 48px;
+  border: 0;
+  border-radius: 8px;
+  background: var(--classic-primary);
+  color: #fff;
+  box-shadow: none;
+}
+
+@media (hover: hover) {
+  .fusion-chat-native .aui-composer-send:hover:not(:disabled),
+  .fusion-chat-native .aui-composer-send-button:hover:not(:disabled) {
+    background: #294d78;
+    box-shadow: none;
+    transform: translateY(-1px);
+  }
+}
+
+.fusion-chat-native .aui-composer-send:disabled,
+.fusion-chat-native .aui-composer-send-button:disabled {
+  background: #d8dde4;
+  color: #778494;
+}
+
+.fusion-chat-native-welcome-details {
+  width: 100%;
+}
+
+.fusion-chat-native-composer-trust {
+  margin: 14px 14px 0;
+  color: var(--classic-gold-text);
+  font-family: var(--yale-font-sans);
+  font-size: 13px;
+  letter-spacing: 0.4px;
+  text-align: right;
+}
+
+.fusion-chat-native-welcome-index {
+  margin-top: 56px;
+}
+
+.fusion-chat-native-welcome-index h2 {
+  margin: 0 0 18px;
+  color: var(--classic-primary);
+  font-family: var(--yale-font-serif);
+  font-size: 22px;
+  font-weight: 500;
+  line-height: 1.5;
+}
+
+.fusion-chat-native-welcome-index-list {
+  border-top: 1px solid var(--classic-border);
+}
+
+.fusion-chat-native-welcome-index-item {
+  display: grid;
+  grid-template-columns: 72px minmax(0, 1fr) 24px;
+  gap: 20px;
+  align-items: center;
+  width: 100%;
+  min-height: 78px;
+  padding: 18px 0;
+  border: 0;
+  border-bottom: 1px solid var(--classic-border);
+  border-radius: 0;
+  background: transparent;
+  color: var(--classic-primary);
+  text-align: left;
+  cursor: pointer;
+  transition: background 0.2s ease, color 0.2s ease;
+}
+
+.fusion-chat-native-welcome-index-category {
+  color: var(--classic-gold-text);
+  font-family: var(--yale-font-serif);
+  font-size: 16px;
+}
+
+.fusion-chat-native-welcome-index-text {
+  font-family: var(--yale-font-sans);
+  font-size: 15px;
+  line-height: 1.7;
+}
+
+.fusion-chat-native-welcome-index-icon {
+  width: 22px;
+  height: 22px;
+  justify-self: end;
+  color: currentColor;
+}
+
+@media (hover: hover) {
+  .fusion-chat-native-welcome-index-item:hover {
+    background: rgba(30, 58, 95, 0.035);
+    color: #294d78;
+  }
+}
+
+.fusion-chat-native-welcome-index-item:focus-visible {
+  outline: 2px solid var(--classic-accent);
+  outline-offset: 3px;
+}
+
+@media (max-width: 768px) {
+  .fusion-chat-page-body {
+    padding: 28px 18px 32px;
+  }
+
+  .fusion-chat-native .aui-thread-root {
+    min-height: 560px;
+    border-radius: 0;
+  }
+
+  .fusion-chat-native .aui-thread-welcome-root {
+    gap: 0;
+    padding-top: 38px;
+  }
+
+  .fusion-chat-native .aui-thread-welcome-center {
+    padding: 0;
+    border-radius: 0;
+  }
+
+  .fusion-chat-native-welcome-eyebrow {
+    margin-bottom: 24px;
+    font-size: 16px;
+  }
+
+  .fusion-chat-native-welcome-title {
+    font-size: clamp(30px, 8vw, 40px);
+  }
+
+  .fusion-chat-native .aui-thread-welcome-message {
+    margin-top: 18px;
+    font-size: 15px;
+  }
+
+  .fusion-chat-native .aui-thread-viewport-footer {
+    margin-top: 26px;
+    padding: 0 0 34px;
+  }
+
+  .fusion-chat-native .aui-composer-root {
+    min-height: 98px;
+    border-radius: 8px;
+  }
+
+  .fusion-chat-native .aui-composer-input,
+  .fusion-chat-native .aui-composer-textarea {
+    min-height: 92px;
+    padding: 24px 62px 22px 18px;
+    font-size: 14px;
+  }
+
+  .fusion-chat-native .aui-composer-send,
+  .fusion-chat-native .aui-composer-send-button,
+  .fusion-chat-native .aui-composer-cancel,
+  .fusion-chat-native .aui-composer-cancel-button {
+    right: 16px;
+    bottom: 25px;
+    width: 42px;
+    height: 42px;
+  }
+
+  .fusion-chat-native-composer-trust {
+    margin-right: 4px;
+  }
+
+  .fusion-chat-native-welcome-index {
+    margin-top: 42px;
+  }
+
+  .fusion-chat-native-welcome-index h2 {
+    font-size: 20px;
+  }
+
+  .fusion-chat-native-welcome-index-item {
+    grid-template-columns: 54px minmax(0, 1fr) 20px;
+    gap: 12px;
+    min-height: 72px;
+    padding: 14px 0;
+  }
+
+  .fusion-chat-native-welcome-index-category {
+    font-size: 14px;
+  }
+
+  .fusion-chat-native-welcome-index-text {
+    font-size: 14px;
+  }
+
+}
+
+@media (max-width: 480px) {
+  .fusion-chat-page-body {
+    padding: 22px 16px 28px;
+  }
+
+  .fusion-chat-native .aui-thread-root {
+    min-height: 520px;
+  }
+
+  .fusion-chat-native .aui-thread-welcome-root {
+    padding-top: 28px;
+  }
+
+  .fusion-chat-native-welcome-title {
+    font-size: 30px;
+    line-height: 1.45;
+  }
+
+  .fusion-chat-native-welcome-index-item {
+    grid-template-columns: 46px minmax(0, 1fr) 18px;
+    gap: 10px;
+  }
+
+  .fusion-chat-native .aui-composer-input,
+  .fusion-chat-native .aui-composer-textarea {
+    font-size: 16px;
+  }
+
+}
+
 /* ========================================
    人物专题与首页专题入口
    ======================================== */
